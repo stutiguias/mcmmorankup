@@ -1,0 +1,61 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package me.stutiguias.apimcmmo;
+
+import com.gmail.nossr50.api.ExperienceAPI;
+import com.gmail.nossr50.mcMMO;
+import java.util.Map;
+import java.util.logging.Level;
+import me.stutiguias.mcmmorankup.Mcmmorankup;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+
+/**
+ *
+ * @author Stutiguias
+ */
+public class PowerLevel {
+    
+    private static Mcmmorankup plugin;
+    
+    public PowerLevel(Mcmmorankup instance)
+    {
+        plugin = instance;
+        Plugin pl = plugin.getServer().getPluginManager().getPlugin("mcMMO");
+        if(pl != null) {
+            Mcmmorankup.log.log(Level.INFO, plugin.logPrefix + " mcMMO found !!!");
+        }
+    }
+    
+    public boolean tryRankUp(Player player) {
+        int PowerLevel = getPowerLevel(player);
+        boolean state = false;
+        for(String PlayerToIgnore:plugin.PlayerToIgnore) {
+            if(player.getName().equalsIgnoreCase(PlayerToIgnore)) {
+                return state;
+            }
+        }
+        for(Map.Entry<Integer,String> entry : plugin.RankLevel.entrySet()) {
+            Integer key = entry.getKey();
+            String  value = entry.getValue();
+            if(key < PowerLevel){
+                state = plugin.permission.playerAddGroup(plugin.getServer().getWorlds().get(0),player.getName(),value);
+                String[] plgr = plugin.permission.getPlayerGroups(player);
+                for(String gr:plgr) {
+                    if(!gr.equals(value))
+                        state = plugin.permission.playerRemoveGroup(plugin.getServer().getWorlds().get(0), player.getName(), gr);
+                }
+                plugin.getServer().broadcastMessage(plugin.MPromote.replace("%player%", player.getName()).replace("%group%", value));
+            }
+        }
+        return state;
+        
+    }
+    
+    private static int getPowerLevel(Player player)
+    {
+        return ExperienceAPI.getPowerLevel(player);
+    }
+}

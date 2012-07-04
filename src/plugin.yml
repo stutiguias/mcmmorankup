@@ -1,0 +1,12 @@
+name: Mcmmorankup
+main: me.stutiguias.mcmmorankup.Mcmmorankup
+version: 0.1
+author: Stutiguias
+depend: [Vault,mcMMO]
+commands:
+  mru:
+   description: Check your Rank
+   usage: /mru check
+
+permissions:
+    
