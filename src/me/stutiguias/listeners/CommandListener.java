@@ -34,6 +34,7 @@ public class CommandListener implements CommandExecutor {
              }else{
                plugin.getServer().broadcastMessage(plugin.MFail);
              }
+             return true;
          }
          
          return false;
