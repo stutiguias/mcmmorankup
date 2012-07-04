@@ -2,6 +2,8 @@
 ## Eclipse
 #################
 
+build.xml
+manifest.mf
 nbproject/
 *.pydevproject
 .project
