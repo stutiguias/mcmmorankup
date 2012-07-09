@@ -30,26 +30,44 @@ public class PowerLevel {
     }
     
     public boolean tryRankUp(Player player) {
-        int PowerLevel = getPowerLevel(player);
-        boolean state = false;
-        for(String PlayerToIgnore:plugin.PlayerToIgnore) {
-            if(player.getName().equalsIgnoreCase(PlayerToIgnore)) {
-                return state;
-            }
-        }
-        for(Map.Entry<Integer,String> entry : plugin.RankLevel.entrySet()) {
-            Integer key = entry.getKey();
-            String  value = entry.getValue();
-            if(key < PowerLevel){
-                state = plugin.permission.playerAddGroup(plugin.getServer().getWorlds().get(0),player.getName(),value);
-                String[] plgr = plugin.permission.getPlayerGroups(player);
-                for(String gr:plgr) {
-                    if(!gr.equals(value))
-                        state = plugin.permission.playerRemoveGroup(plugin.getServer().getWorlds().get(0), player.getName(), gr);
+        try {
+            int PowerLevel = getPowerLevel(player);
+            boolean state = false;
+            for(String PlayerToIgnore:plugin.PlayerToIgnore) {
+                if(player.getName().equalsIgnoreCase(PlayerToIgnore)) {
+                    return state;
                 }
-                plugin.getServer().broadcastMessage(plugin.MPromote.replace("%player%", player.getName()).replace("%group%", value));
             }
+            Integer aux = 0;
+            String group = "";
+            for(Map.Entry<Integer,String> entry : plugin.RankLevel.entrySet()) {
+                Integer key = entry.getKey();
+                String  value = entry.getValue();
+                if(aux < key)
+                {
+                    aux = key;
+                   if(aux < PowerLevel){
+                        group = value; 
+                    }
+                }        
+            }            
+            state = ChangeGroup(player,group);
+            return state;
+        }catch(Exception ex){
+            Mcmmorankup.log.log(Level.WARNING,"Error try to rank up " + ex.getMessage());
+            return false;
         }
+    }
+    
+    private boolean ChangeGroup(Player player,String group)
+    {
+        boolean state = plugin.permission.playerAddGroup(plugin.getServer().getWorlds().get(0),player.getName(),group);
+        String[] plgr = plugin.permission.getPlayerGroups(player);
+        for(String gr:plgr) {
+          if(!gr.equals(group))
+            state = plugin.permission.playerRemoveGroup(plugin.getServer().getWorlds().get(0), player.getName(), gr);
+        }
+        plugin.getServer().broadcastMessage(BroadcastMessage(player, group));
         return state;
         
     }
@@ -57,5 +75,10 @@ public class PowerLevel {
     private static int getPowerLevel(Player player)
     {
         return ExperienceAPI.getPowerLevel(player);
+    }
+    
+    private String BroadcastMessage(Player player,String group)
+    {
+        return plugin.MPromote.replace("%player%", player.getName()).replace("%group%", group);
     }
 }
