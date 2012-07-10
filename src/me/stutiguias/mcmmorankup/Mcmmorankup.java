@@ -29,6 +29,7 @@ public class Mcmmorankup extends JavaPlugin {
     public PowerLevel PowerLevel = null;
     public HashMap<Integer, String> RankLevel = new HashMap<Integer, String>();
     public String[] PlayerToIgnore;
+    public String[] GroupToIgnore;
     
     public String MPromote;
     public String MSucess;
@@ -66,6 +67,7 @@ public class Mcmmorankup extends JavaPlugin {
                 getConfig().addDefault("Message.Sucess", "Promote Sucess");
                 getConfig().addDefault("Message.Fail", "Promote Fail");
                 getConfig().addDefault("PlayerToIgnore", "Stutiguias,Player2");
+                getConfig().addDefault("GroupToIgnore","Admin,Moderator");
                 RankLevel = new HashMap<Integer, String>();
                 RankLevel.put(100, "test");
                 RankLevel.put(200, "test2");
@@ -94,6 +96,7 @@ public class Mcmmorankup extends JavaPlugin {
             initConfig();
             getRanks();
             PlayerToIgnore = getConfig().getString("PlayerToIgnore").split((","));
+            GroupToIgnore = getConfig().getString("GroupToIgnore").split((","));
             MPromote = getConfig().getString("Message.RankUp");
             MSucess = getConfig().getString("Message.Sucess");
             MFail = getConfig().getString("Message.Fail");

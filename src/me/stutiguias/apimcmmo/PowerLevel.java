@@ -45,12 +45,17 @@ public class PowerLevel {
                 String  value = entry.getValue();
                 if(aux < key)
                 {
-                    aux = key;
+                   aux = key;
                    if(aux < PowerLevel){
                         group = value; 
-                    }
+                   }
                 }        
             }            
+            for (String GroupToIgnore  : plugin.GroupToIgnore) {
+                if(GroupToIgnore.equalsIgnoreCase(plugin.permission.getPrimaryGroup(player)))
+                    Mcmmorankup.log.log(Level.WARNING,"Error Ignore group found for " + player.getName());
+                    return false;
+            }
             state = ChangeGroup(player,group);
             return state;
         }catch(Exception ex){
