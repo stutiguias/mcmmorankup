@@ -6,6 +6,8 @@ package me.stutiguias.apimcmmo;
 
 import com.gmail.nossr50.api.ExperienceAPI;
 import com.gmail.nossr50.mcMMO;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import me.stutiguias.mcmmorankup.Mcmmorankup;
@@ -31,31 +33,28 @@ public class PowerLevel {
     
     public boolean tryRankUp(Player player) {
         try {
-            int PowerLevel = getPowerLevel(player);
+            Integer PowerLevel = getPowerLevel(player);
             boolean state = false;
             for(String PlayerToIgnore:plugin.PlayerToIgnore) {
                 if(player.getName().equalsIgnoreCase(PlayerToIgnore)) {
                     return state;
                 }
             }
-            Integer aux = 0;
             String group = "";
-            for(Map.Entry<Integer,String> entry : plugin.RankLevel.entrySet()) {
-                Integer key = entry.getKey();
-                String  value = entry.getValue();
-                if(aux < key)
-                {
-                   aux = key;
-                   if(aux < PowerLevel){
-                        group = value; 
-                   }
-                }        
-            }            
+            for (Iterator<String> it = plugin.RankLevel.iterator(); it.hasNext();) {
+                String entry = it.next();
+                String[] values = entry.split(",");
+                if(Integer.parseInt(values[0]) < PowerLevel){
+                    group = values[1]; 
+                }
+            }
             for (String GroupToIgnore  : plugin.GroupToIgnore) {
-                if(GroupToIgnore.equalsIgnoreCase(plugin.permission.getPrimaryGroup(player)))
+                if(GroupToIgnore.equalsIgnoreCase(plugin.permission.getPrimaryGroup(player))) {
                     Mcmmorankup.log.log(Level.WARNING,"Error Ignore group found for " + player.getName());
                     return false;
+                }
             }
+            Mcmmorankup.log.log(Level.WARNING,"Try " + group);
             state = ChangeGroup(player,group);
             return state;
         }catch(Exception ex){
@@ -66,11 +65,11 @@ public class PowerLevel {
     
     private boolean ChangeGroup(Player player,String group)
     {
-        boolean state = plugin.permission.playerAddGroup(plugin.getServer().getWorlds().get(0),player.getName(),group);
+        boolean state = plugin.permission.playerAddGroup(player.getWorld(),player.getName(),group);
         String[] plgr = plugin.permission.getPlayerGroups(player);
         for(String gr:plgr) {
           if(!gr.equals(group))
-            state = plugin.permission.playerRemoveGroup(plugin.getServer().getWorlds().get(0), player.getName(), gr);
+            state = plugin.permission.playerRemoveGroup(player.getWorld(), player.getName(), gr);
         }
         plugin.getServer().broadcastMessage(BroadcastMessage(player, group));
         return state;

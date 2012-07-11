@@ -5,7 +5,7 @@
 package me.stutiguias.mcmmorankup;
 
 import java.io.File;
-import java.util.HashMap;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import me.stutiguias.apimcmmo.PowerLevel;
@@ -27,10 +27,10 @@ public class Mcmmorankup extends JavaPlugin {
     public Permission permission = null;
     public Economy economy = null;
     public PowerLevel PowerLevel = null;
-    public HashMap<Integer, String> RankLevel = new HashMap<Integer, String>();
+    public ArrayList<String> RankLevel;
     public String[] PlayerToIgnore;
     public String[] GroupToIgnore;
-    
+    public Integer total;
     public String MPromote;
     public String MSucess;
     public String MFail;
@@ -68,11 +68,11 @@ public class Mcmmorankup extends JavaPlugin {
                 getConfig().addDefault("Message.Fail", "Promote Fail");
                 getConfig().addDefault("PlayerToIgnore", "Stutiguias,Player2");
                 getConfig().addDefault("GroupToIgnore","Admin,Moderator");
-                RankLevel = new HashMap<Integer, String>();
-                RankLevel.put(100, "test");
-                RankLevel.put(200, "test2");
-                RankLevel.put(300, "test3"); 
-                getConfig().addDefault("PowerLevelRankUp", RankLevel);
+                HashMap<Integer, String> rl = new HashMap<Integer, String>();
+                rl.put(100, "test");
+                rl.put(200, "test2");
+                rl.put(300, "test3"); 
+                getConfig().addDefault("PowerLevelRankUp", rl);
                 getConfig().options().copyDefaults(true);
                 saveConfig();
     }
@@ -102,12 +102,14 @@ public class Mcmmorankup extends JavaPlugin {
             MFail = getConfig().getString("Message.Fail");
     }
     
-    public HashMap getRanks(){
-        RankLevel = new HashMap<Integer, String>();
+    public void getRanks(){
+        total = 0;
+        RankLevel = new ArrayList<String>();
         for (String key : getConfig().getConfigurationSection("PowerLevelRankUp.").getKeys(false)){
-          RankLevel.put(Integer.parseInt(key), getConfig().getString("PowerLevelRankUp." + key));
+          RankLevel.add(key + "," + getConfig().getString("PowerLevelRankUp." + key));
           log.log(Level.INFO, logPrefix + "Rank " + key + " message " + getConfig().getString("PowerLevelRankUp." + key));
+          total++;
         }
-        return RankLevel;
     }
+
 }
