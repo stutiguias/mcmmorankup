@@ -50,7 +50,7 @@ public class PowerLevel {
             }
             for (String GroupToIgnore  : plugin.GroupToIgnore) {
                 if(GroupToIgnore.equalsIgnoreCase(plugin.permission.getPrimaryGroup(player))) {
-                    Mcmmorankup.log.log(Level.WARNING,"Error Ignore group found for " + player.getName());
+                    Mcmmorankup.log.log(Level.WARNING,"Ignore group found for " + player.getName());
                     return false;
                 }
             }

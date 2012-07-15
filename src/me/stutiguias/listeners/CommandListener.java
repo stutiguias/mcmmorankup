@@ -25,17 +25,17 @@ public class CommandListener implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] args) {
-         if(cs.getName().equalsIgnoreCase("CONSOLE")) {
-             return false;
-         }
+         if(!(cs instanceof Player) || args.length == 0)
+            return false;
+         
          if(args[0].equalsIgnoreCase("check")) {
              Player pl = plugin.getServer().getPlayerExact(cs.getName());
              boolean sucess = plugin.PowerLevel.tryRankUp(pl);
              if(sucess)
              {
-               plugin.getServer().broadcastMessage(plugin.MSucess);
+                 cs.sendMessage(plugin.MSucess);
              }else{
-               plugin.getServer().broadcastMessage(plugin.MFail);
+                 cs.sendMessage(plugin.MFail);
              }
              return true;
          }
