@@ -27,17 +27,34 @@ public class CommandListener implements CommandExecutor {
     public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] args) {
          if(!(cs instanceof Player) || args.length == 0)
             return false;
-         
+
          if(args[0].equalsIgnoreCase("check")) {
-             Player pl = plugin.getServer().getPlayerExact(cs.getName());
-             boolean sucess = plugin.PowerLevel.tryRankUp(pl);
-             if(sucess)
+             
+             boolean alreadyuse = false;
+             
+             if(plugin.Playertime.isEmpty())
              {
-                 cs.sendMessage(plugin.MSucess);
-             }else{
-                 cs.sendMessage(plugin.MFail);
+                 alreadyuse = false;
+             }else if(plugin.Playertime.get(cs.getName()) + 10000 > plugin.getCurrentMilli()) {
+                 alreadyuse = true;
              }
-             return true;
+         
+             if(!alreadyuse)    
+             {
+                Player pl = plugin.getServer().getPlayerExact(cs.getName());
+                boolean sucess = plugin.PowerLevel.tryRankUp(pl);
+                if(sucess)
+                {
+                    cs.sendMessage(plugin.MSucess);
+                }else{
+                    cs.sendMessage(plugin.MFail);
+                }
+                plugin.Playertime.put(cs.getName(),plugin.getCurrentMilli());
+                return true;
+             }else{
+                cs.sendMessage("Don't Spam");
+                return false;
+             }
          }
          
          return false;

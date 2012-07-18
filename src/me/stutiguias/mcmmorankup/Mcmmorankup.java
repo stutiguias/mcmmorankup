@@ -30,6 +30,7 @@ public class Mcmmorankup extends JavaPlugin {
     public ArrayList<String> RankLevel;
     public String[] PlayerToIgnore;
     public String[] GroupToIgnore;
+    public HashMap<String,Long> Playertime;
     public Integer total;
     public String MPromote;
     public String MSucess;
@@ -100,6 +101,11 @@ public class Mcmmorankup extends JavaPlugin {
             MPromote = getConfig().getString("Message.RankUp");
             MSucess = getConfig().getString("Message.Sucess");
             MFail = getConfig().getString("Message.Fail");
+            Playertime = new HashMap<String, Long>();
+    }
+   
+    public long getCurrentMilli() {
+		return System.currentTimeMillis();
     }
     
     public void getRanks(){
