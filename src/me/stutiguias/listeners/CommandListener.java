@@ -35,7 +35,7 @@ public class CommandListener implements CommandExecutor {
              if(plugin.Playertime.isEmpty())
              {
                  alreadyuse = false;
-             }else if(plugin.Playertime.get(cs.getName()) + 10000 > plugin.getCurrentMilli()) {
+             }else if(plugin.Playertime.containsKey(cs.getName()) && plugin.Playertime.get(cs.getName()) + 10000 > plugin.getCurrentMilli()) {
                  alreadyuse = true;
              }
          
