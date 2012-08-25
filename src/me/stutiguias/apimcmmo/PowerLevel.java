@@ -50,12 +50,12 @@ public class PowerLevel {
             }
             for (String GroupToIgnore  : plugin.GroupToIgnore) {
                 if(GroupToIgnore.equalsIgnoreCase(plugin.permission.getPrimaryGroup(player))) {
-                    Mcmmorankup.log.log(Level.WARNING,"Ignore group found for " + player.getName());
                     return false;
                 }
             }
-            Mcmmorankup.log.log(Level.WARNING,"Try " + group);
-            state = ChangeGroup(player,group);
+            if(!group.equalsIgnoreCase("")) 
+                state = ChangeGroup(player,group);
+
             return state;
         }catch(Exception ex){
             Mcmmorankup.log.log(Level.WARNING,"Error try to rank up " + ex.getMessage());
@@ -65,13 +65,16 @@ public class PowerLevel {
     
     private boolean ChangeGroup(Player player,String group)
     {
+        String groupnow = plugin.permission.getPrimaryGroup(player);
         boolean state = plugin.permission.playerAddGroup(player.getWorld(),player.getName(),group);
         String[] plgr = plugin.permission.getPlayerGroups(player);
         for(String gr:plgr) {
           if(!gr.equals(group))
             state = plugin.permission.playerRemoveGroup(player.getWorld(), player.getName(), gr);
         }
-        plugin.getServer().broadcastMessage(BroadcastMessage(player, group));
+        if(!groupnow.equalsIgnoreCase(group)) 
+            plugin.getServer().broadcastMessage(BroadcastMessage(player, group));
+        
         return state;
         
     }
