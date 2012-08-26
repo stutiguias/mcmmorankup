@@ -57,6 +57,12 @@ public class CommandListener implements CommandExecutor {
              }
          }
          
+         if(args[0].equalsIgnoreCase("reload")) {
+             plugin.onReload();
+             cs.sendMessage("Reload Done!");
+             return false;
+         }
+         
          return false;
     }
     

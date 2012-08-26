@@ -59,6 +59,7 @@ public class PowerLevel {
             return state;
         }catch(Exception ex){
             Mcmmorankup.log.log(Level.WARNING,"Error try to rank up " + ex.getMessage());
+            ex.printStackTrace();
             return false;
         }
     }
@@ -72,11 +73,13 @@ public class PowerLevel {
           if(!gr.equals(group))
             state = plugin.permission.playerRemoveGroup(player.getWorld(), player.getName(), gr);
         }
-        if(!groupnow.equalsIgnoreCase(group)) 
+        if(!groupnow.equalsIgnoreCase(group))  {
             plugin.getServer().broadcastMessage(BroadcastMessage(player, group));
-        
-        return state;
-        
+            return state;
+        }else{
+            return false;
+        }
+            
     }
     
     private static int getPowerLevel(Player player)
@@ -86,6 +89,17 @@ public class PowerLevel {
     
     private String BroadcastMessage(Player player,String group)
     {
-        return plugin.MPromote.replace("%player%", player.getName()).replace("%group%", group);
+        if(plugin.UseAlternativeBroadcast) {
+            try {
+               String bc = plugin.RealBroadCast.get(group);
+               return plugin.MPromote.replace("%player%", player.getName()).replace("%group%", bc);
+            }catch(Exception ex) {
+                Mcmmorankup.log.log(Level.WARNING,"Error try to broadcast Alternative " + ex.getMessage());
+                ex.printStackTrace();
+                return "Error try to broadcast Alternative";
+            }
+        }else {
+            return plugin.MPromote.replace("%player%", player.getName()).replace("%group%", group);
+        }
     }
 }
