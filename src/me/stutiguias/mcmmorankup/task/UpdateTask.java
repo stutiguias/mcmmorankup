@@ -23,9 +23,9 @@ public class UpdateTask implements Runnable {
     @Override
     public void run() {
         Player[] playerList = plugin.getServer().getOnlinePlayers();
-        Mcmmorankup.log.log(Level.INFO,"Try to rank up online users...");
         if(plugin.getServer().getOnlinePlayers().length > 0)
         {
+            Mcmmorankup.log.log(Level.INFO,"Try to rank up online users...");
             for (Player player : playerList) {
                   plugin.PowerLevel.tryRankUp(player);
             }

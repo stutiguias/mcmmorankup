@@ -5,10 +5,7 @@
 package me.stutiguias.apimcmmo;
 
 import com.gmail.nossr50.api.ExperienceAPI;
-import com.gmail.nossr50.mcMMO;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import me.stutiguias.mcmmorankup.Mcmmorankup;
 import org.bukkit.entity.Player;

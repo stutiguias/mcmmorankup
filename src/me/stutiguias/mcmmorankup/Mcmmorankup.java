@@ -5,6 +5,7 @@
 package me.stutiguias.mcmmorankup;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -12,6 +13,7 @@ import me.stutiguias.apimcmmo.PowerLevel;
 import me.stutiguias.listeners.CommandListener;
 import me.stutiguias.listeners.MRUPlayerListener;
 import me.stutiguias.mcmmorankup.task.UpdateTask;
+import me.stutiguias.metrics.MetricsLite;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.plugin.PluginManager;
@@ -78,6 +80,15 @@ public class Mcmmorankup extends JavaPlugin {
                 log.log(Level.INFO,logPrefix + "Vault perm enable.");    
             }else{
                 log.log(Level.INFO,logPrefix + "Vault NOT ENABLE.");    
+            }
+            
+            //Metrics 
+            try {
+              log.info(logPrefix + "Sending Metrics for help the dev... http://metrics.griefcraft.com :-)");
+              MetricsLite metrics = new MetricsLite(this);
+              metrics.start();
+            } catch (IOException e) {
+              log.info(logPrefix + "Failed to submit the stats :-(");
             }
 
     }
