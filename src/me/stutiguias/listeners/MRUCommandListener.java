@@ -14,11 +14,11 @@ import org.bukkit.entity.Player;
  *
  * @author Stutiguias
  */
-public class CommandListener implements CommandExecutor {
+public class MRUCommandListener implements CommandExecutor {
     
     public Mcmmorankup plugin;
     
-    public CommandListener(Mcmmorankup instance)
+    public MRUCommandListener(Mcmmorankup instance)
     {
         plugin = instance;
     }
@@ -45,9 +45,13 @@ public class CommandListener implements CommandExecutor {
                 boolean sucess = plugin.PowerLevel.tryRankUp(pl);
                 if(sucess)
                 {
-                    cs.sendMessage(plugin.MSucess);
+                    cs.sendMessage("-----------------------------------------------------");
+                    cs.sendMessage(plugin.parseColor(plugin.MSucess));
+                    cs.sendMessage("-----------------------------------------------------");
                 }else{
-                    cs.sendMessage(plugin.MFail);
+                    cs.sendMessage("-----------------------------------------------------");
+                    cs.sendMessage(plugin.parseColor(plugin.MFail));
+                    cs.sendMessage("-----------------------------------------------------");
                 }
                 plugin.Playertime.put(cs.getName(),plugin.getCurrentMilli());
                 return true;

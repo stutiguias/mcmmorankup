@@ -71,7 +71,9 @@ public class PowerLevel {
             state = plugin.permission.playerRemoveGroup(player.getWorld(), player.getName(), gr);
         }
         if(!groupnow.equalsIgnoreCase(group))  {
-            plugin.getServer().broadcastMessage(BroadcastMessage(player, group));
+            plugin.getServer().broadcastMessage("-----------------McMMORANKUP-------------------------");
+            plugin.getServer().broadcastMessage(plugin.parseColor(BroadcastMessage(player, group)));
+            plugin.getServer().broadcastMessage("-----------------------------------------------------");
             return state;
         }else{
             return false;
@@ -99,4 +101,5 @@ public class PowerLevel {
             return plugin.MPromote.replace("%player%", player.getName()).replace("%group%", group);
         }
     }
+    
 }

@@ -6,16 +6,18 @@ package me.stutiguias.mcmmorankup;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import me.stutiguias.apimcmmo.PowerLevel;
-import me.stutiguias.listeners.CommandListener;
+import me.stutiguias.listeners.MRUCommandListener;
 import me.stutiguias.listeners.MRUPlayerListener;
 import me.stutiguias.mcmmorankup.task.UpdateTask;
-import me.stutiguias.metrics.MetricsLite;
+import me.stutiguias.metrics.Metrics;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -55,7 +57,7 @@ public class Mcmmorankup extends JavaPlugin {
             log.log(Level.INFO,logPrefix + "Mcmmorankup is initializing.");
 
             onLoadConfig();
-            getCommand("mru").setExecutor(new CommandListener(this));
+            getCommand("mru").setExecutor(new MRUCommandListener(this));
             setupEconomy();
             setupPermissions();
             
@@ -85,7 +87,7 @@ public class Mcmmorankup extends JavaPlugin {
             //Metrics 
             try {
               log.info(logPrefix + "Sending Metrics for help the dev... http://metrics.griefcraft.com :-)");
-              MetricsLite metrics = new MetricsLite(this);
+              Metrics metrics = new Metrics(this);
               metrics.start();
             } catch (IOException e) {
               log.info(logPrefix + "Failed to submit the stats :-(");
@@ -175,6 +177,13 @@ public class Mcmmorankup extends JavaPlugin {
           log.log(Level.INFO, logPrefix + "Rank " + key + " message " + getConfig().getString("PowerLevelRankUp." + key));
           total++;
         }
+    }
+    
+    public String parseColor(String message) {
+	 for (ChatColor color : ChatColor.values()) {
+            message = message.replaceAll(String.format("&%c", color.getChar()), color.toString());
+        }
+        return message;
     }
     
     public void getAlternativeBroadcast(){
