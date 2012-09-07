@@ -1,7 +1,7 @@
 #################
 ## Eclipse
 #################
-
+/target/
 build.xml
 manifest.mf
 nbproject/
