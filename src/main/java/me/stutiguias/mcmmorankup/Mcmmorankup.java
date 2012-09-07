@@ -60,7 +60,7 @@ public class Mcmmorankup extends JavaPlugin {
     @SuppressWarnings("LoggerStringConcat")
     public void onEnable() {
 
-            log.log(Level.INFO,logPrefix + "Mcmmorankup is initializing.");
+            log.log(Level.INFO,logPrefix + "Mcmmorankup is initializing");
 
             onLoadConfig();
             getCommand("mru").setExecutor(new MRUCommandListener(this));
