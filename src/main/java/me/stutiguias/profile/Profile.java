@@ -27,20 +27,21 @@ public class Profile {
     YamlConfiguration PlayerYML;
     
     public Profile(Mcmmorankup plugin,Player player) {
-        configplayerfile = new File("plugins/Mcmmorankup/userdata/"+ player.getName() +".yml");
-        boolean alreadyexist = false;
+        configplayerfile = new File("plugins"+ File.separator +"Mcmmorankup"+ File.separator +"userdata"+ File.separator + player.getName() +".yml");
+        boolean havetocreate = false;
         try {
-            alreadyexist = configplayerfile.createNewFile();
+            havetocreate = configplayerfile.createNewFile();
         }catch(IOException ex) {
             Mcmmorankup.log.warning(plugin.logPrefix + " Can't create the user file" + ex.getMessage() );
         }
         
-        if(alreadyexist) {
+        if(!havetocreate) {
             Mcmmorankup.log.info( plugin.logPrefix + " Profile of user " + player.getName() + " found!" );
         }else{
             Mcmmorankup.log.info( plugin.logPrefix + " Profile of user " + player.getName() + " not found, create new one!" );
         }
-        
+        this.player = player;
+        this.plugin = plugin;
         PlayerYML = new YamlConfiguration();
         
         try {
@@ -65,47 +66,43 @@ public class Profile {
             return false;
         }
         if(_playerprofile != null) {
-            switch(Habilitys.valueOf(HabilityForRank)) {
-                case EXCAVATION:
+                
+                if(HabilityForRank.equalsIgnoreCase("EXCAVATION")) {
                     SendMessage(player, HabilityForRank);
-                    break;
-                case FISHING:
+                } else if(HabilityForRank.equalsIgnoreCase("FISHING")) {
                     SendMessage(player, HabilityForRank);
-                    break;
-                case HERBALISM:
+                } else if(HabilityForRank.equalsIgnoreCase("HERBALISM")) {
                     SendMessage(player, HabilityForRank);
-                    break;
-                case MINING:
+                } else if(HabilityForRank.equalsIgnoreCase("MINING")) {
                     SendMessage(player, HabilityForRank);
-                    break;
-                case AXES:
+                } else if(HabilityForRank.equalsIgnoreCase("AXES")) {
                     SendMessage(player, HabilityForRank);
-                    break;
-                case ARCHERY:
+                } else if(HabilityForRank.equalsIgnoreCase("ARCHERY")) {
                     SendMessage(player, HabilityForRank);
-                    break;
-                case SWORDS:
+                } else if(HabilityForRank.equalsIgnoreCase("SWORDS")) {
                     SendMessage(player, HabilityForRank);
-                    break; 
-                case TAMING:
+                } else if(HabilityForRank.equalsIgnoreCase("TAMING")) {
                     SendMessage(player, HabilityForRank);
-                    break;
-                case UNARMED:
+                } else if(HabilityForRank.equalsIgnoreCase("UNARMED")) {
                     SendMessage(player, HabilityForRank);
-                    break;
-                case ACROBATICS:
+                } else if(HabilityForRank.equalsIgnoreCase("ACROBATICS")) {
                     SendMessage(player, HabilityForRank);
-                    break;
-                case REPAIR: 
+                } else if(HabilityForRank.equalsIgnoreCase("REPAIR")) { 
                     SendMessage(player, HabilityForRank);
-                    break;
-                default:
+                } else {
                     return false;
-                
-            }
-                
+                }
         }
-        PlayerYML.addDefault("HabilityForRank", HabilityForRank);
+                
+        PlayerYML.set("HabilityForRank", HabilityForRank);
+        try {
+            PlayerYML.save(configplayerfile);
+        } catch (FileNotFoundException ex) {
+           Mcmmorankup.log.warning(plugin.logPrefix + " File Not Found " + ex.getMessage() );
+        } catch (IOException ex) {
+           Mcmmorankup.log.warning(plugin.logPrefix + " IO Problem " + ex.getMessage() );
+        }
+        
         return true;
     }
     
@@ -113,10 +110,6 @@ public class Profile {
         return PlayerYML.getString("HabilityForRank");
     }
     
-    public enum Habilitys 
-    {
-        EXCAVATION,FISHING,HERBALISM,MINING,AXES,ARCHERY,SWORDS,TAMING,UNARMED,ACROBATICS,REPAIR;
-    }
     
     public void SendMessage(Player player,String Hability) {
              player.sendMessage("-----------------------------------------------------");

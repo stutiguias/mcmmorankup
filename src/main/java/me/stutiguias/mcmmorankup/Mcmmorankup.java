@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.naming.spi.DirectoryManager;
 import me.stutiguias.apimcmmo.PowerLevel;
 import me.stutiguias.listeners.MRUCommandListener;
 import me.stutiguias.listeners.MRUPlayerListener;
@@ -82,6 +83,12 @@ public class Mcmmorankup extends JavaPlugin {
                 getServer().getScheduler().scheduleAsyncRepeatingTask(this, new UpdateTask(this), uptime, uptime);
             }
             
+            File f = new File("plugins"+ File.separator +"Mcmmorankup"+ File.separator +"userdata");
+            if(!f.exists())  {
+                log.log(Level.INFO,logPrefix + " Diretory not exist creating new one");
+                f.mkdirs();
+            }
+            
             if(this.permission.isEnabled() == true)
             {
                 log.log(Level.INFO,logPrefix + "Vault perm enable.");    
@@ -115,7 +122,7 @@ public class Mcmmorankup extends JavaPlugin {
 
     private void initConfig() {
                 PowerLevel = new PowerLevel(this);
-                getConfig().addDefault("Message.NotHaveProfile", "Can't find your McMMO profile");
+                getConfig().addDefault("Message.NotHaveProfile", "Dot not find any profile of mcMMO of you");
                 getConfig().addDefault("Message.ChooseHability", "You choose to rank up base on %hability%");
                 getConfig().addDefault("Message.RankUp", "Player %player% promote to %group%");
                 getConfig().addDefault("Message.Sucess", "Promote Sucess");
@@ -192,10 +199,14 @@ public class Mcmmorankup extends JavaPlugin {
     }
     
     public String parseColor(String message) {
-	 for (ChatColor color : ChatColor.values()) {
-            message = message.replaceAll(String.format("&%c", color.getChar()), color.toString());
+        try { 
+            for (ChatColor color : ChatColor.values()) {
+                message = message.replaceAll(String.format("&%c", color.getChar()), color.toString());
+            }
+            return message;
+        }catch(Exception ex) {
+            return message;
         }
-        return message;
     }
     
     public void getAlternativeBroadcast(){
