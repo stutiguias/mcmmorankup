@@ -41,13 +41,13 @@
   
   <build>
     <finalName>${project.name}</finalName>
-    <sourceDirectory>${basedir}/src/</sourceDirectory>
+    <sourceDirectory>${basedir}/src/main/java/</sourceDirectory>
     
     <resources>
       <resource>
         <targetPath>.</targetPath>
         <filtering>true</filtering>
-        <directory>${basedir}/resources/</directory>
+        <directory>${basedir}/src/main/resources/</directory>
         <includes>
           <include>plugin.yml</include>
         </includes>

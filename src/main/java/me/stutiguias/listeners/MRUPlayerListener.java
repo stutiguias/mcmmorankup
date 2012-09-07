@@ -6,6 +6,7 @@ package me.stutiguias.listeners;
 
 import java.util.logging.Level;
 import me.stutiguias.mcmmorankup.Mcmmorankup;
+import me.stutiguias.profile.Profile;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -32,5 +33,7 @@ public class MRUPlayerListener implements Listener {
             if(sucess)
              event.getPlayer().sendMessage(plugin.MSucess);
         }
+        
+        Profile profile = new Profile(plugin, pl);
     }
 }

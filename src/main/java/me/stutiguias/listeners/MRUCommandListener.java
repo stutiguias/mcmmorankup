@@ -5,6 +5,7 @@
 package me.stutiguias.listeners;
 
 import me.stutiguias.mcmmorankup.Mcmmorankup;
+import me.stutiguias.profile.Profile;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -25,11 +26,26 @@ public class MRUCommandListener implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] args) {
-         if(!(cs instanceof Player) || args.length == 0)
-            return false;
+         // Do not use Console !
+         if(!(cs instanceof Player) || args.length == 0) return false;
 
-         if(args[0].equalsIgnoreCase("check")) {
-             
+         // Its check ?
+         if(args[0].equalsIgnoreCase("check")) return Check(cs);
+         
+         // Change to Rank Up on Hability
+         if(args[0].equalsIgnoreCase("hab")) return RankOnHability(cs,args[1].toString()); 
+         
+         // Its Reload ?
+         if(args[0].equalsIgnoreCase("reload")) {
+             plugin.onReload();
+             cs.sendMessage("Reload Done!");
+             return false;
+         }
+         
+         return false;
+    }
+    
+    public boolean Check(CommandSender cs) {
              boolean alreadyuse = false;
              
              if(plugin.Playertime.isEmpty())
@@ -59,15 +75,11 @@ public class MRUCommandListener implements CommandExecutor {
                 cs.sendMessage("Don't Spam");
                 return false;
              }
-         }
-         
-         if(args[0].equalsIgnoreCase("reload")) {
-             plugin.onReload();
-             cs.sendMessage("Reload Done!");
-             return false;
-         }
-         
-         return false;
     }
     
+    public boolean RankOnHability(CommandSender cs,String Hability) {
+        Player _player = (Player)cs;
+        Profile _profile = new Profile(plugin,_player);
+        return _profile.setHabilityForRank(Hability);
+    }
 }

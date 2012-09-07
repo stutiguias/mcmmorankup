@@ -41,9 +41,14 @@ public class Mcmmorankup extends JavaPlugin {
     public String[] GroupToIgnore;
     public HashMap<String,Long> Playertime;
     public Integer total;
+    
+    // Messages
+    public String ChooseHability;
+    public String NotHaveProfile;
     public String MPromote;
     public String MSucess;
     public String MFail;
+    
     public String AutoUpdateTime;
     
     public boolean UseAlternativeBroadcast;
@@ -110,6 +115,8 @@ public class Mcmmorankup extends JavaPlugin {
 
     private void initConfig() {
                 PowerLevel = new PowerLevel(this);
+                getConfig().addDefault("Message.NotHaveProfile", "Can't find your McMMO profile");
+                getConfig().addDefault("Message.ChooseHability", "You choose to rank up base on %hability%");
                 getConfig().addDefault("Message.RankUp", "Player %player% promote to %group%");
                 getConfig().addDefault("Message.Sucess", "Promote Sucess");
                 getConfig().addDefault("Message.Fail", "Promote Fail");
@@ -159,9 +166,14 @@ public class Mcmmorankup extends JavaPlugin {
             log.log(Level.INFO,logPrefix + " Alternative Broadcast " + UseAlternativeBroadcast);
             PlayerToIgnore = getConfig().getString("PlayerToIgnore").split((","));
             GroupToIgnore = getConfig().getString("GroupToIgnore").split((","));
+            
+            // Messages
+            ChooseHability = getConfig().getString("Message.ChooseHability");
+            NotHaveProfile = getConfig().getString("Message.NotHaveProfile");
             MPromote = getConfig().getString("Message.RankUp");
             MSucess = getConfig().getString("Message.Sucess");
             MFail = getConfig().getString("Message.Fail");
+            
             Playertime = new HashMap<String, Long>();
     }
    
