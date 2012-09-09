@@ -58,7 +58,9 @@ public class MRUCommandListener implements CommandExecutor {
              if(!alreadyuse)    
              {
                 Player pl = plugin.getServer().getPlayerExact(cs.getName());
-                boolean sucess = plugin._RankUp.tryRankUp(pl,"POWERLEVEL");
+                Profile _profile = new Profile(plugin, pl);
+                String skill = _profile.getHabilityForRank().toUpperCase();
+                boolean sucess = plugin.RankUp.tryRankUp(pl,skill);
                 if(sucess)
                 {
                     cs.sendMessage("-----------------------------------------------------");

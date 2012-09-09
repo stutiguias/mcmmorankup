@@ -35,8 +35,8 @@ public class Mcmmorankup extends JavaPlugin {
     public Permission permission = null;
     public final MRUPlayerListener playerlistener = new MRUPlayerListener(this);
     public Economy economy = null;
-    public RankUp _RankUp = null;
-    public HashMap<String,ArrayList<String>> RankUp;
+    public RankUp RankUp = null;
+    public HashMap<String,ArrayList<String>> RankUpConfig;
     public HashMap<String,HashMap<String,String>> BroadCast;
     public String[] PlayerToIgnore;
     public String[] GroupToIgnore;
@@ -65,7 +65,7 @@ public class Mcmmorankup extends JavaPlugin {
     public ConfigAccessor REPAIR;
     
     public String AutoUpdateTime;
-    
+    public String DefaultSkill;
     public boolean UseAlternativeBroadcast;
     public boolean PromoteOnJoin;
     public boolean AutoUpdate;
@@ -135,7 +135,7 @@ public class Mcmmorankup extends JavaPlugin {
     }
 
     private void initConfig() {
-                _RankUp = new RankUp(this);
+                
                 getConfig().addDefault("Message.NotHaveProfile", "Dot not find any profile of mcMMO of you");
                 getConfig().addDefault("Message.ChooseHability", "You choose to rank up base on %hability%");
                 getConfig().addDefault("Message.RankUp", "Player %player% promote to %group%");
@@ -146,6 +146,7 @@ public class Mcmmorankup extends JavaPlugin {
                 getConfig().addDefault("Config.AutoUpdate", true);
                 getConfig().addDefault("Config.AutoUpdateTime", "1h");
                 getConfig().addDefault("Config.UseAlternativeBroadCast", true);
+                getConfig().addDefault("Config.DefaultSkill", "POWERLEVEL");
                 getConfig().addDefault("PlayerToIgnore", "Stutiguias,Player2");
                 getConfig().addDefault("GroupToIgnore","Admin,Moderator");
 
@@ -174,10 +175,15 @@ public class Mcmmorankup extends JavaPlugin {
             PromoteOnJoin = getConfig().getBoolean("Config.PromoteOnJoin");
             AutoUpdate = getConfig().getBoolean("Config.AutoUpdate");
             AutoUpdateTime = getConfig().getString("Config.AutoUpdateTime");
-            log.log(Level.INFO,logPrefix + " Alternative Broadcast " + UseAlternativeBroadcast);
             PlayerToIgnore = getConfig().getString("PlayerToIgnore").split((","));
             GroupToIgnore = getConfig().getString("GroupToIgnore").split((","));
-            RankUp = new HashMap<String, ArrayList<String>>();
+            DefaultSkill = getConfig().getString("Config.DefaultSkill");
+            
+            log.log(Level.INFO,logPrefix + " Alternative Broadcast is " + UseAlternativeBroadcast);
+            log.log(Level.INFO,logPrefix + " Default skill is " + DefaultSkill);
+            
+            RankUp = new RankUp(this);
+            RankUpConfig = new HashMap<String, ArrayList<String>>();
             BroadCast = new HashMap<String, HashMap<String, String>>();
             
             // InitAcessor
@@ -226,7 +232,7 @@ public class Mcmmorankup extends JavaPlugin {
         ArrayList<String> Rank = new ArrayList<String>();
         for (String key : ca.getConfig().getConfigurationSection("RankUp.").getKeys(false)){
           Rank.add(key + "," + ca.getConfig().getString("RankUp." + key));
-          log.log(Level.INFO, logPrefix + "Rank " + key + " is group " + ca.getConfig().getString("RankUp." + key));
+         // log.log(Level.INFO, logPrefix + "Rank " + key + " is group " + ca.getConfig().getString("RankUpConfig." + key));
           total++;
         }
         return Rank;
@@ -247,19 +253,17 @@ public class Mcmmorankup extends JavaPlugin {
         HashMap<String,String> BroadCastCa = new HashMap<String, String>();
         for (String key : ca.getConfig().getConfigurationSection("Broadcast.").getKeys(false)){
           BroadCastCa.put(key, ca.getConfig().getString("Broadcast." + key));
-          log.log(Level.INFO, logPrefix + "Group " + key + " will broadcast " + ca.getConfig().getString("RankUp." + key));
+         // log.log(Level.INFO, logPrefix + "Group " + key + " will broadcast " + ca.getConfig().getString("RankUpConfig." + key));
         }
         return BroadCastCa;
     }
     public void SetupAccessor(String name,ConfigAccessor ca) {
         try {
-            RankUp.put(name,getRanks(ca));
+            RankUpConfig.put(name,getRanks(ca));
             BroadCast.put(name,getAlternativeBroadcast(ca));
             log.info(logPrefix + name + " Rank Enable!");
-        }catch(NotFoundException ex) {
-            log.info(logPrefix + name + " Rank file not found. Disable!");
         }catch(Exception ex) {
-            log.info(logPrefix + name + " Rank file corrupt. Disable!");
+            log.info(logPrefix + name + " Rank file corrupt/not found. Disable!");
         }
     }
 }

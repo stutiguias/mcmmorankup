@@ -39,20 +39,18 @@ public class Profile {
             Mcmmorankup.log.info( plugin.logPrefix + " Profile of user " + player.getName() + " found!" );
         }else{
             Mcmmorankup.log.info( plugin.logPrefix + " Profile of user " + player.getName() + " not found, create new one!" );
+            if(setInitRank()) Mcmmorankup.log.info("Player " + player.getName() + " rank line is " + plugin.DefaultSkill);
         }
         this.player = player;
         this.plugin = plugin;
         PlayerYML = new YamlConfiguration();
         
-        try {
-            PlayerYML.load(configplayerfile);
-        } catch (FileNotFoundException ex) {
-           Mcmmorankup.log.warning(plugin.logPrefix + " File Not Found " + ex.getMessage() );
-        } catch (IOException ex) {
-           Mcmmorankup.log.warning(plugin.logPrefix + " IO Problem " + ex.getMessage() );
-        } catch (InvalidConfigurationException ex) {
-           Mcmmorankup.log.warning(plugin.logPrefix + " Invalid Configuration " + ex.getMessage() );
-        }
+        initLoadYML();
+
+    }
+    
+    private boolean setInitRank() {
+       return setHabilityForRank(plugin.DefaultSkill);
     }
     
     public boolean setHabilityForRank(String HabilityForRank) {
@@ -89,7 +87,9 @@ public class Profile {
                     SendMessage(player, HabilityForRank);
                 } else if(HabilityForRank.equalsIgnoreCase("REPAIR")) { 
                     SendMessage(player, HabilityForRank);
-                } else {
+                } else if(HabilityForRank.equalsIgnoreCase("POWERLEVEL")) {
+                    SendMessage(player, HabilityForRank);
+                } else{
                     return false;
                 }
         }
@@ -115,5 +115,21 @@ public class Profile {
              player.sendMessage("-----------------------------------------------------");
              player.sendMessage(plugin.parseColor(plugin.ChooseHability.replace("%hability%", Hability)));
              player.sendMessage("-----------------------------------------------------");
+    }
+    
+    private void initLoadYML() {
+        LoadYML();
+    }
+    
+    public void LoadYML() {
+        try {
+            PlayerYML.load(configplayerfile);
+        } catch (FileNotFoundException ex) {
+           Mcmmorankup.log.warning(plugin.logPrefix + " File Not Found " + ex.getMessage() );
+        } catch (IOException ex) {
+           Mcmmorankup.log.warning(plugin.logPrefix + " IO Problem " + ex.getMessage() );
+        } catch (InvalidConfigurationException ex) {
+           Mcmmorankup.log.warning(plugin.logPrefix + " Invalid Configuration " + ex.getMessage() );
+        }
     }
 }

@@ -29,7 +29,7 @@ public class MRUPlayerListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player pl = event.getPlayer();
         if(plugin.PromoteOnJoin) {
-            boolean sucess = plugin._RankUp.tryRankUp(pl,"POWERLEVEL");
+            boolean sucess = plugin.RankUp.tryRankUp(pl,"POWERLEVEL");
             if(sucess)
              event.getPlayer().sendMessage(plugin.MSucess);
         }

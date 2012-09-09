@@ -44,7 +44,7 @@ public class RankUp {
                 SkillLevel = _McMMOPlayerProfile.getSkillLevel(getSkillType(skill));
             }
             String group = "";
-            for (Iterator<String> it = plugin.RankUp.get(skill).iterator(); it.hasNext();) {
+            for (Iterator<String> it = plugin.RankUpConfig.get(skill).iterator(); it.hasNext();) {
                 String entry = it.next();
                 String[] values = entry.split(",");
                 if(Integer.parseInt(values[0]) < SkillLevel){
