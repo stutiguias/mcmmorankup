@@ -28,29 +28,30 @@ public class Profile {
     
     public Profile(Mcmmorankup plugin,Player player) {
         configplayerfile = new File("plugins"+ File.separator +"Mcmmorankup"+ File.separator +"userdata"+ File.separator + player.getName() +".yml");
+        PlayerYML = new YamlConfiguration();
         boolean havetocreate = false;
         try {
             havetocreate = configplayerfile.createNewFile();
         }catch(IOException ex) {
             Mcmmorankup.log.warning(plugin.logPrefix + " Can't create the user file" + ex.getMessage() );
         }
-        
+        initLoadYML();
         if(!havetocreate) {
             Mcmmorankup.log.info( plugin.logPrefix + " Profile of user " + player.getName() + " found!" );
         }else{
             Mcmmorankup.log.info( plugin.logPrefix + " Profile of user " + player.getName() + " not found, create new one!" );
+            PlayerYML.set("Gender", "Male");
+            PlayerYML.set("HabilityForRank", plugin.DefaultSkill);
             if(setInitRank()) Mcmmorankup.log.info("Player " + player.getName() + " rank line is " + plugin.DefaultSkill);
         }
         this.player = player;
         this.plugin = plugin;
-        PlayerYML = new YamlConfiguration();
-        
-        initLoadYML();
 
     }
     
     private boolean setInitRank() {
-       return setHabilityForRank(plugin.DefaultSkill);
+       SaveYML();
+       return true;
     }
     
     public boolean setHabilityForRank(String HabilityForRank) {
@@ -95,14 +96,7 @@ public class Profile {
         }
                 
         PlayerYML.set("HabilityForRank", HabilityForRank);
-        try {
-            PlayerYML.save(configplayerfile);
-        } catch (FileNotFoundException ex) {
-           Mcmmorankup.log.warning(plugin.logPrefix + " File Not Found " + ex.getMessage() );
-        } catch (IOException ex) {
-           Mcmmorankup.log.warning(plugin.logPrefix + " IO Problem " + ex.getMessage() );
-        }
-        
+        SaveYML();
         return true;
     }
     
@@ -110,6 +104,15 @@ public class Profile {
         return PlayerYML.getString("HabilityForRank");
     }
     
+    public Boolean setGender(String gender) {
+        PlayerYML.set("Gender", gender);
+        SaveYML();
+        return true;
+    }
+    
+    public String getGender(){
+        return PlayerYML.getString("Gender");
+    }
     
     public void SendMessage(Player player,String Hability) {
              player.sendMessage("-----------------------------------------------------");
@@ -130,6 +133,16 @@ public class Profile {
            Mcmmorankup.log.warning(plugin.logPrefix + " IO Problem " + ex.getMessage() );
         } catch (InvalidConfigurationException ex) {
            Mcmmorankup.log.warning(plugin.logPrefix + " Invalid Configuration " + ex.getMessage() );
+        }
+    }
+    
+    public void SaveYML() {
+        try {
+            PlayerYML.save(configplayerfile);
+        } catch (FileNotFoundException ex) {
+           Mcmmorankup.log.warning(plugin.logPrefix + " File Not Found " + ex.getMessage() );
+        } catch (IOException ex) {
+           Mcmmorankup.log.warning(plugin.logPrefix + " IO Problem " + ex.getMessage() );
         }
     }
 }

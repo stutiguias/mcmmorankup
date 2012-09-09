@@ -28,12 +28,11 @@ public class MRUPlayerListener implements Listener {
     @EventHandler(priority= EventPriority.NORMAL)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player pl = event.getPlayer();
+        Profile _profile = new Profile(plugin, pl);
         if(plugin.PromoteOnJoin) {
-            boolean sucess = plugin.RankUp.tryRankUp(pl,"POWERLEVEL");
-            if(sucess)
-             event.getPlayer().sendMessage(plugin.MSucess);
+            String skill = _profile.getHabilityForRank().toUpperCase();
+            String gender = _profile.getGender();
+            if(plugin.RankUp.tryRankUp(pl,skill,gender)) event.getPlayer().sendMessage(plugin.MSucess);
         }
-        
-        Profile profile = new Profile(plugin, pl);
     }
 }

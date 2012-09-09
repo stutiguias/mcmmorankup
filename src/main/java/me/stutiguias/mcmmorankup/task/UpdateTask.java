@@ -31,7 +31,8 @@ public class UpdateTask implements Runnable {
                 try{
                     Profile _profile = new Profile(plugin, player);
                     String skill = _profile.getHabilityForRank().toUpperCase();
-                    plugin.RankUp.tryRankUp(player,skill);
+                    String gender = _profile.getGender();
+                    plugin.RankUp.tryRankUp(player,skill,gender);
                 }catch(Exception ex) {
                     
                 }

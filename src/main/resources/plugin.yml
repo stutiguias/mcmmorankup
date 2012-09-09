@@ -6,9 +6,12 @@ depend: [Vault,mcMMO]
 commands:
   mru:
    description: Check your Rank
-   usage: /mru check
+   usage:
    
 permissions:
     mru.hability:
        description: Give Acess to Skill By Hability
        default: true
+    mru.reload:
+       description: reload the plugin
+       default: op

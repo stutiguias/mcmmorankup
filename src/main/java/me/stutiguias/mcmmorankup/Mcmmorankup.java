@@ -36,7 +36,8 @@ public class Mcmmorankup extends JavaPlugin {
     public final MRUPlayerListener playerlistener = new MRUPlayerListener(this);
     public Economy economy = null;
     public RankUp RankUp = null;
-    public HashMap<String,ArrayList<String>> RankUpConfig;
+    public HashMap<String,Boolean> isHabilityRankExist;
+    public HashMap<String,HashMap<String,ArrayList<String>>> RankUpConfig;
     public HashMap<String,HashMap<String,String>> BroadCast;
     public String[] PlayerToIgnore;
     public String[] GroupToIgnore;
@@ -49,6 +50,7 @@ public class Mcmmorankup extends JavaPlugin {
     public String MPromote;
     public String MSucess;
     public String MFail;
+    public String NotFound;
     
     //ConfigAcess for hability
     public ConfigAccessor POWERLEVEL;
@@ -141,6 +143,7 @@ public class Mcmmorankup extends JavaPlugin {
                 getConfig().addDefault("Message.RankUp", "Player %player% promote to %group%");
                 getConfig().addDefault("Message.Sucess", "Promote Sucess");
                 getConfig().addDefault("Message.Fail", "Promote Fail");
+                getConfig().addDefault("Message.NotFound", "Hability For Rank not found or configured");
                 
                 getConfig().addDefault("Config.PromoteOnJoin", true);
                 getConfig().addDefault("Config.AutoUpdate", true);
@@ -178,13 +181,15 @@ public class Mcmmorankup extends JavaPlugin {
             PlayerToIgnore = getConfig().getString("PlayerToIgnore").split((","));
             GroupToIgnore = getConfig().getString("GroupToIgnore").split((","));
             DefaultSkill = getConfig().getString("Config.DefaultSkill");
+
             
             log.log(Level.INFO,logPrefix + " Alternative Broadcast is " + UseAlternativeBroadcast);
             log.log(Level.INFO,logPrefix + " Default skill is " + DefaultSkill);
             
             RankUp = new RankUp(this);
-            RankUpConfig = new HashMap<String, ArrayList<String>>();
+            RankUpConfig = new HashMap<String, HashMap<String,ArrayList<String>>>();
             BroadCast = new HashMap<String, HashMap<String, String>>();
+            isHabilityRankExist = new HashMap<String, Boolean>();
             
             // InitAcessor
             POWERLEVEL = new ConfigAccessor(this,"powerlevel.yml");
@@ -219,6 +224,7 @@ public class Mcmmorankup extends JavaPlugin {
             MPromote = getConfig().getString("Message.RankUp");
             MSucess = getConfig().getString("Message.Sucess");
             MFail = getConfig().getString("Message.Fail");
+            NotFound = getConfig().getString("Message.NotFound");
             
             Playertime = new HashMap<String, Long>();
     }
@@ -227,15 +233,19 @@ public class Mcmmorankup extends JavaPlugin {
 		return System.currentTimeMillis();
     }
     
-    public ArrayList<String> getRanks(ConfigAccessor ca){
-        total = 0;
+    public HashMap<String,ArrayList<String>> getRanks(ConfigAccessor ca){
+        HashMap<String,ArrayList<String>> Ranks = new HashMap<String, ArrayList<String>>();
         ArrayList<String> Rank = new ArrayList<String>();
-        for (String key : ca.getConfig().getConfigurationSection("RankUp.").getKeys(false)){
-          Rank.add(key + "," + ca.getConfig().getString("RankUp." + key));
-         // log.log(Level.INFO, logPrefix + "Rank " + key + " is group " + ca.getConfig().getString("RankUpConfig." + key));
-          total++;
+        for (String key : ca.getConfig().getConfigurationSection("RankUp.Male.").getKeys(false)){
+          Rank.add(key + "," + ca.getConfig().getString("RankUp.Male." + key));
         }
-        return Rank;
+        Ranks.put("Male", Rank);
+        Rank = new ArrayList<String>();
+        for (String key : ca.getConfig().getConfigurationSection("RankUp.Female.").getKeys(false)){
+          Rank.add(key + "," + ca.getConfig().getString("RankUp.Female." + key));
+        }
+        Ranks.put("Female", Rank);
+        return Ranks;
     }
     
     public String parseColor(String message) {
@@ -262,8 +272,10 @@ public class Mcmmorankup extends JavaPlugin {
             RankUpConfig.put(name,getRanks(ca));
             BroadCast.put(name,getAlternativeBroadcast(ca));
             log.info(logPrefix + name + " Rank Enable!");
+            isHabilityRankExist.put(name,true);
         }catch(Exception ex) {
             log.info(logPrefix + name + " Rank file corrupt/not found. Disable!");
+            isHabilityRankExist.put(name,false);
         }
     }
 }

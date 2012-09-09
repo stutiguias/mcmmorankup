@@ -33,14 +33,32 @@ public class MRUCommandListener implements CommandExecutor {
          if(args[0].equalsIgnoreCase("check")) return Check(cs);
          
          // Change to Rank Up on Hability
-         if(args[0].equalsIgnoreCase("hab")) return RankOnHability(cs,args[1].toString()); 
+         if(args[0].equalsIgnoreCase("hab")) {
+             if(args.length > 1) {
+                return RankOnHability(cs,args[1].toString());
+             }else{
+                return ListHability(cs);
+             }
+         } 
+         
+         if(args[0].equalsIgnoreCase("male")) {
+             setGender(cs,"Male");
+         }
+         
+         if(args[0].equalsIgnoreCase("female")) {
+             setGender(cs,"Female");
+         }
          
          // Its Reload ?
          if(args[0].equalsIgnoreCase("reload")) {
+             Player _player = (Player)cs;
+             if(!plugin.permission.has(_player.getWorld(), _player.getName(),"mru.reload")) return false;
              plugin.onReload();
              cs.sendMessage("Reload Done!");
              return false;
          }
+         
+         if(args[0].equalsIgnoreCase("help")) return Help(cs);
          
          return false;
     }
@@ -60,8 +78,8 @@ public class MRUCommandListener implements CommandExecutor {
                 Player pl = plugin.getServer().getPlayerExact(cs.getName());
                 Profile _profile = new Profile(plugin, pl);
                 String skill = _profile.getHabilityForRank().toUpperCase();
-                boolean sucess = plugin.RankUp.tryRankUp(pl,skill);
-                if(sucess)
+                String gender = _profile.getGender();
+                if(plugin.RankUp.tryRankUp(pl,skill,gender))
                 {
                     cs.sendMessage("-----------------------------------------------------");
                     cs.sendMessage(plugin.parseColor(plugin.MSucess));
@@ -83,6 +101,54 @@ public class MRUCommandListener implements CommandExecutor {
         Player _player = (Player)cs;
         if(!plugin.permission.has(_player.getWorld(), _player.getName(),"mru.hability")) return false;
         Profile _profile = new Profile(plugin,_player);
+        boolean exists = false;
+        for(String key:plugin.isHabilityRankExist.keySet()) {
+           if(Hability.equalsIgnoreCase(key))
+               exists = plugin.isHabilityRankExist.get(key);
+        }
+        if(!exists) {
+            cs.sendMessage("-----------------------------------------------------");
+            cs.sendMessage(plugin.parseColor(plugin.NotFound));
+            cs.sendMessage("-----------------------------------------------------");
+            return false;
+        }
         return _profile.setHabilityForRank(Hability);
+    }
+    
+    public boolean Help(CommandSender cs) {
+        Player _player = (Player)cs;
+        cs.sendMessage("------------------[Mcmmorankup Help]------------------");
+        cs.sendMessage(plugin.parseColor("&6/mru check &7Check your rank"));
+        cs.sendMessage(plugin.parseColor("&6/mru male &7Set Gender to Male"));
+        cs.sendMessage(plugin.parseColor("&6/mru female &7Set Gender to Female"));
+        if(plugin.permission.has(_player.getWorld(), _player.getName(),"mru.hability")) {
+            cs.sendMessage(plugin.parseColor("&6/mru hab &7See available hability"));
+            cs.sendMessage(plugin.parseColor("&6/mru hab <hability> &7Change Rank Base Hability"));
+        }
+        if(plugin.permission.has(_player.getWorld(), _player.getName(),"mru.reload")) {
+            cs.sendMessage(plugin.parseColor("&6/mru reload &7Reload the plugin"));
+        }
+        cs.sendMessage("-----------------------------------------------------");
+        return true;
+    }
+    
+    public boolean setGender(CommandSender cs,String gender) { 
+        Player _player = (Player)cs;
+        Profile _profile = new Profile(plugin, _player);
+        _profile.setGender(gender);
+        return true;
+    }
+    
+    public boolean ListHability(CommandSender cs) {
+        cs.sendMessage("------------------[Mcmmorankup List]------------------");
+        for(String key:plugin.isHabilityRankExist.keySet()) {
+           if(plugin.isHabilityRankExist.get(key)) {
+               cs.sendMessage(plugin.parseColor("&6" + key + " &7 - Available"));
+           }else{
+               cs.sendMessage(plugin.parseColor("&6" + key + " &7 - Not Available"));
+           }
+        }
+        cs.sendMessage("-----------------------------------------------------");
+        return true;
     }
 }

@@ -32,7 +32,7 @@ public class RankUp {
         }
     }
     
-    public Boolean tryRankUp(Player player,String skill) {
+    public Boolean tryRankUp(Player player,String skill,String gender) {
       try{
             if(PlayerToIgnore(player)) return false;
             if(GroupToIgnore(player)) return false;
@@ -44,7 +44,7 @@ public class RankUp {
                 SkillLevel = _McMMOPlayerProfile.getSkillLevel(getSkillType(skill));
             }
             String group = "";
-            for (Iterator<String> it = plugin.RankUpConfig.get(skill).iterator(); it.hasNext();) {
+            for (Iterator<String> it = plugin.RankUpConfig.get(skill).get(gender).iterator(); it.hasNext();) {
                 String entry = it.next();
                 String[] values = entry.split(",");
                 if(Integer.parseInt(values[0]) < SkillLevel){
@@ -52,6 +52,8 @@ public class RankUp {
                 }
             }
             if(!group.equalsIgnoreCase("")) return ChangeGroup(player,group,skill);
+      }catch(NullPointerException ex) {
+            return false;
       }catch(Exception ex) {
             Mcmmorankup.log.log(Level.WARNING,"Error try to rank up " + ex.getMessage());
             ex.printStackTrace();
@@ -70,7 +72,7 @@ public class RankUp {
             state = plugin.permission.playerRemoveGroup(player.getWorld(), player.getName(), gr);
         }
         if(!groupnow.equalsIgnoreCase(group))  {
-            plugin.getServer().broadcastMessage("-----------------McMMORANKUP-------------------------");
+            plugin.getServer().broadcastMessage("----------------[McMMORANKUP]------------------------");
             plugin.getServer().broadcastMessage(plugin.parseColor(BroadcastMessage(player, group, skill)));
             plugin.getServer().broadcastMessage("-----------------------------------------------------");
             return state;
