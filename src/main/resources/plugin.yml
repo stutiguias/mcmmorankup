@@ -9,4 +9,6 @@ commands:
    usage: /mru check
    
 permissions:
-    
+    mru.hability:
+       description: Give Acess to Skill By Hability
+       default: true

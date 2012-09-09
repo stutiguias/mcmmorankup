@@ -4,14 +4,14 @@
  */
 package me.stutiguias.mcmmorankup;
 
+import com.avaje.ebeaninternal.server.lib.util.NotFoundException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.naming.spi.DirectoryManager;
-import me.stutiguias.apimcmmo.PowerLevel;
+import me.stutiguias.apimcmmo.RankUp;
 import me.stutiguias.listeners.MRUCommandListener;
 import me.stutiguias.listeners.MRUPlayerListener;
 import me.stutiguias.mcmmorankup.task.UpdateTask;
@@ -35,9 +35,9 @@ public class Mcmmorankup extends JavaPlugin {
     public Permission permission = null;
     public final MRUPlayerListener playerlistener = new MRUPlayerListener(this);
     public Economy economy = null;
-    public PowerLevel PowerLevel = null;
-    public ArrayList<String> RankLevel;
-    public HashMap<String,String> RealBroadCast;
+    public RankUp _RankUp = null;
+    public HashMap<String,ArrayList<String>> RankUp;
+    public HashMap<String,HashMap<String,String>> BroadCast;
     public String[] PlayerToIgnore;
     public String[] GroupToIgnore;
     public HashMap<String,Long> Playertime;
@@ -49,6 +49,20 @@ public class Mcmmorankup extends JavaPlugin {
     public String MPromote;
     public String MSucess;
     public String MFail;
+    
+    //ConfigAcess for hability
+    public ConfigAccessor POWERLEVEL;
+    public ConfigAccessor EXCAVATION;
+    public ConfigAccessor FISHING;
+    public ConfigAccessor HERBALISM;
+    public ConfigAccessor MINING;
+    public ConfigAccessor AXES;
+    public ConfigAccessor ARCHERY;
+    public ConfigAccessor SWORDS;
+    public ConfigAccessor TAMING;
+    public ConfigAccessor UNARMED;
+    public ConfigAccessor ACROBATICS;
+    public ConfigAccessor REPAIR;
     
     public String AutoUpdateTime;
     
@@ -121,28 +135,20 @@ public class Mcmmorankup extends JavaPlugin {
     }
 
     private void initConfig() {
-                PowerLevel = new PowerLevel(this);
+                _RankUp = new RankUp(this);
                 getConfig().addDefault("Message.NotHaveProfile", "Dot not find any profile of mcMMO of you");
                 getConfig().addDefault("Message.ChooseHability", "You choose to rank up base on %hability%");
                 getConfig().addDefault("Message.RankUp", "Player %player% promote to %group%");
                 getConfig().addDefault("Message.Sucess", "Promote Sucess");
                 getConfig().addDefault("Message.Fail", "Promote Fail");
+                
                 getConfig().addDefault("Config.PromoteOnJoin", true);
                 getConfig().addDefault("Config.AutoUpdate", true);
                 getConfig().addDefault("Config.AutoUpdateTime", "1h");
+                getConfig().addDefault("Config.UseAlternativeBroadCast", true);
                 getConfig().addDefault("PlayerToIgnore", "Stutiguias,Player2");
                 getConfig().addDefault("GroupToIgnore","Admin,Moderator");
-                HashMap<Integer, String> rl = new HashMap<Integer, String>();
-                rl.put(100, "test");
-                rl.put(200, "test2");
-                rl.put(300, "test3"); 
-                getConfig().addDefault("PowerLevelRankUp", rl);
-                getConfig().addDefault("UseAlternativeBroadCast", true);
-                HashMap<String,String> broadcastName = new HashMap<String, String>();
-                broadcastName.put("test","rank1");
-                broadcastName.put("test2","rank2");
-                broadcastName.put("test3","rank3");
-                getConfig().addDefault("UseThisBroadcast", broadcastName);
+
                 getConfig().options().copyDefaults(true);
                 saveConfig();
     }
@@ -164,15 +170,42 @@ public class Mcmmorankup extends JavaPlugin {
 
     public void onLoadConfig() {
             initConfig();
-            getRanks();
-            getAlternativeBroadcast();
-            UseAlternativeBroadcast = getConfig().getBoolean("UseAlternativeBroadCast");
+            UseAlternativeBroadcast = getConfig().getBoolean("Config.UseAlternativeBroadCast");
             PromoteOnJoin = getConfig().getBoolean("Config.PromoteOnJoin");
             AutoUpdate = getConfig().getBoolean("Config.AutoUpdate");
             AutoUpdateTime = getConfig().getString("Config.AutoUpdateTime");
             log.log(Level.INFO,logPrefix + " Alternative Broadcast " + UseAlternativeBroadcast);
             PlayerToIgnore = getConfig().getString("PlayerToIgnore").split((","));
             GroupToIgnore = getConfig().getString("GroupToIgnore").split((","));
+            RankUp = new HashMap<String, ArrayList<String>>();
+            BroadCast = new HashMap<String, HashMap<String, String>>();
+            
+            // InitAcessor
+            POWERLEVEL = new ConfigAccessor(this,"powerlevel.yml");
+            SetupAccessor("POWERLEVEL",POWERLEVEL);
+            EXCAVATION = new ConfigAccessor(this,"excavation.yml");
+            SetupAccessor("EXCAVATION",EXCAVATION);
+            FISHING = new ConfigAccessor(this,"fishing.yml");
+            SetupAccessor("FISHING",FISHING);
+            HERBALISM = new ConfigAccessor(this,"herbalism.yml");
+            SetupAccessor("HERBALISM",HERBALISM);
+            MINING = new ConfigAccessor(this,"mining.yml");
+            SetupAccessor("MINING",MINING);
+            AXES = new ConfigAccessor(this,"axes.yml");
+            SetupAccessor("AXES",AXES);
+            ARCHERY = new ConfigAccessor(this,"archery.yml");
+            SetupAccessor("ARCHERY",ARCHERY);
+            SWORDS = new ConfigAccessor(this,"swords.yml");
+            SetupAccessor("SWORDS",SWORDS);
+            TAMING = new ConfigAccessor(this,"taming.yml");
+            SetupAccessor("TAMING",TAMING);
+            UNARMED = new ConfigAccessor(this,"unarmed.yml");
+            SetupAccessor("UNARMED",UNARMED);
+            ACROBATICS = new ConfigAccessor(this,"acrobatics.yml");
+            SetupAccessor("ACROBATICS",ACROBATICS);
+            REPAIR = new ConfigAccessor(this,"repair.yml");
+            SetupAccessor("REPAIR",REPAIR);
+    
             
             // Messages
             ChooseHability = getConfig().getString("Message.ChooseHability");
@@ -188,14 +221,15 @@ public class Mcmmorankup extends JavaPlugin {
 		return System.currentTimeMillis();
     }
     
-    public void getRanks(){
+    public ArrayList<String> getRanks(ConfigAccessor ca){
         total = 0;
-        RankLevel = new ArrayList<String>();
-        for (String key : getConfig().getConfigurationSection("PowerLevelRankUp.").getKeys(false)){
-          RankLevel.add(key + "," + getConfig().getString("PowerLevelRankUp." + key));
-          log.log(Level.INFO, logPrefix + "Rank " + key + " message " + getConfig().getString("PowerLevelRankUp." + key));
+        ArrayList<String> Rank = new ArrayList<String>();
+        for (String key : ca.getConfig().getConfigurationSection("RankUp.").getKeys(false)){
+          Rank.add(key + "," + ca.getConfig().getString("RankUp." + key));
+          log.log(Level.INFO, logPrefix + "Rank " + key + " is group " + ca.getConfig().getString("RankUp." + key));
           total++;
         }
+        return Rank;
     }
     
     public String parseColor(String message) {
@@ -209,10 +243,23 @@ public class Mcmmorankup extends JavaPlugin {
         }
     }
     
-    public void getAlternativeBroadcast(){
-        RealBroadCast = new HashMap<String, String>();
-        for (String key : getConfig().getConfigurationSection("UseThisBroadcast.").getKeys(false)){
-          RealBroadCast.put(key, getConfig().getString("UseThisBroadcast." + key));
+    public HashMap<String,String> getAlternativeBroadcast(ConfigAccessor ca){
+        HashMap<String,String> BroadCastCa = new HashMap<String, String>();
+        for (String key : ca.getConfig().getConfigurationSection("Broadcast.").getKeys(false)){
+          BroadCastCa.put(key, ca.getConfig().getString("Broadcast." + key));
+          log.log(Level.INFO, logPrefix + "Group " + key + " will broadcast " + ca.getConfig().getString("RankUp." + key));
+        }
+        return BroadCastCa;
+    }
+    public void SetupAccessor(String name,ConfigAccessor ca) {
+        try {
+            RankUp.put(name,getRanks(ca));
+            BroadCast.put(name,getAlternativeBroadcast(ca));
+            log.info(logPrefix + name + " Rank Enable!");
+        }catch(NotFoundException ex) {
+            log.info(logPrefix + name + " Rank file not found. Disable!");
+        }catch(Exception ex) {
+            log.info(logPrefix + name + " Rank file corrupt. Disable!");
         }
     }
 }

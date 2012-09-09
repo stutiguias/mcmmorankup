@@ -27,7 +27,7 @@ public class UpdateTask implements Runnable {
         {
             Mcmmorankup.log.log(Level.INFO," Try to rank up online users...");
             for (Player player : playerList) {
-                  plugin.PowerLevel.tryRankUp(player);
+                  plugin._RankUp.tryRankUp(player,"POWERLEVEL");
             }
         }
         

@@ -58,7 +58,7 @@ public class MRUCommandListener implements CommandExecutor {
              if(!alreadyuse)    
              {
                 Player pl = plugin.getServer().getPlayerExact(cs.getName());
-                boolean sucess = plugin.PowerLevel.tryRankUp(pl);
+                boolean sucess = plugin._RankUp.tryRankUp(pl,"POWERLEVEL");
                 if(sucess)
                 {
                     cs.sendMessage("-----------------------------------------------------");
@@ -79,6 +79,7 @@ public class MRUCommandListener implements CommandExecutor {
     
     public boolean RankOnHability(CommandSender cs,String Hability) {
         Player _player = (Player)cs;
+        if(!plugin.permission.has(_player.getWorld(), _player.getName(),"mru.hability")) return false;
         Profile _profile = new Profile(plugin,_player);
         return _profile.setHabilityForRank(Hability);
     }
