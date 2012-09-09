@@ -1,6 +1,6 @@
 name: Mcmmorankup
 main: me.stutiguias.mcmmorankup.Mcmmorankup
-version: 0.4-SNAPSHOT
+version: 0.4
 author: Stutiguias
 depend: [Vault,mcMMO]
 commands:

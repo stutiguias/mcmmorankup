@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>me.stutiguias</groupId>
   <artifactId>mcmmorankup</artifactId>
-  <version>${plugin.version}</version>
+  <version>0.4</version>
   <name>mcmmorankup</name>
   <description>Rank UP and DOWN for MCMMO</description>
   
@@ -40,7 +40,7 @@
   </dependencies>
   
   <build>
-    <finalName>${project.name}.${plugin.version}</finalName>
+    <finalName>${project.name}.${project.version}</finalName>
     <sourceDirectory>${basedir}/src/main/java/</sourceDirectory>
     
     <resources>
@@ -74,7 +74,6 @@
     </plugins>
   </build>
   <properties>
-    <plugin.version>0.4-SNAPSHOT</plugin.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <bukkit.version>1.3.2-R0.1</bukkit.version>
   </properties>
