@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 /**
@@ -32,7 +33,26 @@ public class MRUPlayerListener implements Listener {
         if(plugin.PromoteOnJoin) {
             String skill = _profile.getHabilityForRank().toUpperCase();
             String gender = _profile.getGender();
-            if(plugin.RankUp.tryRankUp(pl,skill,gender)) event.getPlayer().sendMessage(plugin.MSucess);
+            Boolean sucess;
+            if(plugin.TagSystem) {
+                sucess = plugin.RankUp.tryRankUpWithoutGroup(pl, skill, gender);
+            }else{
+                sucess =  plugin.RankUp.tryRankUp(pl,skill,gender);
+            }
+            if(sucess) event.getPlayer().sendMessage(plugin.MSucess);
         }
+    }
+    
+    @EventHandler(priority= EventPriority.NORMAL)
+    public void onPlayerChat(AsyncPlayerChatEvent event) {
+        if(event.isCancelled()) return;
+        if(!plugin.TagSystem) return;
+        Player _player = event.getPlayer();
+        Profile _profile = new Profile(plugin, _player);
+        String Tag = _profile.getTag();
+        if(Tag == null) Tag = "Default";
+        String format = event.getFormat();
+        event.setFormat(Tag + " " + format);
+        
     }
 }

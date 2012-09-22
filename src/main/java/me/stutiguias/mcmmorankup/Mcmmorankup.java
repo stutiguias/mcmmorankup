@@ -51,6 +51,7 @@ public class Mcmmorankup extends JavaPlugin {
     public String MSucess;
     public String MFail;
     public String NotFound;
+    public String setGender;
     
     //ConfigAcess for hability
     public ConfigAccessor POWERLEVEL;
@@ -66,6 +67,7 @@ public class Mcmmorankup extends JavaPlugin {
     public ConfigAccessor ACROBATICS;
     public ConfigAccessor REPAIR;
     
+    public boolean TagSystem;
     public String AutoUpdateTime;
     public String DefaultSkill;
     public boolean UseAlternativeBroadcast;
@@ -144,7 +146,9 @@ public class Mcmmorankup extends JavaPlugin {
                 getConfig().addDefault("Message.Sucess", "Promote Sucess");
                 getConfig().addDefault("Message.Fail", "Promote Fail");
                 getConfig().addDefault("Message.NotFound", "Hability For Rank not found or configured");
+                getConfig().addDefault("Message.setGender", "Your Gender is set to %gender%");
                 
+                getConfig().addDefault("Config.UseTagOnlySystem", false);
                 getConfig().addDefault("Config.PromoteOnJoin", true);
                 getConfig().addDefault("Config.AutoUpdate", true);
                 getConfig().addDefault("Config.AutoUpdateTime", "1h");
@@ -181,7 +185,7 @@ public class Mcmmorankup extends JavaPlugin {
             PlayerToIgnore = getConfig().getString("PlayerToIgnore").split((","));
             GroupToIgnore = getConfig().getString("GroupToIgnore").split((","));
             DefaultSkill = getConfig().getString("Config.DefaultSkill");
-
+            TagSystem = getConfig().getBoolean("Config.UseTagOnlySystem");
             
             log.log(Level.INFO,logPrefix + " Alternative Broadcast is " + UseAlternativeBroadcast);
             log.log(Level.INFO,logPrefix + " Default skill is " + DefaultSkill);
@@ -225,6 +229,7 @@ public class Mcmmorankup extends JavaPlugin {
             MSucess = getConfig().getString("Message.Sucess");
             MFail = getConfig().getString("Message.Fail");
             NotFound = getConfig().getString("Message.NotFound");
+            setGender = getConfig().getString("Message.setGender");
             
             Playertime = new HashMap<String, Long>();
     }

@@ -79,7 +79,13 @@ public class MRUCommandListener implements CommandExecutor {
                 Profile _profile = new Profile(plugin, pl);
                 String skill = _profile.getHabilityForRank().toUpperCase();
                 String gender = _profile.getGender();
-                if(plugin.RankUp.tryRankUp(pl,skill,gender))
+                Boolean sucess;
+                if(plugin.TagSystem) {
+                  sucess = plugin.RankUp.tryRankUpWithoutGroup(pl, skill, gender);
+                }else{
+                  sucess =  plugin.RankUp.tryRankUp(pl,skill,gender);
+                }
+                if(sucess)
                 {
                     cs.sendMessage("-----------------------------------------------------");
                     cs.sendMessage(plugin.parseColor(plugin.MSucess));
@@ -136,6 +142,9 @@ public class MRUCommandListener implements CommandExecutor {
         Player _player = (Player)cs;
         Profile _profile = new Profile(plugin, _player);
         _profile.setGender(gender);
+        cs.sendMessage("-----------------------------------------------------");
+        cs.sendMessage(plugin.parseColor(plugin.setGender.replace("%gender%", gender)));
+        cs.sendMessage("-----------------------------------------------------");
         return true;
     }
     

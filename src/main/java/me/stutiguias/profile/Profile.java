@@ -42,6 +42,7 @@ public class Profile {
             Mcmmorankup.log.info( plugin.logPrefix + " Profile of user " + player.getName() + " not found, create new one!" );
             PlayerYML.set("Gender", "Male");
             PlayerYML.set("HabilityForRank", plugin.DefaultSkill);
+            PlayerYML.set("Tag","Default");
             if(setInitRank()) Mcmmorankup.log.info("Player " + player.getName() + " rank line is " + plugin.DefaultSkill);
         }
         this.player = player;
@@ -98,6 +99,16 @@ public class Profile {
         PlayerYML.set("HabilityForRank", HabilityForRank);
         SaveYML();
         return true;
+    }
+    
+    public Boolean setTag(String Tag) {
+        PlayerYML.set("Tag",Tag);
+        SaveYML();
+        return true;
+    }
+    
+    public String getTag() {
+        return PlayerYML.getString("Tag");
     }
     
     public String getHabilityForRank(){
