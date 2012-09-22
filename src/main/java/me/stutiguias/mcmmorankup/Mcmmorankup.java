@@ -275,7 +275,7 @@ public class Mcmmorankup extends JavaPlugin {
     public void SetupAccessor(String name,ConfigAccessor ca) {
         try {
             RankUpConfig.put(name,getRanks(ca));
-            BroadCast.put(name,getAlternativeBroadcast(ca));
+            if(UseAlternativeBroadcast) BroadCast.put(name,getAlternativeBroadcast(ca));
             log.info(logPrefix + name + " Rank Enable!");
             isHabilityRankExist.put(name,true);
         }catch(Exception ex) {
