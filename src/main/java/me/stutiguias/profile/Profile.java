@@ -36,13 +36,11 @@ public class Profile {
             Mcmmorankup.log.warning(plugin.logPrefix + " Can't create the user file" + ex.getMessage() );
         }
         initLoadYML();
-        if(!havetocreate) {
-            Mcmmorankup.log.info( plugin.logPrefix + " Profile of user " + player.getName() + " found!" );
-        }else{
+        if(havetocreate) {
             Mcmmorankup.log.info( plugin.logPrefix + " Profile of user " + player.getName() + " not found, create new one!" );
             PlayerYML.set("Gender", "Male");
             PlayerYML.set("HabilityForRank", plugin.DefaultSkill);
-            PlayerYML.set("Tag","Default");
+            PlayerYML.set("Tag","");
             if(setInitRank()) Mcmmorankup.log.info("Player " + player.getName() + " rank line is " + plugin.DefaultSkill);
         }
         this.player = player;

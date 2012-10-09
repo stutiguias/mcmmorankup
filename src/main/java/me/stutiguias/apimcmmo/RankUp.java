@@ -67,6 +67,7 @@ public class RankUp {
     public boolean tryRankUpWithoutGroup(Player player,String skill,String gender) {
         try{
             if(PlayerToIgnore(player)) return false;
+            if(GroupToIgnore(player)) return false;
             PlayerProfile _McMMOPlayerProfile =  Users.getProfile(player);
             Integer SkillLevel;
             if(skill.equalsIgnoreCase("POWERLEVEL")) {

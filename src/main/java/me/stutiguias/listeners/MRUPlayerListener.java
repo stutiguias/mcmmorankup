@@ -50,7 +50,7 @@ public class MRUPlayerListener implements Listener {
         Player _player = event.getPlayer();
         Profile _profile = new Profile(plugin, _player);
         String Tag = _profile.getTag();
-        if(Tag == null) Tag = "Default";
+        if(Tag == null) Tag = "";
         String format = event.getFormat();
         event.setFormat(plugin.parseColor(Tag) + " " + format);
         
