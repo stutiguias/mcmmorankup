@@ -26,7 +26,7 @@ public class UpdateTask implements Runnable {
         Player[] playerList = plugin.getServer().getOnlinePlayers();
         if(plugin.getServer().getOnlinePlayers().length > 0)
         {
-            Mcmmorankup.log.log(Level.INFO," Try to rank up online users...");
+            Mcmmorankup.logger.log(Level.INFO," Try to rank up online users...");
             for (Player player : playerList) {
                 try{
                     Profile _profile = new Profile(plugin, player);

@@ -31,7 +31,7 @@ public class Mcmmorankup extends JavaPlugin {
 
     public String logPrefix = "[McMMoRankUp] ";
     String PluginDir = "plugins" + File.separator + "Mcmmorankup";
-    public static final Logger log = Logger.getLogger("Minecraft");
+    public static final Logger logger = Logger.getLogger("Minecraft");
     public Permission permission = null;
     public final MRUPlayerListener playerlistener = new MRUPlayerListener(this);
     public Economy economy = null;
@@ -77,7 +77,7 @@ public class Mcmmorankup extends JavaPlugin {
     @Override
     public void onEnable() {
 
-            log.log(Level.INFO, "{0} Mcmmorankup is initializing", logPrefix);
+            logger.log(Level.INFO, "{0} Mcmmorankup is initializing", logPrefix);
 
             onLoadConfig();
             getCommand("mru").setExecutor(new MRUCommandListener(this));
@@ -102,24 +102,24 @@ public class Mcmmorankup extends JavaPlugin {
             
             File f = new File("plugins"+ File.separator +"Mcmmorankup"+ File.separator +"userdata");
             if(!f.exists())  {
-                log.log(Level.INFO, "{0} Diretory not exist creating new one", logPrefix);
+                logger.log(Level.INFO, "{0} Diretory not exist creating new one", logPrefix);
                 f.mkdirs();
             }
             
             if(this.permission.isEnabled() == true)
             {
-                log.log(Level.INFO, "{0} Vault perm enable.", logPrefix);    
+                logger.log(Level.INFO, "{0} Vault perm enable.", logPrefix);    
             }else{
-                log.log(Level.INFO, "{0} Vault NOT ENABLE.", logPrefix);    
+                logger.log(Level.INFO, "{0} Vault NOT ENABLE.", logPrefix);    
             }
             
             //Metrics 
             try {
-              log.log(Level.INFO, "{0} Sending Metrics !", logPrefix);
+              logger.log(Level.INFO, "{0} Sending Metrics !", logPrefix);
               Metrics metrics = new Metrics(this);
               metrics.start();
             } catch (IOException e) {
-              log.log(Level.INFO, "{0} Failed to submit the stats :-(", logPrefix);
+              logger.log(Level.INFO, "{0} Failed to submit the stats :-(", logPrefix);
             }
 
     }
@@ -127,7 +127,7 @@ public class Mcmmorankup extends JavaPlugin {
     @Override
     public void onDisable() {
             getServer().getPluginManager().disablePlugin(this);
-            log.log(Level.INFO, "{0} Disabled. Bye :D", logPrefix);
+            logger.log(Level.INFO, "{0} Disabled. Bye :D", logPrefix);
     }
     
     public void onReload() {
@@ -186,8 +186,8 @@ public class Mcmmorankup extends JavaPlugin {
             DefaultSkill = getConfig().getString("Config.DefaultSkill");
             TagSystem = getConfig().getBoolean("Config.UseTagOnlySystem");
             
-            log.log(Level.INFO, "{0} Alternative Broadcast is {1}", new Object[]{logPrefix, UseAlternativeBroadcast});
-            log.log(Level.INFO, "{0} Default skill is {1}", new Object[]{logPrefix, DefaultSkill});
+            logger.log(Level.INFO, "{0} Alternative Broadcast is {1}", new Object[]{logPrefix, UseAlternativeBroadcast});
+            logger.log(Level.INFO, "{0} Default skill is {1}", new Object[]{logPrefix, DefaultSkill});
             
             RankUp = new RankUp(this);
             RankUpConfig = new HashMap<String, HashMap<String,ArrayList<String>>>();
@@ -275,10 +275,10 @@ public class Mcmmorankup extends JavaPlugin {
         try {
             RankUpConfig.put(name,getRanks(ca));
             if(UseAlternativeBroadcast) BroadCast.put(name,getAlternativeBroadcast(ca));
-            log.log(Level.INFO, "{0}{1} Rank Enable!", new Object[]{logPrefix, name});
+            logger.log(Level.INFO, "{0}{1} Rank Enable!", new Object[]{logPrefix, name});
             isHabilityRankExist.put(name,true);
         }catch(Exception ex) {
-            log.log(Level.INFO, "{0}{1} Rank file corrupt/not found.", new Object[]{logPrefix, name});
+            logger.log(Level.INFO, "{0}{1} Rank file corrupt/not found.", new Object[]{logPrefix, name});
             isHabilityRankExist.put(name,false);
         }
     }

@@ -29,7 +29,7 @@ public class RankUp {
         plugin = instance;
         Plugin pl = plugin.getServer().getPluginManager().getPlugin("mcMMO");
         if(pl != null) {
-            Mcmmorankup.log.log(Level.INFO, plugin.logPrefix + " mcMMO found !!!");
+            Mcmmorankup.logger.log(Level.INFO, plugin.logPrefix + " mcMMO found !!!");
         }
     }
     
@@ -54,10 +54,10 @@ public class RankUp {
             }
             if(!group.equalsIgnoreCase("")) return ChangeGroup(player,group,skill);
       }catch(NullPointerException ex) {
-            Mcmmorankup.log.log(Level.WARNING,"Error try to rank up " + ex.getMessage());
+            Mcmmorankup.logger.log(Level.WARNING,"Error try to rank up " + ex.getMessage());
             return false;
       }catch(Exception ex) {
-            Mcmmorankup.log.log(Level.WARNING,"Error try to rank up " + ex.getMessage());
+            Mcmmorankup.logger.log(Level.WARNING,"Error try to rank up " + ex.getMessage());
             ex.printStackTrace();
             return false;
       }
@@ -86,10 +86,10 @@ public class RankUp {
             System.out.print(Tag);
             if(!Tag.equalsIgnoreCase("")) return ChangeTag(player,Tag,skill);
       }catch(NullPointerException ex) {
-            Mcmmorankup.log.log(Level.WARNING,"Error try to rank up " + ex.getMessage());
+            Mcmmorankup.logger.log(Level.WARNING,"Error try to rank up " + ex.getMessage());
             return false;
       }catch(Exception ex) {
-            Mcmmorankup.log.log(Level.WARNING,"Error try to rank up " + ex.getMessage());
+            Mcmmorankup.logger.log(Level.WARNING,"Error try to rank up " + ex.getMessage());
             ex.printStackTrace();
             return false;
       }
@@ -144,7 +144,7 @@ public class RankUp {
                String bc = _BroadCast.get(group);
                return plugin.MPromote.replace("%player%", player.getName()).replace("%group%", bc);
             }catch(Exception ex) {
-                Mcmmorankup.log.log(Level.WARNING,"Error try to broadcast Alternative " + ex.getMessage());
+                Mcmmorankup.logger.log(Level.WARNING,"Error try to broadcast Alternative " + ex.getMessage());
                 ex.printStackTrace();
                 return "Error try to broadcast Alternative";
             }

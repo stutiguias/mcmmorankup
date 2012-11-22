@@ -9,6 +9,7 @@ import com.gmail.nossr50.util.Users;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.logging.Level;
 import me.stutiguias.mcmmorankup.Mcmmorankup;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -33,15 +34,15 @@ public class Profile {
         try {
             havetocreate = configplayerfile.createNewFile();
         }catch(IOException ex) {
-            Mcmmorankup.log.warning(plugin.logPrefix + " Can't create the user file" + ex.getMessage() );
+            Mcmmorankup.logger.log(Level.WARNING, "{0} Can't create the user file {1}", new Object[]{plugin.logPrefix, ex.getMessage()});
         }
         initLoadYML();
         if(havetocreate) {
-            Mcmmorankup.log.info( plugin.logPrefix + " Profile of user " + player.getName() + " not found, create new one!" );
+            Mcmmorankup.logger.log( Level.INFO, "{0} Profile of user {1} not found, create new one!", new Object[]{plugin.logPrefix, player.getName()});
             PlayerYML.set("Gender", "Male");
             PlayerYML.set("HabilityForRank", plugin.DefaultSkill);
             PlayerYML.set("Tag","");
-            if(setInitRank()) Mcmmorankup.log.info("Player " + player.getName() + " rank line is " + plugin.DefaultSkill);
+            if(setInitRank()) Mcmmorankup.logger.log(Level.INFO, "Player {0} rank line is {1}", new Object[]{player.getName(), plugin.DefaultSkill});
         }
         this.player = player;
         this.plugin = plugin;
@@ -58,8 +59,8 @@ public class Profile {
         try {
             _playerprofile = Users.getProfile(player);
         }catch(Exception ex) {
-            Mcmmorankup.log.info(" Can't find profile for player " + player.getName());
-            Mcmmorankup.log.info(ex.getMessage());
+            Mcmmorankup.logger.log(Level.INFO, " Can't find profile for player {0}", player.getName());
+            Mcmmorankup.logger.info(ex.getMessage());
             player.sendMessage(plugin.logPrefix + " " + plugin.NotHaveProfile);
             return false;
         }
@@ -137,11 +138,11 @@ public class Profile {
         try {
             PlayerYML.load(configplayerfile);
         } catch (FileNotFoundException ex) {
-           Mcmmorankup.log.warning(plugin.logPrefix + " File Not Found " + ex.getMessage() );
+           Mcmmorankup.logger.log(Level.WARNING, "{0} File Not Found {1}", new Object[]{plugin.logPrefix, ex.getMessage()});
         } catch (IOException ex) {
-           Mcmmorankup.log.warning(plugin.logPrefix + " IO Problem " + ex.getMessage() );
+           Mcmmorankup.logger.log(Level.WARNING, "{0} IO Problem {1}", new Object[]{plugin.logPrefix, ex.getMessage()});
         } catch (InvalidConfigurationException ex) {
-           Mcmmorankup.log.warning(plugin.logPrefix + " Invalid Configuration " + ex.getMessage() );
+           Mcmmorankup.logger.log(Level.WARNING, "{0} Invalid Configuration {1}", new Object[]{plugin.logPrefix, ex.getMessage()});
         }
     }
     
@@ -149,9 +150,9 @@ public class Profile {
         try {
             PlayerYML.save(configplayerfile);
         } catch (FileNotFoundException ex) {
-           Mcmmorankup.log.warning(plugin.logPrefix + " File Not Found " + ex.getMessage() );
+           Mcmmorankup.logger.log(Level.WARNING, "{0} File Not Found {1}", new Object[]{plugin.logPrefix, ex.getMessage()});
         } catch (IOException ex) {
-           Mcmmorankup.log.warning(plugin.logPrefix + " IO Problem " + ex.getMessage() );
+           Mcmmorankup.logger.log(Level.WARNING, "{0} IO Problem {1}", new Object[]{plugin.logPrefix, ex.getMessage()});
         }
     }
 }
