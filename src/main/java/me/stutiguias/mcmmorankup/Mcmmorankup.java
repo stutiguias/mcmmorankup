@@ -4,7 +4,6 @@
  */
 package me.stutiguias.mcmmorankup;
 
-import com.avaje.ebeaninternal.server.lib.util.NotFoundException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
