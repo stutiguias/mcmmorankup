@@ -72,6 +72,7 @@ public class Mcmmorankup extends JavaPlugin {
     public boolean UseAlternativeBroadcast;
     public boolean PromoteOnJoin;
     public boolean AutoUpdate;
+    public boolean RemoveOnlyPluginGroup;
     
     @Override
     public void onEnable() {
@@ -147,6 +148,7 @@ public class Mcmmorankup extends JavaPlugin {
                 getConfig().addDefault("Message.setGender", "Your Gender is set to %gender%");
                 
                 getConfig().addDefault("Config.UseTagOnlySystem", false);
+                getConfig().addDefault("Config.RemoveOnlyPluginGroup",true);
                 getConfig().addDefault("Config.PromoteOnJoin", true);
                 getConfig().addDefault("Config.AutoUpdate", true);
                 getConfig().addDefault("Config.AutoUpdateTime", "1h");
@@ -184,6 +186,7 @@ public class Mcmmorankup extends JavaPlugin {
             GroupToIgnore = getConfig().getString("GroupToIgnore").split((","));
             DefaultSkill = getConfig().getString("Config.DefaultSkill");
             TagSystem = getConfig().getBoolean("Config.UseTagOnlySystem");
+            RemoveOnlyPluginGroup = getConfig().getBoolean("Config.RemoveOnlyPluginGroup");
             
             logger.log(Level.INFO, "{0} Alternative Broadcast is {1}", new Object[]{logPrefix, UseAlternativeBroadcast});
             logger.log(Level.INFO, "{0} Default skill is {1}", new Object[]{logPrefix, DefaultSkill});

@@ -111,24 +111,28 @@ public class RankUp {
         }
     }
     
-    private boolean ChangeGroup(Player player,String group,String skill)
+    private boolean ChangeGroup(Player player,String newgroup,String skill)
     {
         String groupnow = plugin.permission.getPrimaryGroup(player);
-        boolean state = plugin.permission.playerAddGroup(player.getWorld(),player.getName(),group);
-        String[] plgr = plugin.permission.getPlayerGroups(player);
-        for(String gr:plgr) {
-          if(!gr.equals(group))
-            state = plugin.permission.playerRemoveGroup(player.getWorld(), player.getName(), gr);
-        }
-        if(!groupnow.equalsIgnoreCase(group))  {
-            plugin.getServer().broadcastMessage("----------------[McMMORANKUP]------------------------");
-            plugin.getServer().broadcastMessage(plugin.parseColor(BroadcastMessage(player, group, skill)));
-            plugin.getServer().broadcastMessage("-----------------------------------------------------");
-            return state;
+        boolean state;
+        
+        if(plugin.RemoveOnlyPluginGroup) {
+            plugin.permission.playerRemoveGroup(player.getWorld(), player.getName(), groupnow);
         }else{
-            return false;
+            String[] playergroups = plugin.permission.getPlayerGroups(player);
+            for(String playergroup:playergroups) {
+                plugin.permission.playerRemoveGroup(player.getWorld(), player.getName(), playergroup);
+            }
         }
-            
+        state = plugin.permission.playerAddGroup(player.getWorld(),player.getName(),newgroup);
+        
+        if(!groupnow.equalsIgnoreCase(newgroup))  {
+            plugin.getServer().broadcastMessage("----------------[McMMORANKUP]------------------------");
+            plugin.getServer().broadcastMessage(plugin.parseColor(BroadcastMessage(player, newgroup, skill)));
+            plugin.getServer().broadcastMessage("-----------------------------------------------------");
+        }
+        
+        return state;   
     }
     
     private static int getPowerLevel(Player player)
