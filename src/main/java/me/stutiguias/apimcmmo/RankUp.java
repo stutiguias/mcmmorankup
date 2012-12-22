@@ -45,13 +45,15 @@ public class RankUp {
                 SkillLevel = _McMMOPlayerProfile.getSkillLevel(getSkillType(skill));
             }
             String group = "";
+            String groupNow = plugin.permission.getPrimaryGroup(player);
             for (Iterator<String> it = plugin.RankUpConfig.get(skill).get(gender).iterator(); it.hasNext();) {
                 String entry = it.next();
-                String[] values = entry.split(",");
-                if(Integer.parseInt(values[0]) < SkillLevel){
-                    group = values[1]; 
+                String[] levelGroup = entry.split(",");
+                if(Integer.parseInt(levelGroup[0]) < SkillLevel){
+                    group = levelGroup[1]; 
                 }
             }
+            if(group.equalsIgnoreCase(groupNow)) return false;
             if(!group.equalsIgnoreCase("")) return ChangeGroup(player,group,skill);
       }catch(NullPointerException ex) {
             Mcmmorankup.logger.log(Level.WARNING,"Error try to rank up " + ex.getMessage());
