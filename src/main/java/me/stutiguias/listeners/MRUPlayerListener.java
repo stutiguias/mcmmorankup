@@ -1,9 +1,9 @@
 package me.stutiguias.listeners;
 
 //import java.util.logging.Level;
+import me.stutiguias.mcmmorankup.ChatTools;
 import me.stutiguias.mcmmorankup.Mcmmorankup;
 import me.stutiguias.profile.Profile;
-import me.zrocweb.utils.ChatTools;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -29,7 +29,7 @@ public class MRUPlayerListener implements Listener {
      ******************************************************************************************************************************* */  
     @EventHandler(priority= EventPriority.NORMAL)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        final Player pl = event.getPlayer();
+    	final Player pl = event.getPlayer();
     	
         if(plugin.PromoteOnJoin) {
         	Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {                
