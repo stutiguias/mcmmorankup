@@ -8,9 +8,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.logging.Level;
 
+import me.stutiguias.mcmmorankup.ChatTools;
 import me.stutiguias.mcmmorankup.Mcmmorankup;
 import me.stutiguias.profile.Profile;
-import me.zrocweb.utils.ChatTools;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -32,7 +32,7 @@ public class RankUp {
     
     public String tryRankUp(Player player, String skill, String gender, String cmd) {
         try{
-              if(PlayerToIgnore(player)) return "ignore";
+        	  if(PlayerToIgnore(player)) return "ignore";
               if(GroupToIgnore(player)) return "ignore";
 
               PlayerProfile _McMMOPlayerProfile =  Users.getProfile(player);
