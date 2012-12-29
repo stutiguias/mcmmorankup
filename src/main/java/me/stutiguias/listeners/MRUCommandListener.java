@@ -1,8 +1,8 @@
 package me.stutiguias.listeners;
 
+import me.stutiguias.mcmmorankup.ChatTools;
 import me.stutiguias.mcmmorankup.Mcmmorankup;
 import me.stutiguias.profile.Profile;
-import me.zrocweb.utils.ChatTools;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -20,8 +20,14 @@ public class MRUCommandListener implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] args) {
-         // Do not use Console !
-         if(!(cs instanceof Player) || args.length == 0) return false;
+         
+    	 // Do not use Console !
+         //if(!(cs instanceof Player) || args.length == 0) return false;
+    	if(!(cs instanceof Player)) {
+    		return false;
+    	} else if (args.length==0) {
+    		return Help(cs);
+    	}
 
          // Show ? - Checks the players current and next promotional levels and displays them only      
          // Rank ? - Checks and attempts to promote the player to the next level in the promotion ladder
@@ -54,7 +60,7 @@ public class MRUCommandListener implements CommandExecutor {
              return false;
          }
          
-         if(args[0].equalsIgnoreCase("help")) return Help(cs);
+         if(args[0].equalsIgnoreCase("help") || args[0].equalsIgnoreCase("?")) return Help(cs);
          
          return false;
     }
@@ -63,7 +69,7 @@ public class MRUCommandListener implements CommandExecutor {
              boolean alreadyuse = false;
              
              if(cmd.equalsIgnoreCase("rank")) {
-                 if(plugin.Playertime.isEmpty()) {
+	             if(plugin.Playertime.isEmpty()) {
 	                 alreadyuse = false;
 	             } else if (plugin.Playertime.containsKey(cs.getName()) && plugin.Playertime.get(cs.getName()) + 10000 > plugin.getCurrentMilli()) {
 	                 alreadyuse = true;
