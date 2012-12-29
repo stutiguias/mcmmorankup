@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package me.stutiguias.profile;
 
 import com.gmail.nossr50.datatypes.PlayerProfile;
@@ -11,14 +7,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.logging.Level;
 import me.stutiguias.mcmmorankup.Mcmmorankup;
+import me.zrocweb.utils.ChatTools;
+
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
-/**
- *
- * @author Daniel
- */
 public class Profile {
     
     Player player;
@@ -38,7 +32,7 @@ public class Profile {
         }
         initLoadYML();
         if(havetocreate) {
-            Mcmmorankup.logger.log( Level.INFO, "{0} Profile of user {1} not found, create new one!", new Object[]{plugin.logPrefix, player.getName()});
+            Mcmmorankup.logger.log( Level.INFO, "{0} Profile of user {1} not found, creating a new one!", new Object[]{plugin.logPrefix, player.getName()});
             PlayerYML.set("Gender", "Male");
             PlayerYML.set("HabilityForRank", plugin.DefaultSkill);
             PlayerYML.set("Tag","");
@@ -124,10 +118,14 @@ public class Profile {
         return PlayerYML.getString("Gender");
     }
     
-    public void SendMessage(Player player,String Hability) {
-             player.sendMessage("-----------------------------------------------------");
-             player.sendMessage(plugin.parseColor(plugin.ChooseHability.replace("%hability%", Hability)));
-             player.sendMessage("-----------------------------------------------------");
+    public void SendMessage(Player player, String Hability) {
+             //player.sendMessage("-----------------------------------------------------");
+             player.sendMessage("\n"+ChatTools.formatTitle("ABILITY SELECTED",  plugin.titleHeader, plugin.titleHeaderLineColor, plugin.titleHeaderTextColor, plugin.titleHeaderAltColorBold,
+    	     														       plugin.titleHeaderAltColor, plugin.titleHeaderAltColorBold));
+             //player.sendMessage(plugin.parseColor(plugin.ChooseHability.replace("%ability%", Hability.toUpperCase())));
+    	     player.sendMessage(ChatTools.getAltColor(plugin.generalMessages) + plugin.ChooseHability.replace("%ability%", Hability.toUpperCase()));
+             //player.sendMessage("-----------------------------------------------------");
+             player.sendMessage(ChatTools.getAltColor(plugin.titleFooterLineColor) + plugin.titleFooter);
     }
     
     private void initLoadYML() {
