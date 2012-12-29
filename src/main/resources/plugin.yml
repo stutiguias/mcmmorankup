@@ -1,7 +1,7 @@
 name: Mcmmorankup
 main: me.stutiguias.mcmmorankup.Mcmmorankup
-version: 0.6
-author: Stutiguias
+version: 0.6.1
+author: Stutiguias, zrocweb
 depend: [Vault,mcMMO]
 commands:
   mru:
