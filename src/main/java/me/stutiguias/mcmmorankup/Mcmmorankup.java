@@ -76,6 +76,7 @@ public class Mcmmorankup extends JavaPlugin {
     public long onJoinDelay;
     public Boolean globalBroadcastFeed;
     public Boolean playerBroadcastFeed;
+    public Boolean displayNextPromo;
     
     // zrocweb: Formatting
     public String titleHeader;
@@ -182,6 +183,7 @@ public class Mcmmorankup extends JavaPlugin {
                 getConfig().addDefault("Config.OnJoinDelay",300);
                 getConfig().addDefault("Config.GlobalBroadcastFeed", true);
                 getConfig().addDefault("Config.PlayerBroadcastFeed", true);
+                getConfig().addDefault("Config.DisplayNextPromo", true);
                 
                 // zrocweb: formatting
                 getConfig().addDefault("Formatting.TitleHeader", ".oOo.————————————————————————————————————————————————————————————————.oOo.");
@@ -242,6 +244,7 @@ public class Mcmmorankup extends JavaPlugin {
             onJoinDelay = getConfig().getLong("Config.OnJoinDelay");
             globalBroadcastFeed = getConfig().getBoolean("Config.GlobalBroadcastFeed");
             playerBroadcastFeed = getConfig().getBoolean("Config.PlayerBroadcastFeed");
+            displayNextPromo = getConfig().getBoolean("Config.DisplayNextPromo");
             
             // zrocweb: Formatting
             titleHeader = getConfig().getString("Formatting.TitleHeader");
@@ -363,4 +366,3 @@ public class Mcmmorankup extends JavaPlugin {
         }
     }
 }
-
