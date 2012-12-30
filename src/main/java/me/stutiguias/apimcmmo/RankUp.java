@@ -122,44 +122,21 @@ public class RankUp {
               String pp = ChatTools.getAltColor(plugin.promotePreTextColor);
               Boolean pb = plugin.promoteTextBold;
 
-        	  msg = msg + rt + "Base Ability: " + ra + skill + rt + 
+        	  msg = rt + "Base Ability: " + ra + skill + rt + 
         			" @ Level: " + ra + SkillLevel + rt + " (" + 
-        			(cmd.equalsIgnoreCase("show") ? (promote ? ra + pp + ChatColor.BOLD + " * " + ra + groupNow + rt + ")" : ra + groupNow+rt+")") : ra + groupNow+rt+")");         	  
+        			(cmd.equalsIgnoreCase("show") ? (promote ? ra + pp + ChatColor.BOLD + " * " + ra + groupNow + rt + ")" : ra + groupNow+rt+")") + "\n" : ra + groupNow+rt+")\n");         	  
 
-        	  msg = msg + pp + (cmd.equalsIgnoreCase("show") ? (promote ? "\n* use " + ChatColor.YELLOW + "/mru rank" + pp + " to promote ability to: " + ChatColor.YELLOW + pGroup : "") :
-        		          (promote ? "" + pp + (pb ? ChatColor.BOLD : ChatColor.RESET) + "\nPromoted to: " + pt + (pb ? ChatColor.BOLD : ChatColor.RESET) + pGroup : ""));
+        	  msg = msg + pp +
+        			      (cmd.equalsIgnoreCase("show") ?
+        			    		  (promote ? "* use " + ChatColor.YELLOW + "/mru rank" + pp + " to promote ability to: " + ChatColor.YELLOW + pGroup + "\n" : "") :
+        		            (promote ? "" + pp + (pb ? ChatColor.BOLD : ChatColor.RESET) + "Promoted to: " + pt + (pb ? ChatColor.BOLD : ChatColor.RESET) + pGroup + "\n" : ""));
         	  
-        	  msg = msg + (plugin.displayNextPromo ? "\n" : "") + ra + 
+        	  msg = msg + ra + 
         			      ((maxLvl ? "Ability (" + ht + skill + ra + ") Achieved!\n" : 
-        		            (promoteInto ? ra + "Your next promotion will achieve greatness in this ability!" :
-        		              (plugin.displayNextPromo ? rt + "Next Promotion @ Level: " + ra + (nLevel+1) + rt + " (" : ""))) + ra +
-        		               (maxLvl ? "Use " + ht + "/mru hab " + ChatColor.WHITE + "<" + ht + "ability" + ChatColor.WHITE + ">" + ra + " to select a new Ability" :
-        		             (plugin.displayNextPromo ? nGroup + rt+")" : ""))) + (plugin.displayNextPromo ? "\n" : "");              
-        	  
-        	  /*
-        	  msg = msg + "\n" + ra + 
-    			      ((maxLvl ? "Ability (" + ht + skill + ra + ") Achieved!\n" : 
-    		          (promoteInto ? ra + "Your next promotion will achieve greatness in this ability!" : rt + "Next Promotion @ Level: " + ra + (nLevel+1) +
-    		          rt + " (")) + ra + (maxLvl ? "Use " + ht + "/mru hab " +
-    		          ChatColor.WHITE + "<" + ht + "ability" + ChatColor.WHITE + ">" + ra + " to select a new Ability" : nGroup + rt+")")) + "\n";
-        	  */
-        	  
-        	  
-        	  
-        	  /* before color/formatting changes
-        	  msg = msg + ChatColor.AQUA + "Base Ability: " + ChatColor.DARK_AQUA + skill + ChatColor.AQUA + 
-        			" @ Level: " + ChatColor.DARK_AQUA + SkillLevel + ChatColor.AQUA + " - " + 
-        			(cmd.equalsIgnoreCase("show") ? (promote ? ChatColor.DARK_AQUA + groupNow + ChatColor.YELLOW + "(" + ChatColor.DARK_AQUA + " * promotable " + ChatColor.YELLOW + ")" : ChatColor.DARK_AQUA + groupNow) : ChatColor.DARK_AQUA + groupNow);         	  
-
-        	  msg = msg + ChatColor.DARK_PURPLE + (cmd.equalsIgnoreCase("show") ? (promote ? "\n* use " + ChatColor.YELLOW + "/mru rank" + ChatColor.DARK_PURPLE + " to promote ability to: " + ChatColor.YELLOW + pGroup : "") :
-        		          (promote ? "" + ChatColor.DARK_PURPLE + ChatColor.BOLD + "\nPromoted to: " + ChatColor.YELLOW + ChatColor.BOLD + pGroup : ""));
-        	  
-        	  msg = msg + "\n" + ChatColor.DARK_AQUA + 
-        			      ((maxLvl ? "Ability (" + ChatColor.YELLOW + skill + ChatColor.DARK_AQUA + ") Achieved!\n" : 
-        		          (promoteInto ? ChatColor.DARK_AQUA + "Your next promotion will achieve greatness in this ability!" : ChatColor.AQUA + "Next Promotion @ Level: " + ChatColor.DARK_AQUA + nLevel +
-        		          ChatColor.AQUA + " ( ")) + ChatColor.DARK_AQUA + (maxLvl ? "Use " + ChatColor.YELLOW + "/mru hab " +
-        		          ChatColor.WHITE + "<" + ChatColor.YELLOW + "ability" + ChatColor.WHITE + ">" + ChatColor.DARK_AQUA + " to select a new Ability" : nGroup + ")")) + "\n";
-        	  /******************************************************************* */
+        		            (promoteInto ? ra + "Your next promotion will achieve greatness in this ability!\n" :
+        		            	(plugin.displayNextPromo ? rt + "Next Promotion @ Level: " + ra + (nLevel+1) + rt + " (" : ""))) +
+        		            	ra + (maxLvl ? "Use " + ht + "/mru hab " + ChatColor.WHITE + "<" + ht + "ability" + ChatColor.WHITE + ">" + ra + " to select a new Ability\n" :
+        		                       (promoteInto ? "" : (plugin.displayNextPromo ? nGroup + rt+")\n" : ""))));              
               
         	  player.sendMessage("\n" + ChatTools.formatTitle(title, plugin.titleHeader, plugin.titleHeaderLineColor, plugin.titleHeaderTextColor, plugin.titleHeaderAltColorBold,
         			                                                 plugin.titleHeaderAltColor, plugin.titleHeaderAltColorBold));
@@ -188,42 +165,6 @@ public class RankUp {
         return "failed";
       }
 
-    
-    /* Original
-    public Boolean tryRankUp(Player player,String skill,String gender) {
-      try{
-            if(PlayerToIgnore(player)) return false;
-            if(GroupToIgnore(player)) return false;
-            PlayerProfile _McMMOPlayerProfile =  Users.getProfile(player);
-            Integer SkillLevel;
-            if(skill.equalsIgnoreCase("POWERLEVEL")) {
-                SkillLevel = getPowerLevel(player);
-            }else{
-                SkillLevel = _McMMOPlayerProfile.getSkillLevel(getSkillType(skill));
-            }
-            String group = "";
-            String groupNow = plugin.permission.getPrimaryGroup(player);
-            for (Iterator<String> it = plugin.RankUpConfig.get(skill).get(gender).iterator(); it.hasNext();) {
-                String entry = it.next();
-                String[] levelGroup = entry.split(",");
-                if(Integer.parseInt(levelGroup[0]) < SkillLevel){
-                    group = levelGroup[1]; 
-                }
-            }
-            if(group.equalsIgnoreCase(groupNow)) return false;
-            if(!group.equalsIgnoreCase("")) return ChangeGroup(player,group,skill);
-      }catch(NullPointerException ex) {
-            Mcmmorankup.logger.log(Level.WARNING,"{tryRankUp} - Error trying to rank up " + ex.getMessage());
-            return false;
-      }catch(Exception ex) {
-            Mcmmorankup.logger.log(Level.WARNING,"{tryRankUp} - Error trying to rank up " + ex.getMessage());
-            ex.printStackTrace();
-            return false;
-      }
-      return false;
-    }
-    ************************************************************************************************ */
-    
     public boolean tryRankUpWithoutGroup(Player player,String skill,String gender) {
         try{
             if(PlayerToIgnore(player)) return false;
