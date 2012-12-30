@@ -53,7 +53,7 @@ public class MRUCommandListener implements CommandExecutor {
          }
          
          // Toggle Displaying The Next Promotional Information in Rank Info and/or Promotion Messaging
-         if(args[0].equalsIgnoreCase("promo")) {
+         if(args[0].equalsIgnoreCase("pinfo")) {
              Player _player = (Player)cs;
              if(!plugin.permission.has(_player.getWorld(), _player.getName(),"mru.reload")) return false;
         	 
@@ -170,7 +170,7 @@ public class MRUCommandListener implements CommandExecutor {
             cs.sendMessage(plugin.parseColor("&6/mru hab <ability> &7Set your Rank Base Ability to <ability>"));
         }
         if(plugin.permission.has(_player.getWorld(), _player.getName(),"mru.reload")) {
-            cs.sendMessage(plugin.parseColor("&6/mru promo &7Toggle Next Promotion Info. &e" + (plugin.displayNextPromo ? "OFF" : "ON")));
+            cs.sendMessage(plugin.parseColor("&6/mru pinfo &7Toggle Next Promotion Info. &e" + (plugin.displayNextPromo ? "OFF" : "ON")));
         	cs.sendMessage(plugin.parseColor("&6/mru reload &7Reload the all configs..."));
         }
         //cs.sendMessage("-----------------------------------------------------");
