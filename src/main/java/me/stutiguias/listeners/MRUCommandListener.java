@@ -4,6 +4,7 @@ import me.stutiguias.mcmmorankup.ChatTools;
 import me.stutiguias.mcmmorankup.Mcmmorankup;
 import me.stutiguias.profile.Profile;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -49,6 +50,19 @@ public class MRUCommandListener implements CommandExecutor {
          
          if(args[0].equalsIgnoreCase("female")) {
              setGender(cs,"Female");
+         }
+         
+         // Toggle Displaying The Next Promotional Information in Rank Info and/or Promotion Messaging
+         if(args[0].equalsIgnoreCase("promo")) {
+             Player _player = (Player)cs;
+             if(!plugin.permission.has(_player.getWorld(), _player.getName(),"mru.reload")) return false;
+        	 
+             plugin.displayNextPromo = !plugin.displayNextPromo;
+             plugin.getConfig().set("Config.DisplayNextPromo",  plugin.displayNextPromo);
+             plugin.saveConfig();
+             
+             cs.sendMessage("" + ChatColor.YELLOW + ChatColor.BOLD + "Promotional Information Toggled " +
+                ChatColor.WHITE + ChatColor.BOLD + (plugin.displayNextPromo ? "ON" : "OFF")); 
          }
          
          // Its Reload ?
@@ -147,7 +161,7 @@ public class MRUCommandListener implements CommandExecutor {
         //cs.sendMessage("-=-=-=-=-=-=-=-=- [ RANKING HELP ] -=-=-=-=-=-=-=-=-");
         cs.sendMessage("\n"+ChatTools.formatTitle("RANKING HELP",  plugin.titleHeader, plugin.titleHeaderLineColor, plugin.titleHeaderTextColor, plugin.titleHeaderAltColorBold,
         			                                          plugin.titleHeaderAltColor, plugin.titleHeaderAltColorBold));
-        cs.sendMessage(plugin.parseColor("&6/mru show &7Shows your rank and next promotion"));
+        cs.sendMessage(plugin.parseColor("&6/mru show &7Shows your current ranking info."));
         cs.sendMessage(plugin.parseColor("&6/mru rank &7Execute Rankup Promotion??"));
         cs.sendMessage(plugin.parseColor("&6/mru male &7Set your Gender to Male"));
         cs.sendMessage(plugin.parseColor("&6/mru female &7Set your Gender to Female"));
@@ -156,7 +170,8 @@ public class MRUCommandListener implements CommandExecutor {
             cs.sendMessage(plugin.parseColor("&6/mru hab <ability> &7Set your Rank Base Ability to <ability>"));
         }
         if(plugin.permission.has(_player.getWorld(), _player.getName(),"mru.reload")) {
-            cs.sendMessage(plugin.parseColor("&6/mru reload &7Reload the all configs..."));
+            cs.sendMessage(plugin.parseColor("&6/mru promo &7Toggle Next Promotion Info. &e" + (plugin.displayNextPromo ? "OFF" : "ON")));
+        	cs.sendMessage(plugin.parseColor("&6/mru reload &7Reload the all configs..."));
         }
         //cs.sendMessage("-----------------------------------------------------");
         cs.sendMessage(ChatTools.getAltColor(plugin.titleFooterLineColor) + plugin.titleFooter);
