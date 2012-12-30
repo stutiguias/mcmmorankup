@@ -5,12 +5,12 @@ author: Stutiguias, zrocweb
 depend: [Vault,mcMMO]
 commands:
   mru:
-   description: Check your Rank
+   description: RankUp in your skills
    usage:
    
 permissions:
     mru.hability:
-       description: Give Acess to Skill By Hability
+       description: Gives access to provide player option to choose ability skill
        default: true
     mru.reload:
        description: reload the plugin
