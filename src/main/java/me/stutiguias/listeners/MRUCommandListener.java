@@ -133,7 +133,7 @@ public class MRUCommandListener implements CommandExecutor {
                 plugin.Playertime.put(cs.getName(),plugin.getCurrentMilli());
                 return true;
              } else {
-                cs.sendMessage("&cCommand attempted too soon!");
+                cs.sendMessage(ChatColor.RED + "Command attempted too soon!");
                 return false;
              }
     }
