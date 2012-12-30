@@ -129,11 +129,22 @@ public class RankUp {
         	  msg = msg + pp + (cmd.equalsIgnoreCase("show") ? (promote ? "\n* use " + ChatColor.YELLOW + "/mru rank" + pp + " to promote ability to: " + ChatColor.YELLOW + pGroup : "") :
         		          (promote ? "" + pp + (pb ? ChatColor.BOLD : ChatColor.RESET) + "\nPromoted to: " + pt + (pb ? ChatColor.BOLD : ChatColor.RESET) + pGroup : ""));
         	  
-        	  msg = msg + "\n" + ra + 
+        	  msg = msg + (plugin.displayNextPromo ? "\n" : "") + ra + 
         			      ((maxLvl ? "Ability (" + ht + skill + ra + ") Achieved!\n" : 
-        		          (promoteInto ? ra + "Your next promotion will achieve greatness in this ability!" : rt + "Next Promotion @ Level: " + ra + (nLevel+1) +
-        		          rt + " (")) + ra + (maxLvl ? "Use " + ht + "/mru hab " +
-        		          ChatColor.WHITE + "<" + ht + "ability" + ChatColor.WHITE + ">" + ra + " to select a new Ability" : nGroup + rt+")")) + "\n";              
+        		            (promoteInto ? ra + "Your next promotion will achieve greatness in this ability!" :
+        		              (plugin.displayNextPromo ? rt + "Next Promotion @ Level: " + ra + (nLevel+1) + rt + " (" : ""))) + ra +
+        		               (maxLvl ? "Use " + ht + "/mru hab " + ChatColor.WHITE + "<" + ht + "ability" + ChatColor.WHITE + ">" + ra + " to select a new Ability" :
+        		             (plugin.displayNextPromo ? nGroup + rt+")" : ""))) + (plugin.displayNextPromo ? "\n" : "");              
+        	  
+        	  /*
+        	  msg = msg + "\n" + ra + 
+    			      ((maxLvl ? "Ability (" + ht + skill + ra + ") Achieved!\n" : 
+    		          (promoteInto ? ra + "Your next promotion will achieve greatness in this ability!" : rt + "Next Promotion @ Level: " + ra + (nLevel+1) +
+    		          rt + " (")) + ra + (maxLvl ? "Use " + ht + "/mru hab " +
+    		          ChatColor.WHITE + "<" + ht + "ability" + ChatColor.WHITE + ">" + ra + " to select a new Ability" : nGroup + rt+")")) + "\n";
+        	  */
+        	  
+        	  
         	  
         	  /* before color/formatting changes
         	  msg = msg + ChatColor.AQUA + "Base Ability: " + ChatColor.DARK_AQUA + skill + ChatColor.AQUA + 
