@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package me.stutiguias.mcmmorankup;
 
 import java.io.File;
@@ -22,10 +18,6 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-/**
- *
- * @author Stutiguias
- */
 public class Mcmmorankup extends JavaPlugin {
 
     public String logPrefix = "[McMMoRankUp] ";
@@ -51,6 +43,12 @@ public class Mcmmorankup extends JavaPlugin {
     public String MFail;
     public String NotFound;
     public String setGender;
+
+    // zrocweb: added messaging
+    public String rankinfoTitle;
+    public String promoteTitle;
+    public String globalBroadcastRankupTitle;
+    public String baseRanksListing;
     
     //ConfigAcess for hability
     public ConfigAccessor POWERLEVEL;
@@ -74,10 +72,33 @@ public class Mcmmorankup extends JavaPlugin {
     public boolean AutoUpdate;
     public boolean RemoveOnlyPluginGroup;
     
+    // zrocweb: add config 
+    public long onJoinDelay;
+    public Boolean globalBroadcastFeed;
+    public Boolean playerBroadcastFeed;
+    public Boolean displayNextPromo;
+    
+    // zrocweb: Formatting
+    public String titleHeader;
+    public String titleFooter;
+    public String titleHeaderLineColor;
+    public String titleHeaderTextColor;
+    public Boolean titleHeaderTextColorBold;
+    public String titleHeaderAltColor;
+    public Boolean titleHeaderAltColorBold;
+    public String titleFooterLineColor;
+    public String titleFooterTextColor;
+    public String rankinfoTextColor;
+    public String rankinfoAltColor;
+    public String promoteTextColor;
+    public Boolean promoteTextBold;
+    public String promotePreTextColor;
+    public String generalMessages;
+    
     @Override
     public void onEnable() {
 
-            logger.log(Level.INFO, "{0} Mcmmorankup is initializing", logPrefix);
+            logger.log(Level.INFO, "{0} z_Mcmmorankup is initializing", logPrefix);
 
             onLoadConfig();
             getCommand("mru").setExecutor(new MRUCommandListener(this));
@@ -97,7 +118,7 @@ public class Mcmmorankup extends JavaPlugin {
                   uptime = Long.parseLong(AutoUpdateTime.replace("m",""));
                   uptime =  ( uptime * 60 ) * 20;
                 }
-                getServer().getScheduler().scheduleAsyncRepeatingTask(this, new UpdateTask(this), uptime, uptime);
+                getServer().getScheduler().scheduleSyncRepeatingTask(this, new UpdateTask(this), uptime, uptime);
             }
             
             File f = new File("plugins"+ File.separator +"Mcmmorankup"+ File.separator +"userdata");
@@ -108,12 +129,12 @@ public class Mcmmorankup extends JavaPlugin {
             
             if(this.permission.isEnabled() == true)
             {
-                logger.log(Level.INFO, "{0} Vault perm enable.", logPrefix);    
+                logger.log(Level.INFO, "{0} Vault perms hooked!", logPrefix);    
             }else{
-                logger.log(Level.INFO, "{0} Vault NOT ENABLE.", logPrefix);    
+                logger.log(Level.INFO, "{0} Vault WAS NOT ENABLED!", logPrefix);    
             }
             
-            //Metrics 
+           //Metrics 
             try {
               logger.log(Level.INFO, "{0} Sending Metrics !", logPrefix);
               Metrics metrics = new Metrics(this);
@@ -121,7 +142,7 @@ public class Mcmmorankup extends JavaPlugin {
             } catch (IOException e) {
               logger.log(Level.INFO, "{0} Failed to submit the stats :-(", logPrefix);
             }
-
+           
     }
 
     @Override
@@ -139,23 +160,54 @@ public class Mcmmorankup extends JavaPlugin {
 
     private void initConfig() {
                 
-                getConfig().addDefault("Message.NotHaveProfile", "Dot not find any profile of mcMMO of you");
-                getConfig().addDefault("Message.ChooseHability", "You choose to rank up base on %hability%");
-                getConfig().addDefault("Message.RankUp", "Player %player% promote to %group%");
-                getConfig().addDefault("Message.Sucess", "Promote Sucess");
-                getConfig().addDefault("Message.Fail", "Promote Fail");
-                getConfig().addDefault("Message.NotFound", "Hability For Rank not found or configured");
-                getConfig().addDefault("Message.setGender", "Your Gender is set to %gender%");
+                getConfig().addDefault("Message.NotHaveProfile", "Did not find your ranking profile!");
+                getConfig().addDefault("Message.ChooseHability", "You chose to rank up based on %ability%");
+                getConfig().addDefault("Message.RankUp", "Player %player% has been promoted to %group%");
+                getConfig().addDefault("Message.Sucess", "Congrats! Ability has been promoted to the next level");
+                getConfig().addDefault("Message.Fail", "Sorry your level is too low for promotion");
+                getConfig().addDefault("Message.NotFound", "Ranking File not found or has not been configured");
+                getConfig().addDefault("Message.setGender", "Your Gender has been set to %gender%");
+                
+                // zrocweb: added messaging
+                getConfig().addDefault("Message.RankInfoTitle", "RANK INFO");
+                getConfig().addDefault("Message.PromoteTitle", "PROMOTION");
+                getConfig().addDefault("Message.GlobalBroadcastRankupTitle", "RANK UP");
+                getConfig().addDefault("Message.BaseRanksListing", "BASE RANK ABILITIES LISTING");
+                
                 
                 getConfig().addDefault("Config.UseTagOnlySystem", false);
                 getConfig().addDefault("Config.RemoveOnlyPluginGroup",true);
                 getConfig().addDefault("Config.PromoteOnJoin", true);
+                
+                // zrocweb: added config
+                getConfig().addDefault("Config.OnJoinDelay",300);
+                getConfig().addDefault("Config.GlobalBroadcastFeed", true);
+                getConfig().addDefault("Config.PlayerBroadcastFeed", true);
+                getConfig().addDefault("Config.DisplayNextPromo", true);
+                
+                // zrocweb: formatting
+                getConfig().addDefault("Formatting.TitleHeader", ".oOo.————————————————————————————————————————————————————————————————.oOo.");
+                getConfig().addDefault("Formatting.TitleFooter", "——————————————————————————————————————————————————————————————————————————————");
+                getConfig().addDefault("Formatting.TitleHeaderLineColor", "&9");
+                getConfig().addDefault("Formatting.TitleHeaderTextColor", "&e");
+                getConfig().addDefault("Formatting.TitleHeaderTextColorBold", true);
+                getConfig().addDefault("Formatting.TitleHeaderAltColor", "&f");
+                getConfig().addDefault("Formatting.TitleHeaderAltColorBold", true);
+                getConfig().addDefault("Formatting.TitleFooterLineColor", "&9");
+                getConfig().addDefault("Formatting.TitleFooterTextColor", "&e"); 
+                getConfig().addDefault("Formatting.RankInfoTextColor", "&b");
+                getConfig().addDefault("Formatting.RankInfoAltColor", "&3");
+                getConfig().addDefault("Formatting.PromoteTextColor", "&e");
+                getConfig().addDefault("Formatting.PromoteTextBold", true);
+                getConfig().addDefault("Formatting.PromotePreTextColor", "&5");
+                getConfig().addDefault("Formatting.GeneralMessages", "&6");
+                
                 getConfig().addDefault("Config.AutoUpdate", true);
                 getConfig().addDefault("Config.AutoUpdateTime", "1h");
                 getConfig().addDefault("Config.UseAlternativeBroadCast", true);
                 getConfig().addDefault("Config.DefaultSkill", "POWERLEVEL");
-                getConfig().addDefault("PlayerToIgnore", "Stutiguias,Player2");
-                getConfig().addDefault("GroupToIgnore","Admin,Moderator");
+                getConfig().addDefault("PlayerToIgnore", "");
+                getConfig().addDefault("GroupToIgnore","");
 
                 getConfig().options().copyDefaults(true);
                 saveConfig();
@@ -187,6 +239,29 @@ public class Mcmmorankup extends JavaPlugin {
             DefaultSkill = getConfig().getString("Config.DefaultSkill");
             TagSystem = getConfig().getBoolean("Config.UseTagOnlySystem");
             RemoveOnlyPluginGroup = getConfig().getBoolean("Config.RemoveOnlyPluginGroup");
+            
+            // zrocweb: added config
+            onJoinDelay = getConfig().getLong("Config.OnJoinDelay");
+            globalBroadcastFeed = getConfig().getBoolean("Config.GlobalBroadcastFeed");
+            playerBroadcastFeed = getConfig().getBoolean("Config.PlayerBroadcastFeed");
+            displayNextPromo = getConfig().getBoolean("Config.DisplayNextPromo");
+            
+            // zrocweb: Formatting
+            titleHeader = getConfig().getString("Formatting.TitleHeader");
+            titleFooter = getConfig().getString("Formatting.TitleFooter");
+            titleHeaderLineColor = getConfig().getString("Formatting.TitleHeaderLineColor");
+            titleHeaderTextColor = getConfig().getString("Formatting.TitleHeaderTextColor");
+            titleHeaderTextColorBold = getConfig().getBoolean("Formatting.TitleHeaderTextColorBold");
+            titleHeaderAltColor = getConfig().getString("Formatting.TitleHeaderAltColor");
+            titleHeaderAltColorBold = getConfig().getBoolean("Formatting.TitleHeaderAltColorBold");
+            titleFooterLineColor = getConfig().getString("Formatting.TitleFooterLineColor");
+            titleFooterTextColor = getConfig().getString("Formatting.TitleFooterTextColor");
+            rankinfoTextColor = getConfig().getString("Formatting.RankInfoTextColor");
+            rankinfoAltColor = getConfig().getString("Formatting.RankInfoAltColor");
+            promoteTextColor = getConfig().getString("Formatting.PromoteTextColor");
+            promoteTextBold = getConfig().getBoolean("Formatting.PromoteTextBold");
+            promotePreTextColor = getConfig().getString("Formatting.PromotePreTextColor");
+            generalMessages = getConfig().getString("Formatting.GeneralMessages");
             
             logger.log(Level.INFO, "{0} Alternative Broadcast is {1}", new Object[]{logPrefix, UseAlternativeBroadcast});
             logger.log(Level.INFO, "{0} Default skill is {1}", new Object[]{logPrefix, DefaultSkill});
@@ -231,6 +306,12 @@ public class Mcmmorankup extends JavaPlugin {
             MFail = getConfig().getString("Message.Fail");
             NotFound = getConfig().getString("Message.NotFound");
             setGender = getConfig().getString("Message.setGender");
+            
+            // zrocweb: added messaging
+            rankinfoTitle = getConfig().getString("Message.RankInfoTitle");
+            promoteTitle = getConfig().getString("Message.PromoteTitle");
+            globalBroadcastRankupTitle = getConfig().getString("Message.GlobalBroadcastRankupTitle");
+            baseRanksListing = getConfig().getString("Message.BaseRanksListing");
             
             Playertime = new HashMap<String, Long>();
     }
@@ -277,10 +358,10 @@ public class Mcmmorankup extends JavaPlugin {
         try {
             RankUpConfig.put(name,getRanks(ca));
             if(UseAlternativeBroadcast) BroadCast.put(name,getAlternativeBroadcast(ca));
-            logger.log(Level.INFO, "{0}{1} Rank Enable!", new Object[]{logPrefix, name});
+            logger.log(Level.INFO, "{0}{1} Ranking Enabled!", new Object[]{logPrefix, name});
             isHabilityRankExist.put(name,true);
         }catch(Exception ex) {
-            logger.log(Level.INFO, "{0}{1} Rank file corrupt/not found.", new Object[]{logPrefix, name});
+            logger.log(Level.INFO, "{0}{1} Rank file is either corrupt and/or missing.", new Object[]{logPrefix, name});
             isHabilityRankExist.put(name,false);
         }
     }

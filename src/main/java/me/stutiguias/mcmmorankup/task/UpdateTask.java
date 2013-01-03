@@ -1,18 +1,12 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package me.stutiguias.mcmmorankup.task;
 
 import java.util.logging.Level;
 import me.stutiguias.mcmmorankup.Mcmmorankup;
 import me.stutiguias.profile.Profile;
+
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-/**
- *
- * @author Daniel
- */
 public class UpdateTask implements Runnable {
     
    private final Mcmmorankup plugin;
@@ -26,18 +20,21 @@ public class UpdateTask implements Runnable {
         Player[] playerList = plugin.getServer().getOnlinePlayers();
         if(plugin.getServer().getOnlinePlayers().length > 0)
         {
-            Mcmmorankup.logger.log(Level.INFO," Try to rank up online users...");
+            Mcmmorankup.logger.log(Level.INFO," Attempting to rank up online users...");
             for (Player player : playerList) {
-                try{
+                try {
                     Profile _profile = new Profile(plugin, player);
                     String skill = _profile.getHabilityForRank().toUpperCase();
                     String gender = _profile.getGender();
+                    
+                    player.sendMessage(ChatColor.AQUA + player.getName() + ", " + ChatColor.DARK_AQUA + " checking your rank and trying to promote...");
+                    
                     if(plugin.TagSystem) {
                         plugin.RankUp.tryRankUpWithoutGroup(player, skill, gender);
-                    }else{
-                        plugin.RankUp.tryRankUp(player,skill,gender);
+                    } else {
+                        plugin.RankUp.tryRankUp(player, skill, gender, "rank");    	// zrocweb: added "rank" to params
                     }
-                }catch(Exception ex) {
+                } catch(Exception ex) {
                     
                 }
             }
