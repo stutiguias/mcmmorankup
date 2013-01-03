@@ -9,8 +9,8 @@ import java.util.logging.Logger;
 import me.stutiguias.apimcmmo.RankUp;
 import me.stutiguias.listeners.MRUCommandListener;
 import me.stutiguias.listeners.MRUPlayerListener;
-import me.stutiguias.mcmmorankup.task.UpdateTask;
 import me.stutiguias.metrics.Metrics;
+import me.stutiguias.task.UpdateTask;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.ChatColor;
@@ -98,7 +98,7 @@ public class Mcmmorankup extends JavaPlugin {
     @Override
     public void onEnable() {
 
-            logger.log(Level.INFO, "{0} z_Mcmmorankup is initializing", logPrefix);
+            logger.log(Level.INFO, "{0} Mcmmorankup is initializing", logPrefix);
 
             onLoadConfig();
             getCommand("mru").setExecutor(new MRUCommandListener(this));

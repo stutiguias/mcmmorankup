@@ -1,9 +1,8 @@
-package me.stutiguias.mcmmorankup.task;
+package me.stutiguias.task;
 
 import java.util.logging.Level;
 import me.stutiguias.mcmmorankup.Mcmmorankup;
 import me.stutiguias.profile.Profile;
-
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 

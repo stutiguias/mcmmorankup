@@ -32,8 +32,8 @@ public class RankUp {
     
     public String tryRankUp(Player player, String skill, String gender, String cmd) {
         try{
-        	  if(PlayerToIgnore(player)) return "ignore";
-              if(GroupToIgnore(player)) return "ignore";
+              if(PlayerToIgnore(player)) return "ignore";
+              if(GroupToIgnore(player))  return "ignore";
 
               PlayerProfile _McMMOPlayerProfile =  Users.getProfile(player);
               Integer SkillLevel;
@@ -45,13 +45,13 @@ public class RankUp {
               }
               
               // zrocweb:
-              String title = "";
-              String msg = "";
-              String grp = "";
+              String title;
+              String msg;
+              String group = "";
               String pGroup = "";
-              String nGroup = "";
-              Integer nLevel = 0;
-              Integer lvl = 0;
+              String nextGroup = "";
+              Integer nextLevel = 0;
+              Integer level;
               String retM = "";
 
               Boolean promote = false;
@@ -65,42 +65,33 @@ public class RankUp {
                   String entry = it.next();
                   String[] levelGroup = entry.split(",");
                   
-                  // zrocweb:
-                  lvl = Integer.parseInt(levelGroup[0]);
-                  grp = levelGroup[1];
+                  level = Integer.parseInt(levelGroup[0]);
+                  group = levelGroup[1];
 
-                  if(lvl < SkillLevel) {                	  
-                	  if(SkillLevel >= lvl) {
-	        			  if(!grp.equalsIgnoreCase(groupNow)) {
-	        				  pGroup = grp;
-	        				  promote = true;
-	        			  } else {
-	        				  pGroup = groupNow;
-	        				  promote = false;
-	        			  }
-                	  } else {
-                		  pGroup = groupNow;
-                		  promote = false;
-                	  }
-                  } else {            	  
-                	  if(SkillLevel <= lvl && nGroup.equalsIgnoreCase("")) {
-                		  nGroup = grp;
-                		  nLevel = lvl;
-                	  }                	  
-                  }                                                  
-                  //player.sendMessage("cG:" + groupNow + "(" + SkillLevel + ") | tG: " + grp + "(" + lvl + ") | pG:" + pGroup + " | nG:" + nGroup + "(" + (nLevel+1) +")");
+                  if(SkillLevel >= level && !group.equalsIgnoreCase(groupNow)) {                	  
+                         pGroup = group;
+                         promote = true;
+                  } else {
+                        pGroup = groupNow;
+                        promote = false;
+                  }
+      
+                  if(SkillLevel <= level && nextGroup.equalsIgnoreCase("")) {
+                		  nextGroup = group;
+                		  nextLevel = level;
+                  }                	  
+                                                                 
               }
               
-              if(promote && nGroup.equalsIgnoreCase("") && grp.equalsIgnoreCase(groupNow)) {
-            	  // last level has been reached within this ability and has been promoted to this level
+              if(promote && nextGroup.equalsIgnoreCase("") && group.equalsIgnoreCase(groupNow)) {
             	  maxLvl=true;
-              } else if (promote && nGroup.equalsIgnoreCase("")) {
+              } else if (promote && nextGroup.equalsIgnoreCase("")) {
             	  if(cmd.equalsIgnoreCase("rank")) {
             		  maxLvl=true;
             	  } else {
             		  promoteInto=true;
             	  }            	  
-              } else if (!promote && nGroup.equalsIgnoreCase("")) {
+              } else if (!promote && nextGroup.equalsIgnoreCase("")) {
             	  maxLvl=true;
               }
                             
@@ -134,9 +125,9 @@ public class RankUp {
         	  msg = msg + ra + 
         			      ((maxLvl ? "Ability (" + ht + skill + ra + ") Achieved!\n" : 
         		            (promoteInto ? ra + "Your next promotion will achieve greatness in this ability!\n" :
-        		            	(plugin.displayNextPromo ? rt + "Next Promotion @ Level: " + ra + (nLevel+1) + rt + " (" : ""))) +
+        		            	(plugin.displayNextPromo ? rt + "Next Promotion @ Level: " + ra + (nextLevel+1) + rt + " (" : ""))) +
         		            	ra + (maxLvl ? "Use " + ht + "/mru hab " + ChatColor.WHITE + "<" + ht + "ability" + ChatColor.WHITE + ">" + ra + " to select a new Ability\n" :
-        		                       (promoteInto ? "" : (plugin.displayNextPromo ? nGroup + rt+")\n" : ""))));              
+        		                       (promoteInto ? "" : (plugin.displayNextPromo ? nextGroup + rt+")\n" : ""))));              
               
         	  player.sendMessage("\n" + ChatTools.formatTitle(title, plugin.titleHeader, plugin.titleHeaderLineColor, plugin.titleHeaderTextColor, plugin.titleHeaderAltColorBold,
         			                                                 plugin.titleHeaderAltColor, plugin.titleHeaderAltColorBold));
