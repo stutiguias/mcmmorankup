@@ -1,13 +1,5 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package me.stutiguias.mcmmorankup;
 
-/**
- *
- * @author Daniel
- */
 import java.io.*;
 import java.util.logging.Level;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -68,6 +60,13 @@ public class ConfigAccessor {
         if (defConfigStream != null) {
             YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
             fileConfiguration.setDefaults(defConfig);
+            
+	        // zrocweb:
+            try {
+	        	defConfigStream.close();
+	        } catch (IOException x) {
+	        	// do nothing...
+	        }
         }
     }
 

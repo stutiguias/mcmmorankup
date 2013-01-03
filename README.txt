@@ -37,7 +37,8 @@ UseThisBroadcast:
 GroupName are Case Sensitive !
 
 Comands
-/mru check ( checks if they can be promoted to the next rank )
+/mru show ( displays player promotional ladder only ) - v0.6.1+
+/mru rank ( checks if they can be promoted to the next rank ) - v0.6.1+
 /mru reload ( reload the plugin )
 
 Depends :
