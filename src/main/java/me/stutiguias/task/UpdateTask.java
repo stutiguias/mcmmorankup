@@ -31,7 +31,7 @@ public class UpdateTask implements Runnable {
                     if(plugin.TagSystem) {
                         plugin.RankUp.tryRankUpWithoutGroup(player, skill, gender);
                     } else {
-                        plugin.RankUp.tryRankUp(player, skill, gender, "rank");    	// zrocweb: added "rank" to params
+                        plugin.RankUp.tryRankUp(player, skill, gender);    	// zrocweb: added "rank" to params
                     }
                 } catch(Exception ex) {
                     

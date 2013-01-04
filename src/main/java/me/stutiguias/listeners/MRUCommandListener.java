@@ -104,26 +104,26 @@ public class MRUCommandListener implements CommandExecutor {
                 if(plugin.TagSystem) {
                   sucess = plugin.RankUp.tryRankUpWithoutGroup(pl, skill, gender);
                 } else {
-                  promoted =  plugin.RankUp.tryRankUp(pl, skill, gender, cmd);
+                  promoted =  plugin.RankUp.tryRankUp(pl, skill, gender);
                 }
                 
-                if (promoted == "promoted" || sucess) {
+                if ("promoted".equals(promoted) || sucess) {
                     cs.sendMessage("-----------------------------------------------------");
                     //cs.sendMessage(plugin.parseColor(plugin.MSucess));
                     cs.sendMessage(ChatTools.getAltColor(plugin.generalMessages) + plugin.MSucess);
                     cs.sendMessage("-----------------------------------------------------");
                 } else {
-                	if (cmd.equalsIgnoreCase("rank") && promoted == "failed") {		// zrocweb
+                	if (cmd.equalsIgnoreCase("rank") && "failed".equals(promoted)) {		// zrocweb
 	                    cs.sendMessage("-----------------------------------------------------");
 	                    //cs.sendMessage(plugin.parseColor(plugin.MFail));
 	                    cs.sendMessage(ChatTools.getAltColor(plugin.generalMessages) + plugin.MFail);
 	                    cs.sendMessage("-----------------------------------------------------");
-                	} else if (promoted == "already") {
+                	} else if ("already".equals(promoted)) {
 	                    cs.sendMessage("-----------------------------------------------------");
 	                    //cs.sendMessage("No further promotions available for this ability!");
 	                    cs.sendMessage(ChatTools.getAltColor(plugin.generalMessages) + "No further promotions available for this ability");
 	                    cs.sendMessage("-----------------------------------------------------");
-                	} else if (promoted == "ignore") {
+                	} else if ("ignore".equals(promoted)) {
 	                    cs.sendMessage("-----------------------------------------------------");
 	                    //cs.sendMessage("Promotions are ignored for this player and/or group");
 	                    cs.sendMessage(ChatTools.getAltColor(plugin.generalMessages) + "Promotions are ignored for this player and/or group");
@@ -158,7 +158,6 @@ public class MRUCommandListener implements CommandExecutor {
     
     public boolean Help(CommandSender cs) {
         Player _player = (Player)cs;
-        //cs.sendMessage("-=-=-=-=-=-=-=-=- [ RANKING HELP ] -=-=-=-=-=-=-=-=-");
         cs.sendMessage("\n"+ChatTools.formatTitle("RANKING HELP",  plugin.titleHeader, plugin.titleHeaderLineColor, plugin.titleHeaderTextColor, plugin.titleHeaderAltColorBold,
         			                                          plugin.titleHeaderAltColor, plugin.titleHeaderAltColorBold));
         cs.sendMessage(plugin.parseColor("&6/mru show &7Shows your current ranking info."));
@@ -173,7 +172,6 @@ public class MRUCommandListener implements CommandExecutor {
             cs.sendMessage(plugin.parseColor("&6/mru pinfo &7Toggle Next Promotion Info. &e" + (plugin.displayNextPromo ? "OFF" : "ON")));
         	cs.sendMessage(plugin.parseColor("&6/mru reload &7Reload the all configs..."));
         }
-        //cs.sendMessage("-----------------------------------------------------");
         cs.sendMessage(ChatTools.getAltColor(plugin.titleFooterLineColor) + plugin.titleFooter);
         
         return true;
@@ -183,20 +181,14 @@ public class MRUCommandListener implements CommandExecutor {
         Player _player = (Player)cs;
         Profile _profile = new Profile(plugin, _player);
         _profile.setGender(gender);
-        //cs.sendMessage("-----------------------------------------------------");
-	    cs.sendMessage("\n"+ChatTools.formatTitle("GENDER SELECTED",  plugin.titleHeader, plugin.titleHeaderLineColor, plugin.titleHeaderTextColor, plugin.titleHeaderAltColorBold,
-			      												 plugin.titleHeaderAltColor, plugin.titleHeaderAltColorBold));
-        //cs.sendMessage(plugin.parseColor(plugin.setGender.replace("%gender%", gender)));
+	    cs.sendMessage("\n"+ChatTools.formatTitle("GENDER SELECTED",  plugin.titleHeader, plugin.titleHeaderLineColor, plugin.titleHeaderTextColor, plugin.titleHeaderAltColorBold,	plugin.titleHeaderAltColor, plugin.titleHeaderAltColorBold));
 	    cs.sendMessage(ChatTools.getAltColor(plugin.generalMessages) + plugin.setGender.replace("%gender%", gender));
-        //cs.sendMessage("-----------------------------------------------------");
         cs.sendMessage(ChatTools.getAltColor(plugin.titleFooterLineColor) + plugin.titleFooter);
         return true;
     }
     
-    
     // zrocweb: TODO: detail out each level/group for the skills rank bases displayed below...
     public boolean ListHability(CommandSender cs) {
-        //cs.sendMessage("-=-=-=-=-= [ BASE RANK ABILITIES LISTING ] =-=-=-=-=-=-");
     	cs.sendMessage("\n"+ChatTools.formatTitle(plugin.baseRanksListing,  plugin.titleHeader, plugin.titleHeaderLineColor, plugin.titleHeaderTextColor, plugin.titleHeaderAltColorBold,
                 															 plugin.titleHeaderAltColor, plugin.titleHeaderAltColorBold));    	
         for(String key:plugin.isHabilityRankExist.keySet()) {
@@ -206,7 +198,6 @@ public class MRUCommandListener implements CommandExecutor {
                cs.sendMessage(plugin.parseColor("&6" + key + " &7 - Not Available for Rank Base"));
            }
         }
-        //cs.sendMessage("-------------------------------------------------------");
         cs.sendMessage(ChatTools.getAltColor(plugin.titleFooterLineColor) + plugin.titleFooter);
         return true;
     }

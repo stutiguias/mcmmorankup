@@ -35,6 +35,7 @@ public class MRUPlayerListener implements Listener {
         	Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {                
                 Profile _profile = new Profile(plugin, pl);
         		
+                @Override
                 public void run() {
 					String skill = _profile.getHabilityForRank().toUpperCase();
 					String gender = _profile.getGender();
@@ -45,10 +46,10 @@ public class MRUPlayerListener implements Listener {
 					if(plugin.TagSystem) {
 					    sucess = plugin.RankUp.tryRankUpWithoutGroup(pl, skill, gender);
 					} else {
-					    promoted =  plugin.RankUp.tryRankUp(pl, skill, gender, "rank");
+					    promoted =  plugin.RankUp.tryRankUp(pl, skill, gender);
 					} 
 					
-					if (sucess || promoted == "promoted") {
+					if (sucess || "promoted".equals(promoted)) {
 						pl.getPlayer().sendMessage(ChatTools.getAltColor(plugin.generalMessages) + plugin.MSucess);
 					}
                 }

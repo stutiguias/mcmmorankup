@@ -30,7 +30,7 @@ public class RankUp {
         }
     }
     
-    public String tryRankUp(Player player, String skill, String gender, String cmd) {
+    public String tryRankUp(Player player, String skill, String gender) {
         try{
               if(PlayerToIgnore(player)) return "ignore";
               if(GroupToIgnore(player))  return "ignore";
@@ -46,21 +46,18 @@ public class RankUp {
               
               // zrocweb:
               String title;
-              String msg;
+              StringBuilder msg = new StringBuilder();
               String group = "";
-              String pGroup = "";
-              String nextGroup = "";
+              String nextGroup = "none";
               Integer nextLevel = 0;
               Integer level;
-              String retM = "";
+              String result = "failed";
+              
+              Boolean reachMaxLevel = false;
+              
+              String OldplayerGroup = plugin.permission.getPrimaryGroup(player);
+              String NewplayerGroup = OldplayerGroup;
 
-              Boolean promote = false;
-              Boolean dummy = false;
-              Boolean maxLvl = false;
-              Boolean promoteInto=false;
-              
-              String groupNow = plugin.permission.getPrimaryGroup(player);
-              
               for (Iterator<String> it = plugin.RankUpConfig.get(skill).get(gender).iterator(); it.hasNext();) {
                   String entry = it.next();
                   String[] levelGroup = entry.split(",");
@@ -68,41 +65,27 @@ public class RankUp {
                   level = Integer.parseInt(levelGroup[0]);
                   group = levelGroup[1];
 
-                  if(SkillLevel >= level && !group.equalsIgnoreCase(groupNow)) {                	  
-                         pGroup = group;
-                         promote = true;
-                  } else {
-                        pGroup = groupNow;
-                        promote = false;
+                  if(SkillLevel >= level) {                	  
+                        NewplayerGroup = group;
                   }
       
-                  if(SkillLevel <= level && nextGroup.equalsIgnoreCase("")) {
-                		  nextGroup = group;
-                		  nextLevel = level;
+                  if(SkillLevel <= level && nextGroup.equalsIgnoreCase("none")) {
+                        nextGroup = group;
+                        nextLevel = level;
                   }                	  
                                                                  
               }
               
-              if(promote && nextGroup.equalsIgnoreCase("") && group.equalsIgnoreCase(groupNow)) {
-            	  maxLvl=true;
-              } else if (promote && nextGroup.equalsIgnoreCase("")) {
-            	  if(cmd.equalsIgnoreCase("rank")) {
-            		  maxLvl=true;
-            	  } else {
-            		  promoteInto=true;
-            	  }            	  
-              } else if (!promote && nextGroup.equalsIgnoreCase("")) {
-            	  maxLvl=true;
+              if(nextGroup.equalsIgnoreCase("none")) {
+            	  reachMaxLevel=true;    
+                  result="already";                  
               }
                             
-              if (promote && cmd.equalsIgnoreCase("rank")) {
+              if (OldplayerGroup.equalsIgnoreCase(NewplayerGroup)) {
               	  title = plugin.promoteTitle;
-            	  if(!pGroup.equalsIgnoreCase(groupNow)) {
-            		  dummy = ChangeGroup(player, pGroup, skill);
-            	  }
-              } else {            	  
+              } else {  
+                  if(ChangeGroup(player, NewplayerGroup, skill)) result = "promoted";  
             	  title = plugin.rankinfoTitle;
-            	  if(maxLvl && cmd.equalsIgnoreCase("rank") && pGroup.equalsIgnoreCase(groupNow)) retM="already";
               }
               
               // Color Formatting init
@@ -113,47 +96,30 @@ public class RankUp {
               String pp = ChatTools.getAltColor(plugin.promotePreTextColor);
               Boolean pb = plugin.promoteTextBold;
 
-        	  msg = rt + "Base Ability: " + ra + skill + rt + 
-        			" @ Level: " + ra + SkillLevel + rt + " (" + 
-        			(cmd.equalsIgnoreCase("show") ? (promote ? ra + pp + ChatColor.BOLD + " * " + ra + groupNow + rt + ")" : ra + groupNow+rt+")") + "\n" : ra + groupNow+rt+")\n");         	  
-
-        	  msg = msg + pp +
-        			      (cmd.equalsIgnoreCase("show") ?
-        			    		  (promote ? "* use " + ChatColor.YELLOW + "/mru rank" + pp + " to promote ability to: " + ChatColor.YELLOW + pGroup + "\n" : "") :
-        		            (promote ? "" + pp + (pb ? ChatColor.BOLD : ChatColor.RESET) + "Promoted to: " + pt + (pb ? ChatColor.BOLD : ChatColor.RESET) + pGroup + "\n" : ""));
-        	  
-        	  msg = msg + ra + 
-        			      ((maxLvl ? "Ability (" + ht + skill + ra + ") Achieved!\n" : 
-        		            (promoteInto ? ra + "Your next promotion will achieve greatness in this ability!\n" :
-        		            	(plugin.displayNextPromo ? rt + "Next Promotion @ Level: " + ra + (nextLevel+1) + rt + " (" : ""))) +
-        		            	ra + (maxLvl ? "Use " + ht + "/mru hab " + ChatColor.WHITE + "<" + ht + "ability" + ChatColor.WHITE + ">" + ra + " to select a new Ability\n" :
-        		                       (promoteInto ? "" : (plugin.displayNextPromo ? nextGroup + rt+")\n" : ""))));              
-              
-        	  player.sendMessage("\n" + ChatTools.formatTitle(title, plugin.titleHeader, plugin.titleHeaderLineColor, plugin.titleHeaderTextColor, plugin.titleHeaderAltColorBold,
-        			                                                 plugin.titleHeaderAltColor, plugin.titleHeaderAltColorBold));
-              player.sendMessage(msg);
-              player.sendMessage(ChatTools.getAltColor(plugin.titleFooterLineColor) + plugin.titleFooter);
-              
-              
-              if (promote) {
-            	  if(dummy) {
-            		  return "promoted";
-            	  } else {
-            		  return "";
-            	  }
-              } else if (!retM.equalsIgnoreCase("")) {
-            	  return retM;
+              msg.append("Base Ability: ").append(skill);
+              msg.append(" @ Level: ").append(SkillLevel).append(" ( ").append(NewplayerGroup).append(" )\n");
+              if(reachMaxLevel) {
+                  msg.append("Ability ( ").append(skill).append(" ) Achieved!\n");
+                  msg.append("Use /mru hab <ability> to select a new Ability\n");
+              }else if(plugin.displayNextPromo) {
+                  msg.append("Your next promotion will achieve greatness in this ability!\n");
+                  msg.append("Next Promotion @ Level: ").append(nextLevel+1).append(" ( ").append(nextGroup).append(" ) ");
               }
+              
+              player.sendMessage("\n" + ChatTools.formatTitle(title, plugin.titleHeader, plugin.titleHeaderLineColor, plugin.titleHeaderTextColor, plugin.titleHeaderAltColorBold,plugin.titleHeaderAltColor, plugin.titleHeaderAltColorBold));
+              player.sendMessage(msg.toString());
+              player.sendMessage(ChatTools.getAltColor(plugin.titleFooterLineColor) + plugin.titleFooter);
+              return result;
 
         } catch (NullPointerException ex) {
               Mcmmorankup.logger.log(Level.WARNING,"{tryRankUp} - Error trying to rank up " + ex.getMessage());
+              ex.printStackTrace();
               return "error";
         } catch (Exception ex) {
               Mcmmorankup.logger.log(Level.WARNING,"{tryRankUp} - Error trying to rank up " + ex.getMessage());
               ex.printStackTrace();
               return "error";
         }
-        return "failed";
       }
 
     public boolean tryRankUpWithoutGroup(Player player,String skill,String gender) {
@@ -223,13 +189,9 @@ public class RankUp {
         state = plugin.permission.playerAddGroup(player.getWorld(),player.getName(),newgroup);
         
         if(!groupnow.equalsIgnoreCase(newgroup))  {
-            //plugin.getServer().broadcastMessage("-=-=-=-=-=-=-=-=- [ RANK UP] -=-=-=-=-=-=-=-=-=-=-=-");
-        	plugin.getServer().broadcastMessage("\n"+ChatTools.formatTitle(plugin.globalBroadcastRankupTitle, plugin.titleFooter, plugin.titleHeaderLineColor, plugin.titleHeaderTextColor, plugin.titleHeaderAltColorBold,
-						  												   plugin.titleHeaderAltColor, plugin.titleHeaderAltColorBold));
-        	//plugin.getServer().broadcastMessage(plugin.parseColor(BroadcastMessage(player, newgroup, skill)));
+        	plugin.getServer().broadcastMessage("\n"+ChatTools.formatTitle(plugin.globalBroadcastRankupTitle, plugin.titleFooter, plugin.titleHeaderLineColor, plugin.titleHeaderTextColor, plugin.titleHeaderAltColorBold,plugin.titleHeaderAltColor, plugin.titleHeaderAltColorBold));
         	plugin.getServer().broadcastMessage(ChatTools.getAltColor(plugin.generalMessages) + BroadcastMessage(player, newgroup, skill));
-            //plugin.getServer().broadcastMessage("----------------------------------------------------");
-            plugin.getServer().broadcastMessage(ChatTools.getAltColor(plugin.titleFooterLineColor) + plugin.titleFooter);
+                plugin.getServer().broadcastMessage(ChatTools.getAltColor(plugin.titleFooterLineColor) + plugin.titleFooter);
         }
         
         return state;   
