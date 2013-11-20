@@ -4,8 +4,7 @@ McmmoRankUp
 ## What this Plugin do ? ##
 	 Gives you and players the option to automate your permission systems groups to players on your servers.
 
-Optionally, if you just want a Rank-Up based on internal tags, you don't have use the permissions systems groups.
-All of this with your McMMO RPG System.
+Optionally, if you just want a Rank-Up based on internal tags, you don't have use the permissions systems groups all of this with your McMMO RPG System.
 
 ## Players ##
          Can choose which ability they wish to use as their Base Rank Ability. 
