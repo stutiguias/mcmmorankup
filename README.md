@@ -5,7 +5,7 @@ McmmoRankUp
 	 Gives you and players the option to automate your permission systems groups to players on your servers.
 
 Optionally, if you just want a Rank-Up based on internal tags, you don't have use the permissions systems groups.
-All of this is commingled with your McMMO RPG System. All mcMMO abilities are available to the ranking systems of mcmmoRankUp.
+All of this with your McMMO RPG System.
 
 ## Players ##
          Can choose which ability they wish to use as their Base Rank Ability. 
