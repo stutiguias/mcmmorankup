@@ -1,91 +1,101 @@
 package me.stutiguias.listeners;
 
-//import java.util.logging.Level;
-import me.stutiguias.mcmmorankup.ChatTools;
+import me.stutiguias.apimcmmo.McMMOApi;
+import me.stutiguias.mcmmorankup.Effects;
 import me.stutiguias.mcmmorankup.Mcmmorankup;
+import me.stutiguias.mcmmorankup.Utilities;
 import me.stutiguias.profile.Profile;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+
+import com.gmail.nossr50.datatypes.skills.SkillType;
+import com.gmail.nossr50.events.experience.McMMOPlayerLevelUpEvent;
+import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
+import me.stutiguias.mcmmorankup.task.OnJoinTask;
 
 public class MRUPlayerListener implements Listener {
-    
-    private final Mcmmorankup plugin;
 
-    public MRUPlayerListener(Mcmmorankup plugin){
+    private final Mcmmorankup plugin;
+    private Profile profile;
+    
+    public MRUPlayerListener(Mcmmorankup plugin) {
         this.plugin = plugin;
     }
-    
-    /* zrocweb: Updated to include SyncDelayedTask as player logons if PromoteOnJoin is enabled.  
-     *          This allows for other server and player plugins to respond either before or after to avoid earlier or later
-     *          messaging (promotion) to the player(s) as well as spam to the broadcaster.  Some plugins that have spam detection
-     *          could detect and intercept this as immediate spam and it would be discarded.
-     ******************************************************************************************************************************* */  
-    @EventHandler(priority= EventPriority.NORMAL)
+
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerJoin(PlayerJoinEvent event) {
-    	final Player pl = event.getPlayer();
-    	
-        if(plugin.PromoteOnJoin) {
-        	Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {                
-                Profile _profile = new Profile(plugin, pl);
-        		
-                @Override
-                public void run() {
-					String skill = _profile.getHabilityForRank().toUpperCase();
-					String gender = _profile.getGender();
-					String promoted = "";
-					Boolean sucess=false;
-					
-					pl.sendMessage(ChatColor.AQUA + pl.getName() + ", " + ChatColor.DARK_AQUA + " checking your rank and trying to promote...");
-					if(plugin.TagSystem) {
-					    sucess = plugin.RankUp.tryRankUpWithoutGroup(pl, skill, gender);
-					} else {
-					    promoted =  plugin.RankUp.tryRankUp(pl, skill, gender);
-					} 
-					
-					if (sucess || "promoted".equals(promoted)) {
-						pl.getPlayer().sendMessage(ChatTools.getAltColor(plugin.generalMessages) + plugin.MSucess);
-					}
-                }
-           }, plugin.onJoinDelay);
+        
+        Player player = event.getPlayer();
+
+        if (plugin.PromoteOnJoin && plugin.hasPermission(player, "mru.rankup")) {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin,new OnJoinTask(plugin, player), plugin.onJoinDelay);
         }
-    }    
-    
-    /* Original
-    @EventHandler(priority= EventPriority.NORMAL)
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        Player pl = event.getPlayer();
-        Profile _profile = new Profile(plugin, pl);
-        if(plugin.PromoteOnJoin) {
-            String skill = _profile.getHabilityForRank().toUpperCase();
-            String gender = _profile.getGender();
-            Boolean sucess;
-            if(plugin.TagSystem) {
-                sucess = plugin.RankUp.tryRankUpWithoutGroup(pl, skill, gender);
-            }else{
-                sucess =  plugin.RankUp.tryRankUp(pl,skill,gender);
-            }
-            if(sucess) event.getPlayer().sendMessage(plugin.MSucess);
-        }
-    }
-    ********************************************************************************* */
-    
-    @EventHandler(priority= EventPriority.NORMAL)
-    public void onPlayerChat(AsyncPlayerChatEvent event) {
-        if(event.isCancelled()) return;
-        if(!plugin.TagSystem) return;
-        Player _player = event.getPlayer();
-        Profile _profile = new Profile(plugin, _player);
-        String Tag = _profile.getTag();
-        if(Tag == null) Tag = "";
-        String format = event.getFormat();
-        event.setFormat(plugin.parseColor(Tag) + " " + format);
         
     }
+
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onPlayerLeave(PlayerQuitEvent event) {
+        profile = new Profile(plugin, event.getPlayer() );
+        profile.SetQuitStats();
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onMcMMOPlayerLevelUp(McMMOPlayerLevelUpEvent event) {
+        SkillType skillType = event.getSkill();
+
+        profile = new Profile(plugin, event.getPlayer());
+        String skill = profile.GetHabilityForRank();
+
+        if (!skillType.toString().equalsIgnoreCase(skill) || !skill.equalsIgnoreCase("POWERLEVEL")) return;
+        
+        if (profile.GetPlayerXpUpdateFeed()) {
+            String skilllevel = String.valueOf(plugin.GetSkillLevel(profile.player, skill));
+            profile.SendFormatMessage(plugin.Message.McmmoLevelUp.replaceAll("%skilllevel%", skilllevel ).replaceAll("%ability%", skill));
+        }
+
+        if (profile.GetPlayerLevelUpsFeed()) {
+            Effects.abilityLevelUpCelebration(profile.player, skill);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onMcMMOPlayerXpGain(McMMOPlayerXpGainEvent event) {
+        if (!plugin.playerAbilityXpUpdateFeed) return;
+        SkillType skillType = event.getSkill();
+
+        profile = new Profile(plugin, event.getPlayer());
+        String skill = profile.GetHabilityForRank();
+
+        if (!profile.GetPlayerXpUpdateFeed() || !skillType.toString().equalsIgnoreCase(skill) || skill.equalsIgnoreCase("POWERLEVEL")) return; 
+        
+        String xp = String.valueOf((int)event.getRawXpGained() + McMMOApi.getXp(profile.player, skill));
+        String toNextLevel = String.valueOf(McMMOApi.getXpToNextLevel(profile.player, skill));
+        
+        profile.SendFormatMessage(plugin.Message.McmmoXpGain.replaceAll("%cXp%",xp).replaceAll("%rXp%",toNextLevel)); 
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onPlayerChat(AsyncPlayerChatEvent event) {
+        if (event.isCancelled()) return;
+        if (!plugin.TagSystem) return;
+        if (plugin.isIgnored(event.getPlayer())) return;
+        
+        profile = new Profile(plugin, event.getPlayer());
+        String Tag = profile.GetTag();
+        if (Tag == null) Tag = "";
+        String format = event.getFormat();
+        if(format.contains("-mru")) {
+            event.setFormat(format.replace("-mru",Utilities.parseColor(Tag)));
+        }else{
+            event.setFormat(Utilities.parseColor(Tag) + " " + format);
+        }
+    }
+    
 }

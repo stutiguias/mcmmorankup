@@ -1,157 +1,309 @@
 package me.stutiguias.profile;
 
-import com.gmail.nossr50.datatypes.PlayerProfile;
-import com.gmail.nossr50.util.Users;
+import com.gmail.nossr50.datatypes.player.McMMOPlayer;
+import com.gmail.nossr50.util.player.UserManager;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Level;
 
-import me.stutiguias.mcmmorankup.ChatTools;
 import me.stutiguias.mcmmorankup.Mcmmorankup;
+import me.stutiguias.mcmmorankup.Utilities;
+import me.stutiguias.mcmmorankup.XpCalc;
 
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 public class Profile {
-    
-    Player player;
+
+    public Player player;
     Mcmmorankup plugin;
-    String HabilityForRank;
     File configplayerfile;
     YamlConfiguration PlayerYML;
-    
-    public Profile(Mcmmorankup plugin,Player player) {
-        configplayerfile = new File("plugins"+ File.separator +"Mcmmorankup"+ File.separator +"userdata"+ File.separator + player.getName() +".yml");
-        PlayerYML = new YamlConfiguration();
-        boolean havetocreate = false;
-        try {
-            havetocreate = configplayerfile.createNewFile();
-        }catch(IOException ex) {
-            Mcmmorankup.logger.log(Level.WARNING, "{0} Can't create the user file {1}", new Object[]{plugin.logPrefix, ex.getMessage()});
-        }
-        initLoadYML();
-        if(havetocreate) {
-            Mcmmorankup.logger.log( Level.INFO, "{0} Profile of user {1} not found, creating a new one!", new Object[]{plugin.logPrefix, player.getName()});
-            PlayerYML.set("Gender", "Male");
-            PlayerYML.set("HabilityForRank", plugin.DefaultSkill);
-            PlayerYML.set("Tag","");
-            if(setInitRank()) Mcmmorankup.logger.log(Level.INFO, "Player {0} rank line is {1}", new Object[]{player.getName(), plugin.DefaultSkill});
-        }
-        this.player = player;
-        this.plugin = plugin;
 
+    public Profile(Mcmmorankup plugin, String playerName) {
+        LoadPlayerProfile(playerName, plugin);
     }
-    
-    private boolean setInitRank() {
-       SaveYML();
-       return true;
+
+    public Profile(Mcmmorankup plugin, Player player) {
+        LoadPlayerProfile(player.getName(), plugin);
+        this.player = player;
     }
-    
-    public boolean setHabilityForRank(String HabilityForRank) {
-        PlayerProfile _playerprofile;
+
+    private McMMOPlayer SetMcMMOPlayer() {
+        McMMOPlayer mcmmoPlayer;
+
         try {
-            _playerprofile = Users.getProfile(player);
-        }catch(Exception ex) {
-            Mcmmorankup.logger.log(Level.INFO, " Can't find profile for player {0}", player.getName());
-            Mcmmorankup.logger.info(ex.getMessage());
-            player.sendMessage(plugin.logPrefix + " " + plugin.NotHaveProfile);
-            return false;
+            mcmmoPlayer = UserManager.getPlayer(player.getName());
+        } catch (Exception ex) {
+            Mcmmorankup.logger.log(Level.WARNING, "{0} Can't find mcMMO profile for player {1}", new Object[]{Mcmmorankup.logPrefix, player.getName()});
+            Mcmmorankup.logger.log(Level.WARNING, "{0} Extended Error was: {1}", new Object[]{Mcmmorankup.logPrefix, ex.getMessage()});
+            player.sendMessage(plugin.Message.NotHaveProfile);
+            return null;
         }
-        if(_playerprofile != null) {
-                
-                if(HabilityForRank.equalsIgnoreCase("EXCAVATION")) {
+        
+        return mcmmoPlayer;
+    }
+    
+    private boolean SetInitRank() {
+        SaveYML();
+        return true;
+    }
+
+    public boolean SetHabilityForRank(String HabilityForRank) {
+        McMMOPlayer mcMMOPlayer = SetMcMMOPlayer();
+
+        if (mcMMOPlayer != null) {
+            switch(HabilityForRank.toUpperCase()){
+                case "EXCAVATION":
+                case "FISHING":
+                case "HERBALISM":
+                case "MINING":
+                case "AXES":
+                case "ARCHERY":
+                case "SWORDS":
+                case "TAMING":
+                case "UNARMED":
+                case "ACROBATICS":
+                case "REPAIR":
+                case "WOODCUTTING":
+                case "SMELTING":
+                case "POWERLEVEL":
                     SendMessage(player, HabilityForRank);
-                } else if(HabilityForRank.equalsIgnoreCase("FISHING")) {
-                    SendMessage(player, HabilityForRank);
-                } else if(HabilityForRank.equalsIgnoreCase("HERBALISM")) {
-                    SendMessage(player, HabilityForRank);
-                } else if(HabilityForRank.equalsIgnoreCase("MINING")) {
-                    SendMessage(player, HabilityForRank);
-                } else if(HabilityForRank.equalsIgnoreCase("AXES")) {
-                    SendMessage(player, HabilityForRank);
-                } else if(HabilityForRank.equalsIgnoreCase("ARCHERY")) {
-                    SendMessage(player, HabilityForRank);
-                } else if(HabilityForRank.equalsIgnoreCase("SWORDS")) {
-                    SendMessage(player, HabilityForRank);
-                } else if(HabilityForRank.equalsIgnoreCase("TAMING")) {
-                    SendMessage(player, HabilityForRank);
-                } else if(HabilityForRank.equalsIgnoreCase("UNARMED")) {
-                    SendMessage(player, HabilityForRank);
-                } else if(HabilityForRank.equalsIgnoreCase("ACROBATICS")) {
-                    SendMessage(player, HabilityForRank);
-                } else if(HabilityForRank.equalsIgnoreCase("REPAIR")) { 
-                    SendMessage(player, HabilityForRank);
-                } else if(HabilityForRank.equalsIgnoreCase("POWERLEVEL")) {
-                    SendMessage(player, HabilityForRank);
-                } else{
+                    break;
+                default:
                     return false;
-                }
+            }
+
         }
-                
-        PlayerYML.set("HabilityForRank", HabilityForRank);
+
+        PlayerYML.set("HabilityForRank", HabilityForRank.toUpperCase());
         SaveYML();
         return true;
     }
-    
-    public Boolean setTag(String Tag) {
-        PlayerYML.set("Tag",Tag);
+
+    public Boolean SetTag(String Tag) {
+        PlayerYML.set("Tag", Tag);
         SaveYML();
         return true;
     }
-    
-    public String getTag() {
+
+    public Boolean SetPurchasedRank(List<String> ranks) {
+        PlayerYML.set("PurchasedRanks", ranks);
+        SaveYML();
+        return true;
+    }
+
+    public void SetQuitStats() {
+        McMMOPlayer mcmmoPlayer = SetMcMMOPlayer();
+
+        if (mcmmoPlayer != null) {
+            PlayerYML.set("Last Stats.LastQuitSkill", GetHabilityForRank());
+            PlayerYML.set("Last Stats.LastQuitLevel", plugin.GetSkillLevel(player, GetHabilityForRank()));
+            PlayerYML.set("Last Stats.LastRank", plugin.TagSystem ? GetTag() : plugin.GetPlayerCurrentGroup(player));
+            PlayerYML.set("Last Stats.LastXp", XpCalc.GetTotalExperience(player));
+            PlayerYML.set("Last Stats.LastXpLevel", XpCalc.GetPlayerXpl(player));
+            PlayerYML.set("Last Stats.LastBalance", plugin.GetPlayerCurrency(player));
+
+            SaveYML();
+        }
+    }
+
+    public boolean SetPlayerRankupFeed(boolean rankupFeed) {
+        PlayerYML.set("PlayerFeeds.Rankup", rankupFeed);
+        SaveYML();
+        return true;
+    }
+
+    public boolean SetPlayerRankCheckingFeed(boolean rankChecker) {
+        PlayerYML.set("PlayerFeeds.RankChecker", rankChecker);
+        SaveYML();
+        return true;
+    }
+
+    public boolean SetPlayerGlobalFeed(boolean globalFeed) {
+        PlayerYML.set("PlayerFeeds.Global", globalFeed);
+        SaveYML();
+        return true;
+    }
+
+    public boolean SetPlayerXpUpdateFeed(boolean xpUpdateFeed) {
+        PlayerYML.set("PlayerFeeds.XpUpdates", xpUpdateFeed);
+        SaveYML();
+        return true;
+    }
+
+    public boolean SetPlayerLevelUpsFeed(boolean levelUpFeed) {
+        PlayerYML.set("PlayerFeeds.LevelUps", levelUpFeed);
+        SaveYML();
+        return true;
+    }
+
+    public String GetTag() {
         return PlayerYML.getString("Tag");
     }
-    
-    public String getHabilityForRank(){
+
+    public List<String> GetPurchasedRanks() {
+        return PlayerYML.getStringList("PurchasedRanks");
+    }
+
+    public String GetHabilityForRank() {
         return PlayerYML.getString("HabilityForRank");
     }
+
+    public int GetSkillLevelRankLine() {
+        return plugin.GetSkillLevel(player, GetHabilityForRank());
+    }
     
-    public Boolean setGender(String gender) {
+    public Boolean SetGender(String gender) {
         PlayerYML.set("Gender", gender);
         SaveYML();
         return true;
     }
-    
-    public String getGender(){
+
+    public String GetGender() {
         return PlayerYML.getString("Gender");
     }
-    
-    public void SendMessage(Player player, String Hability) {
-             //player.sendMessage("-----------------------------------------------------");
-             player.sendMessage("\n"+ChatTools.formatTitle("ABILITY SELECTED",  plugin.titleHeader, plugin.titleHeaderLineColor, plugin.titleHeaderTextColor, plugin.titleHeaderAltColorBold,
-    	     														       plugin.titleHeaderAltColor, plugin.titleHeaderAltColorBold));
-             //player.sendMessage(plugin.parseColor(plugin.ChooseHability.replace("%ability%", Hability.toUpperCase())));
-    	     player.sendMessage(ChatTools.getAltColor(plugin.generalMessages) + plugin.ChooseHability.replace("%ability%", Hability.toUpperCase()));
-             //player.sendMessage("-----------------------------------------------------");
-             player.sendMessage(ChatTools.getAltColor(plugin.titleFooterLineColor) + plugin.titleFooter);
+
+    public String GetQuitSkill() {
+        return PlayerYML.getString("Last Stats.LastQuitSkill");
+    }
+
+    public Integer GetQuitLevel() {
+        return PlayerYML.getInt("Last Stats.LastQuitLevel");
+    }
+
+    public String GetQuitRank() {
+        return PlayerYML.getString("Last Stats.LastRank");
+    }
+
+    public double GetQuitBalance() {
+        return PlayerYML.getDouble("Last Stats.LastBalance");
+    }
+
+    public double GetQuitXp() {
+        return PlayerYML.getDouble("Last Stats.LastXp");
+    }
+
+    public int GetQuitXpLevel() {
+        return PlayerYML.getInt("Last Stats.LastXpLevel");
+    }
+
+    public boolean GetPlayerRankupFeed() {
+        return PlayerYML.getBoolean("PlayerFeeds.Rankup");
+    }
+
+    public boolean GetPlayerGlobalFeed() {
+        return PlayerYML.getBoolean("PlayerFeeds.Global");
+    }
+
+    public boolean GetPlayerXpUpdateFeed() {
+        return PlayerYML.getBoolean("PlayerFeeds.XpUpdates");
+    }
+
+    public boolean GetPlayerLevelUpsFeed() {
+        return PlayerYML.getBoolean("PlayerFeeds.LevelUps");
+    }
+
+    public void SendMessage(Player player, String Hability) {       
+        SendFormatMessage("ABILITY SELECTED");
+        SendFormatMessage(plugin.Message.HabilitySet.replace("%ability%", Hability.toUpperCase()));
+        SendFormatMessage(plugin.MessageSeparator);
+    }
+
+    public void SendFormatMessage(String msg) {
+        player.sendMessage(Utilities.parseColor(msg));
     }
     
     private void initLoadYML() {
         LoadYML();
     }
-    
+
     public void LoadYML() {
         try {
             PlayerYML.load(configplayerfile);
         } catch (FileNotFoundException ex) {
-           Mcmmorankup.logger.log(Level.WARNING, "{0} File Not Found {1}", new Object[]{plugin.logPrefix, ex.getMessage()});
+            Mcmmorankup.logger.log(Level.WARNING, "{0} File Not Found {1}", new Object[]{Mcmmorankup.logPrefix, ex.getMessage()});
         } catch (IOException ex) {
-           Mcmmorankup.logger.log(Level.WARNING, "{0} IO Problem {1}", new Object[]{plugin.logPrefix, ex.getMessage()});
+            Mcmmorankup.logger.log(Level.WARNING, "{0} IO Problem {1}", new Object[]{Mcmmorankup.logPrefix, ex.getMessage()});
         } catch (InvalidConfigurationException ex) {
-           Mcmmorankup.logger.log(Level.WARNING, "{0} Invalid Configuration {1}", new Object[]{plugin.logPrefix, ex.getMessage()});
+            Mcmmorankup.logger.log(Level.SEVERE, "{0} Invalid Configuration {1}", new Object[]{Mcmmorankup.logPrefix, ex.getMessage()});
         }
     }
-    
+
+    public void CheckPlayerConfig() {
+
+        if (!PlayerYML.isSet("Tag") && !plugin.StartTagName.isEmpty()) {
+            PlayerYML.set("Tag", plugin.StartTagName);						   		
+        }
+        
+        if (!PlayerYML.isSet("Last Stats.LastQuitSkill")) PlayerYML.set("Last Stats.LastQuitSkill", "N/A");
+        if (!PlayerYML.isSet("Last Stats.LastQuitLevel")) PlayerYML.set("Last Stats.LastQuitLevel", 0);
+        if (!PlayerYML.isSet("Last Stats.LastRank"))      PlayerYML.set("Last Stats.LastRank", "N/A");
+        if (!PlayerYML.isSet("Last Stats.LastXp"))        PlayerYML.set("Last Stats.LastXp", 0);
+        if (!PlayerYML.isSet("Last Stats.LastXpLevel"))   PlayerYML.set("Last Stats.LastXpLevel", 0);
+        if (!PlayerYML.isSet("Last Stats.LastBalance"))   PlayerYML.set("Last Stats.LastBalance", 0);
+        if (!PlayerYML.isSet("PurchasedRanks"))           PlayerYML.set("PurchasedRanks", "");
+        if (!PlayerYML.isSet("PlayerFeeds.Rankup"))       PlayerYML.set("PlayerFeeds.Rankup", true);
+        if (!PlayerYML.isSet("PlayerFeeds.Global"))       PlayerYML.set("PlayerFeeds.Global", true);
+        if (!PlayerYML.isSet("PlayerFeeds.XpUpdates"))    PlayerYML.set("PlayerFeeds.XpUpdates", true);
+        if (!PlayerYML.isSet("PlayerFeeds.LevelUps"))     PlayerYML.set("PlayerFeeds.LevelUps", true);
+        
+        SaveYML();
+
+    }
+
     public void SaveYML() {
         try {
             PlayerYML.save(configplayerfile);
         } catch (FileNotFoundException ex) {
-           Mcmmorankup.logger.log(Level.WARNING, "{0} File Not Found {1}", new Object[]{plugin.logPrefix, ex.getMessage()});
+            Mcmmorankup.logger.log(Level.WARNING, "{0} File Not Found {1}", new Object[]{Mcmmorankup.logPrefix, ex.getMessage()});
         } catch (IOException ex) {
-           Mcmmorankup.logger.log(Level.WARNING, "{0} IO Problem {1}", new Object[]{plugin.logPrefix, ex.getMessage()});
+            Mcmmorankup.logger.log(Level.WARNING, "{0} IO Problem {1}", new Object[]{Mcmmorankup.logPrefix, ex.getMessage()});
         }
+    }
+
+    private void LoadPlayerProfile(String playerName, Mcmmorankup plugin) {
+        configplayerfile = new File(Mcmmorankup.PluginPlayerDir + File.separator + playerName + ".yml");
+        PlayerYML = new YamlConfiguration();
+
+        boolean havetocreate = false;
+
+        try {
+            havetocreate = configplayerfile.createNewFile();
+        } catch (IOException ex) {
+            Mcmmorankup.logger.log(Level.WARNING, "{0} Can't create the rankup user file {1}", new Object[]{Mcmmorankup.logPrefix, ex.getMessage()});
+        }
+
+        initLoadYML();
+
+        if (havetocreate) {
+            Mcmmorankup.logger.log(Level.INFO, "{0} Creating profile for {1}!", new Object[]{Mcmmorankup.logPrefix, playerName});
+            PlayerYML.set("Gender", "Male");		
+            PlayerYML.set("HabilityForRank", plugin.DefaultSkill.toUpperCase());
+            PlayerYML.set("Tag", plugin.StartTagName);
+            PlayerYML.set("Last Stats.LastQuitSkill", "N/A");
+            PlayerYML.set("Last Stats.LastQuitLevel", 0);
+            PlayerYML.set("Last Stats.LastRank", "N/A");
+            PlayerYML.set("Last Stats.LastXp", 0);
+            PlayerYML.set("Last Stats.LastXpLevel", 0);
+            PlayerYML.set("Last Stats.LastBalance", 0);
+            PlayerYML.set("PurchasedRanks", "");
+            PlayerYML.set("PlayerFeeds.Rankup", true);
+            PlayerYML.set("PlayerFeeds.Global", true);
+            PlayerYML.set("PlayerFeeds.XpUpdates", true);
+            PlayerYML.set("PlayerFeeds.LevelUps", true);
+
+            if (SetInitRank()) {
+                Mcmmorankup.logger.log(Level.INFO, "Player {0}:- Set Auto Rank Line to: {1}", new Object[]{playerName, plugin.DefaultSkill});
+            }
+            
+        } else {
+            CheckPlayerConfig();
+        }
+        this.plugin = plugin;
     }
 }

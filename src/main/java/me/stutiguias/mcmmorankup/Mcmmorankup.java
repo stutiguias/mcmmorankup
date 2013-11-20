@@ -3,366 +3,478 @@ package me.stutiguias.mcmmorankup;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import me.stutiguias.apimcmmo.McMMOApi;
 import me.stutiguias.apimcmmo.RankUp;
 import me.stutiguias.listeners.MRUCommandListener;
 import me.stutiguias.listeners.MRUPlayerListener;
+import me.stutiguias.mcmmorankup.rank.BuyRanks;
+import me.stutiguias.mcmmorankup.task.UpdateTask;
 import me.stutiguias.metrics.Metrics;
-import me.stutiguias.task.UpdateTask;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
-import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
+
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Mcmmorankup extends JavaPlugin {
 
-    public String logPrefix = "[McMMoRankUp] ";
-    String PluginDir = "plugins" + File.separator + "Mcmmorankup";
+    public final String verLink = "http://dev.bukkit.org/server-mods/mcmmorankup/";
+    public final String verIssues = "https://github.com/McMmmoRankUp/mcmmoRankup/issues/";
+    public static final String logPrefix = "[mcmmoRankUp] ";
+    public static final String PluginDir = "plugins" + File.separator + "Mcmmorankup";
+    public static String PluginPlayerDir = PluginDir + File.separator + "userdata";
+    public static String PluginSkillsDir = PluginDir + File.separator + "skills";
+    public static String PluginReportsDir = PluginDir + File.separator + "reports";
     public static final Logger logger = Logger.getLogger("Minecraft");
-    public Permission permission = null;
     public final MRUPlayerListener playerlistener = new MRUPlayerListener(this);
+    
+    public Permission permission = null;
     public Economy economy = null;
+    
     public RankUp RankUp = null;
-    public HashMap<String,Boolean> isHabilityRankExist;
-    public HashMap<String,HashMap<String,ArrayList<String>>> RankUpConfig;
-    public HashMap<String,HashMap<String,String>> BroadCast;
-    public String[] PlayerToIgnore;
-    public String[] GroupToIgnore;
-    public HashMap<String,Long> Playertime;
-    public Integer total;
+    public BuyRanks BuyRank = null;
+    public UtilityReportWriter ReportWriter = null;
+    public HashMap<String, Long> Playertime;
+    public HashMap<String, Boolean> isRankExist;
+    public HashMap<String, HashMap<String, ArrayList<String>>> RankUpConfig;
+    public HashMap<String, HashMap<String, String>> BroadCast;
+    public HashMap<String, Boolean> BuyRankUsePerms;
+    public HashMap<String, Boolean> BuyRankEnabled;
     
-    // Messages
-    public String ChooseHability;
-    public String NotHaveProfile;
-    public String MPromote;
-    public String MSucess;
-    public String MFail;
-    public String NotFound;
-    public String setGender;
+    public HashMap<String, Map<String, String>> XpRanks;	
+    public HashMap<String, Map<String, String>> BuksRanks;		
+    public HashMap<String, HashMap<String, String>> RewardsConfig;
+    
+    // Messaging
+    public Message Message;
+    
+    public ConfigAccessor config;
+    public ConfigAccessor menu;
 
-    // zrocweb: added messaging
-    public String rankinfoTitle;
-    public String promoteTitle;
-    public String globalBroadcastRankupTitle;
-    public String baseRanksListing;
-    
-    //ConfigAcess for hability
-    public ConfigAccessor POWERLEVEL;
-    public ConfigAccessor EXCAVATION;
-    public ConfigAccessor FISHING;
-    public ConfigAccessor HERBALISM;
-    public ConfigAccessor MINING;
-    public ConfigAccessor AXES;
-    public ConfigAccessor ARCHERY;
-    public ConfigAccessor SWORDS;
-    public ConfigAccessor TAMING;
-    public ConfigAccessor UNARMED;
-    public ConfigAccessor ACROBATICS;
-    public ConfigAccessor REPAIR;
-    
+    // System Configurations
+    public boolean mruStartupSummary;
     public boolean TagSystem;
     public String AutoUpdateTime;
     public String DefaultSkill;
+    public String StartTagName;
     public boolean UseAlternativeBroadcast;
+    public boolean AllowDemotions;
+    public boolean AllowBuyRankDemotions;
     public boolean PromoteOnJoin;
     public boolean AutoUpdate;
     public boolean RemoveOnlyPluginGroup;
-    
-    // zrocweb: add config 
     public long onJoinDelay;
-    public Boolean globalBroadcastFeed;
-    public Boolean playerBroadcastFeed;
-    public Boolean displayNextPromo;
+    public boolean globalBroadcastFeed;
+    public boolean playerBroadcastFeed;
+    public boolean playerAbilityXpUpdateFeed;
+    public boolean displayNextPromo;
+    public boolean RankInfoTitles;
+    public boolean displayDisabledRanks;
+    public boolean UseGenderClass;
+    public boolean AllowBuyingRanks;
+    public boolean AllowRankRewards;
+    public String BuyRankCurrencyName;
+    public String[] GroupToIgnore;
     
-    // zrocweb: Formatting
-    public String titleHeader;
-    public String titleFooter;
-    public String titleHeaderLineColor;
-    public String titleHeaderTextColor;
-    public Boolean titleHeaderTextColorBold;
-    public String titleHeaderAltColor;
-    public Boolean titleHeaderAltColorBold;
-    public String titleFooterLineColor;
-    public String titleFooterTextColor;
-    public String rankinfoTextColor;
-    public String rankinfoAltColor;
-    public String promoteTextColor;
-    public Boolean promoteTextBold;
-    public String promotePreTextColor;
-    public String generalMessages;
-    
+    // Formatting
+    public String MessageSeparator;
+    public String GeneralMessages;
+    public String PlayerWarnings;
+
     @Override
     public void onEnable() {
+        File dir = getDataFolder();
+        if (!dir.exists()) {
+          dir.mkdirs();
+        }
+        
+        File fuserdata = new File(PluginDir + File.separator + "userdata");
+        if (!fuserdata.exists()) {
+            logger.log(Level.WARNING, "{0} UserData folder does not exist. Creating 'userdata' Folder", new Object[]{logPrefix});
+            fuserdata.mkdirs();
+        }
 
-            logger.log(Level.INFO, "{0} Mcmmorankup is initializing", logPrefix);
+        File fskills = new File(PluginSkillsDir);
+        if (!fskills.exists()) {
+            logger.log(Level.WARNING, "{0} Skills folder does not exist. Creating 'skills' folder", new Object[]{logPrefix});
+            fskills.mkdirs();
+        }
 
-            onLoadConfig();
-            getCommand("mru").setExecutor(new MRUCommandListener(this));
-            setupEconomy();
-            setupPermissions();
-            
-            PluginManager pm = getServer().getPluginManager();
-            pm.registerEvents(playerlistener, this);
-            
+        File freports = new File(PluginReportsDir);
+        if (!freports.exists()) {
+            logger.log(Level.WARNING, "{0} Reports folder does not exist. Creating 'reports' folder", new Object[]{logPrefix});
+            freports.mkdirs();
+        }
+        
+        onLoadConfig();
+        getCommand("mru").setExecutor(new MRUCommandListener(this));
+
+        setupEconomy();
+        setupPermissions();
+        
+        PluginManager pm = getServer().getPluginManager();
+        pm.registerEvents(playerlistener, this);
+
+        if (mruStartupSummary) {
+
+
+            if (economy == null) {
+                logger.log(Level.WARNING, "{0} - No Economy found!", new Object[]{logPrefix});
+            }
+
+            if (permission == null) {
+                logger.log(Level.WARNING, "{0} - Vault WAS NOT HOOKED!", new Object[]{logPrefix});
+            }
+
+            logger.log(Level.INFO, "{0} Ignoring Groups     : {1}", new Object[]{logPrefix, Arrays.toString(GroupToIgnore)});
+            logger.log(Level.INFO, "{0} Ranking System      : {1}", new Object[]{logPrefix, (TagSystem ? "Tags" : "Permissions")});
+            logger.log(Level.INFO, "{0} Demotions are       : {1}", new Object[]{logPrefix, (AllowDemotions ? "Allowed" : "DisAllowed")});
+            logger.log(Level.INFO, "{0} P.Rank Demotions    : {1}", new Object[]{logPrefix, (AllowBuyRankDemotions ? "Enabled" : "Disabled")});
+            logger.log(Level.INFO, "{0} Auto Ranking is     : {1}", new Object[]{logPrefix, (AutoUpdate ? "On" : "Off")});
             if(AutoUpdate) {
-                Long uptime = new Long("0");
-                if(AutoUpdateTime.contains("h")) {
-                  uptime = Long.parseLong(AutoUpdateTime.replace("h",""));
-                  uptime = ( ( uptime * 60 ) * 60 ) * 20;
-                }
-                if(AutoUpdateTime.contains("m")) {
-                  uptime = Long.parseLong(AutoUpdateTime.replace("m",""));
-                  uptime =  ( uptime * 60 ) * 20;
-                }
-                getServer().getScheduler().scheduleSyncRepeatingTask(this, new UpdateTask(this), uptime, uptime);
+                logger.log(Level.INFO, "{0} Auto Ranking every  : {1}", new Object[]{logPrefix, AutoUpdateTime});
             }
             
-            File f = new File("plugins"+ File.separator +"Mcmmorankup"+ File.separator +"userdata");
-            if(!f.exists())  {
-                logger.log(Level.INFO, "{0} Diretory not exist creating new one", logPrefix);
-                f.mkdirs();
-            }
-            
-            if(this.permission.isEnabled() == true)
-            {
-                logger.log(Level.INFO, "{0} Vault perms hooked!", logPrefix);    
-            }else{
-                logger.log(Level.INFO, "{0} Vault WAS NOT ENABLED!", logPrefix);    
-            }
-            
-           //Metrics 
+            // Metrics 
             try {
-              logger.log(Level.INFO, "{0} Sending Metrics !", logPrefix);
-              Metrics metrics = new Metrics(this);
-              metrics.start();
+                logger.log(Level.INFO, "{0} {1} - Sending Metrics, Thank You!", new Object[]{logPrefix, "[Metrics]"});
+                Metrics metrics = new Metrics(this);
+                metrics.start();
             } catch (IOException e) {
-              logger.log(Level.INFO, "{0} Failed to submit the stats :-(", logPrefix);
+                logger.log(Level.WARNING, "{0} {1} !! Failed to submit the stats !! ", new Object[]{logPrefix, "[Metrics]"});
             }
-           
+        } else {
+            logger.log(Level.INFO, "{0} - has been initialized!", new Object[]{logPrefix});
+        }
+
+        if (AutoUpdate) {
+            Long uptime = new Long("0");
+            if (AutoUpdateTime.contains("h")) {
+                uptime = Long.parseLong(AutoUpdateTime.replace("h", ""));
+                uptime = ((uptime * 60) * 60) * 20;
+            }
+
+            if (AutoUpdateTime.contains("m")) {
+                uptime = Long.parseLong(AutoUpdateTime.replace("m", ""));
+                uptime = (uptime * 60) * 20;
+            }
+
+            getServer().getScheduler().scheduleSyncRepeatingTask(this, new UpdateTask(this), uptime, uptime);
+        }
     }
 
     @Override
     public void onDisable() {
-            getServer().getPluginManager().disablePlugin(this);
-            logger.log(Level.INFO, "{0} Disabled. Bye :D", logPrefix);
+
+        getServer().getPluginManager().disablePlugin(this);
+        logger.log(Level.INFO, "{0} {1} - mcmmoRankup has been disabled...", new Object[]{logPrefix, "[System]"});
     }
-    
+
     public void onReload() {
-        this.reloadConfig();
-        saveConfig();
+        config.reloadConfig();
+        Message.Reload();
+        menu.reloadConfig();
+        onLoadConfig();
         getServer().getPluginManager().disablePlugin(this);
         getServer().getPluginManager().enablePlugin(this);
     }
 
-    private void initConfig() {
-                
-                getConfig().addDefault("Message.NotHaveProfile", "Did not find your ranking profile!");
-                getConfig().addDefault("Message.ChooseHability", "You chose to rank up based on %ability%");
-                getConfig().addDefault("Message.RankUp", "Player %player% has been promoted to %group%");
-                getConfig().addDefault("Message.Sucess", "Congrats! Ability has been promoted to the next level");
-                getConfig().addDefault("Message.Fail", "Sorry your level is too low for promotion");
-                getConfig().addDefault("Message.NotFound", "Ranking File not found or has not been configured");
-                getConfig().addDefault("Message.setGender", "Your Gender has been set to %gender%");
-                
-                // zrocweb: added messaging
-                getConfig().addDefault("Message.RankInfoTitle", "RANK INFO");
-                getConfig().addDefault("Message.PromoteTitle", "PROMOTION");
-                getConfig().addDefault("Message.GlobalBroadcastRankupTitle", "RANK UP");
-                getConfig().addDefault("Message.BaseRanksListing", "BASE RANK ABILITIES LISTING");
-                
-                
-                getConfig().addDefault("Config.UseTagOnlySystem", false);
-                getConfig().addDefault("Config.RemoveOnlyPluginGroup",true);
-                getConfig().addDefault("Config.PromoteOnJoin", true);
-                
-                // zrocweb: added config
-                getConfig().addDefault("Config.OnJoinDelay",300);
-                getConfig().addDefault("Config.GlobalBroadcastFeed", true);
-                getConfig().addDefault("Config.PlayerBroadcastFeed", true);
-                getConfig().addDefault("Config.DisplayNextPromo", true);
-                
-                // zrocweb: formatting
-                getConfig().addDefault("Formatting.TitleHeader", ".oOo.————————————————————————————————————————————————————————————————.oOo.");
-                getConfig().addDefault("Formatting.TitleFooter", "——————————————————————————————————————————————————————————————————————————————");
-                getConfig().addDefault("Formatting.TitleHeaderLineColor", "&9");
-                getConfig().addDefault("Formatting.TitleHeaderTextColor", "&e");
-                getConfig().addDefault("Formatting.TitleHeaderTextColorBold", true);
-                getConfig().addDefault("Formatting.TitleHeaderAltColor", "&f");
-                getConfig().addDefault("Formatting.TitleHeaderAltColorBold", true);
-                getConfig().addDefault("Formatting.TitleFooterLineColor", "&9");
-                getConfig().addDefault("Formatting.TitleFooterTextColor", "&e"); 
-                getConfig().addDefault("Formatting.RankInfoTextColor", "&b");
-                getConfig().addDefault("Formatting.RankInfoAltColor", "&3");
-                getConfig().addDefault("Formatting.PromoteTextColor", "&e");
-                getConfig().addDefault("Formatting.PromoteTextBold", true);
-                getConfig().addDefault("Formatting.PromotePreTextColor", "&5");
-                getConfig().addDefault("Formatting.GeneralMessages", "&6");
-                
-                getConfig().addDefault("Config.AutoUpdate", true);
-                getConfig().addDefault("Config.AutoUpdateTime", "1h");
-                getConfig().addDefault("Config.UseAlternativeBroadCast", true);
-                getConfig().addDefault("Config.DefaultSkill", "POWERLEVEL");
-                getConfig().addDefault("PlayerToIgnore", "");
-                getConfig().addDefault("GroupToIgnore","");
-
-                getConfig().options().copyDefaults(true);
-                saveConfig();
-    }
-
     private boolean setupPermissions() {
-        RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
-        permission = rsp.getProvider();
-        return permission != null;
+        RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(Permission.class);
+        if (permissionProvider != null) {
+            permission = permissionProvider.getProvider();
+        }
+        return (permission != null);
     }
 
-    private Boolean setupEconomy() {
-            RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(Economy.class);
-            if (economyProvider != null) {
-                    economy = economyProvider.getProvider();
-            }
-
-            return (economy != null);
+    private boolean setupEconomy() {
+        RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(Economy.class);
+        if (economyProvider != null) {
+            economy = economyProvider.getProvider();
+        }
+        return (economy != null);
     }
 
     public void onLoadConfig() {
-            initConfig();
-            UseAlternativeBroadcast = getConfig().getBoolean("Config.UseAlternativeBroadCast");
-            PromoteOnJoin = getConfig().getBoolean("Config.PromoteOnJoin");
-            AutoUpdate = getConfig().getBoolean("Config.AutoUpdate");
-            AutoUpdateTime = getConfig().getString("Config.AutoUpdateTime");
-            PlayerToIgnore = getConfig().getString("PlayerToIgnore").split((","));
-            GroupToIgnore = getConfig().getString("GroupToIgnore").split((","));
-            DefaultSkill = getConfig().getString("Config.DefaultSkill");
-            TagSystem = getConfig().getBoolean("Config.UseTagOnlySystem");
-            RemoveOnlyPluginGroup = getConfig().getBoolean("Config.RemoveOnlyPluginGroup");
+
+        try {
+
+            config = new ConfigAccessor(this, "config.yml");
+            config.setupConfig();
+            FileConfiguration fc = config.getConfig();
+
+            // System Configurations
+            mruStartupSummary = fc.getBoolean("Config.mruStartupSummary");
+            UseAlternativeBroadcast = fc.getBoolean("Config.UseAlternativeBroadCast");
+            PromoteOnJoin = fc.getBoolean("Config.PromoteOnJoin");
+            AllowDemotions = fc.getBoolean("Config.AllowDemotions");
+            AllowBuyRankDemotions = fc.getBoolean("Config.AllowBuyRankDemotions");
+            AutoUpdate = fc.getBoolean("Config.AutoUpdate");
+            AutoUpdateTime = fc.getString("Config.AutoUpdateTime");
+            GroupToIgnore = fc.getString("Config.GroupToIgnore").split((","));
+            DefaultSkill = fc.getString("Config.DefaultSkill").toUpperCase();
+            StartTagName = fc.getString("Config.StartTagName");
+            TagSystem = fc.getBoolean("Config.UseTagOnlySystem");
+            RemoveOnlyPluginGroup = fc.getBoolean("Config.RemoveOnlyPluginGroup");
+            onJoinDelay = fc.getLong("Config.OnJoinDelay");
+            globalBroadcastFeed = fc.getBoolean("Config.GlobalBroadcastFeed");
+            playerBroadcastFeed = fc.getBoolean("Config.PlayerBroadcastFeed");
+            playerAbilityXpUpdateFeed = fc.getBoolean("Config.PlayerAbilityXpUpdateFeed");
+            displayNextPromo = fc.getBoolean("Config.DisplayNextPromo");
+            RankInfoTitles = fc.getBoolean("Config.RankInfoTitles");
+            UseGenderClass = fc.getBoolean("Config.UseGenderClass");
+            displayDisabledRanks = fc.getBoolean("Config.DisplayDisabledRanks");
+            AllowBuyingRanks = fc.getBoolean("Config.AllowBuyingRanks");
+            AllowRankRewards = fc.getBoolean("Config.AllowRankRewards");
+            BuyRankCurrencyName = fc.getString("Config.BuyRankCurrencyName");
+
+
+            menu = new ConfigAccessor(this, "menu.yml");
+            menu.setupConfig();
+            FileConfiguration ff = menu.getConfig();
+
+            // Menu Formatting
+            MessageSeparator = ff.getString("Formatting.MessageSeparator");
+            GeneralMessages = ff.getString("Formatting.GeneralMessages");
+            PlayerWarnings = ff.getString("Formatting.PlayerWarnings");
             
-            // zrocweb: added config
-            onJoinDelay = getConfig().getLong("Config.OnJoinDelay");
-            globalBroadcastFeed = getConfig().getBoolean("Config.GlobalBroadcastFeed");
-            playerBroadcastFeed = getConfig().getBoolean("Config.PlayerBroadcastFeed");
-            displayNextPromo = getConfig().getBoolean("Config.DisplayNextPromo");
+            Message = new Message(this,fc.getString("Config.Language"));
+            MessagesReplaces();
             
-            // zrocweb: Formatting
-            titleHeader = getConfig().getString("Formatting.TitleHeader");
-            titleFooter = getConfig().getString("Formatting.TitleFooter");
-            titleHeaderLineColor = getConfig().getString("Formatting.TitleHeaderLineColor");
-            titleHeaderTextColor = getConfig().getString("Formatting.TitleHeaderTextColor");
-            titleHeaderTextColorBold = getConfig().getBoolean("Formatting.TitleHeaderTextColorBold");
-            titleHeaderAltColor = getConfig().getString("Formatting.TitleHeaderAltColor");
-            titleHeaderAltColorBold = getConfig().getBoolean("Formatting.TitleHeaderAltColorBold");
-            titleFooterLineColor = getConfig().getString("Formatting.TitleFooterLineColor");
-            titleFooterTextColor = getConfig().getString("Formatting.TitleFooterTextColor");
-            rankinfoTextColor = getConfig().getString("Formatting.RankInfoTextColor");
-            rankinfoAltColor = getConfig().getString("Formatting.RankInfoAltColor");
-            promoteTextColor = getConfig().getString("Formatting.PromoteTextColor");
-            promoteTextBold = getConfig().getBoolean("Formatting.PromoteTextBold");
-            promotePreTextColor = getConfig().getString("Formatting.PromotePreTextColor");
-            generalMessages = getConfig().getString("Formatting.GeneralMessages");
-            
+        } catch (IOException ex) {
+            logger.log(Level.INFO, "{0} Error on config file", new Object[]{logPrefix});
+            ex.printStackTrace();
+            onDisable();
+        }
+
+
+        if (mruStartupSummary) {
             logger.log(Level.INFO, "{0} Alternative Broadcast is {1}", new Object[]{logPrefix, UseAlternativeBroadcast});
-            logger.log(Level.INFO, "{0} Default skill is {1}", new Object[]{logPrefix, DefaultSkill});
-            
-            RankUp = new RankUp(this);
-            RankUpConfig = new HashMap<String, HashMap<String,ArrayList<String>>>();
-            BroadCast = new HashMap<String, HashMap<String, String>>();
-            isHabilityRankExist = new HashMap<String, Boolean>();
-            
-            // InitAcessor
-            POWERLEVEL = new ConfigAccessor(this,"powerlevel.yml");
-            SetupAccessor("POWERLEVEL",POWERLEVEL);
-            EXCAVATION = new ConfigAccessor(this,"excavation.yml");
-            SetupAccessor("EXCAVATION",EXCAVATION);
-            FISHING = new ConfigAccessor(this,"fishing.yml");
-            SetupAccessor("FISHING",FISHING);
-            HERBALISM = new ConfigAccessor(this,"herbalism.yml");
-            SetupAccessor("HERBALISM",HERBALISM);
-            MINING = new ConfigAccessor(this,"mining.yml");
-            SetupAccessor("MINING",MINING);
-            AXES = new ConfigAccessor(this,"axes.yml");
-            SetupAccessor("AXES",AXES);
-            ARCHERY = new ConfigAccessor(this,"archery.yml");
-            SetupAccessor("ARCHERY",ARCHERY);
-            SWORDS = new ConfigAccessor(this,"swords.yml");
-            SetupAccessor("SWORDS",SWORDS);
-            TAMING = new ConfigAccessor(this,"taming.yml");
-            SetupAccessor("TAMING",TAMING);
-            UNARMED = new ConfigAccessor(this,"unarmed.yml");
-            SetupAccessor("UNARMED",UNARMED);
-            ACROBATICS = new ConfigAccessor(this,"acrobatics.yml");
-            SetupAccessor("ACROBATICS",ACROBATICS);
-            REPAIR = new ConfigAccessor(this,"repair.yml");
-            SetupAccessor("REPAIR",REPAIR);
-    
-            
-            // Messages
-            ChooseHability = getConfig().getString("Message.ChooseHability");
-            NotHaveProfile = getConfig().getString("Message.NotHaveProfile");
-            MPromote = getConfig().getString("Message.RankUp");
-            MSucess = getConfig().getString("Message.Sucess");
-            MFail = getConfig().getString("Message.Fail");
-            NotFound = getConfig().getString("Message.NotFound");
-            setGender = getConfig().getString("Message.setGender");
-            
-            // zrocweb: added messaging
-            rankinfoTitle = getConfig().getString("Message.RankInfoTitle");
-            promoteTitle = getConfig().getString("Message.PromoteTitle");
-            globalBroadcastRankupTitle = getConfig().getString("Message.GlobalBroadcastRankupTitle");
-            baseRanksListing = getConfig().getString("Message.BaseRanksListing");
-            
-            Playertime = new HashMap<String, Long>();
+            logger.log(Level.INFO, "{0} Default skill is {1}", new Object[]{logPrefix, DefaultSkill.toUpperCase()});
+        }
+
+        OnSetupSkills();
+
+        RankUp = new RankUp(this);
+        BuyRank = new BuyRanks(this);
+        ReportWriter = new UtilityReportWriter(this);
+        Playertime = new HashMap<>();
     }
-   
-    public long getCurrentMilli() {
-		return System.currentTimeMillis();
-    }
+
+    public void OnSetupSkills() {
+        
+        RankUpConfig = new HashMap<>();
+        BroadCast = new HashMap<>();
+        isRankExist = new HashMap<>();
+        BuyRankEnabled = new HashMap<>();
+        BuyRankUsePerms = new HashMap<>();
+        XpRanks = new HashMap<>();
+        BuksRanks = new HashMap<>();
+
+        SetupAccessor("POWERLEVEL", new ConfigAccessor(this, "powerlevel.yml"));
+        SetupAccessor("EXCAVATION", new ConfigAccessor(this, "excavation.yml"));
+        SetupAccessor("FISHING", new ConfigAccessor(this, "fishing.yml"));
+        SetupAccessor("HERBALISM", new ConfigAccessor(this, "herbalism.yml"));
+        SetupAccessor("MINING", new ConfigAccessor(this, "mining.yml"));
+        SetupAccessor("AXES", new ConfigAccessor(this, "axes.yml"));
+        SetupAccessor("ARCHERY", new ConfigAccessor(this, "archery.yml"));
+        SetupAccessor("SWORDS", new ConfigAccessor(this, "swords.yml"));
+        SetupAccessor("TAMING", new ConfigAccessor(this, "taming.yml"));
+        SetupAccessor("UNARMED", new ConfigAccessor(this, "unarmed.yml"));
+        SetupAccessor("ACROBATICS", new ConfigAccessor(this, "acrobatics.yml"));
+        SetupAccessor("REPAIR", new ConfigAccessor(this, "repair.yml"));
+        SetupAccessor("WOODCUTTING", new ConfigAccessor(this, "woodcutting.yml"));
+        SetupAccessor("SMELTING", new ConfigAccessor(this, "smelting.yml"));
+        
+    }    
     
-    public HashMap<String,ArrayList<String>> getRanks(ConfigAccessor ca){
-        HashMap<String,ArrayList<String>> Ranks = new HashMap<String, ArrayList<String>>();
-        ArrayList<String> Rank = new ArrayList<String>();
-        for (String key : ca.getConfig().getConfigurationSection("RankUp.Male.").getKeys(false)){
-          Rank.add(key + "," + ca.getConfig().getString("RankUp.Male." + key));
+    public void MessagesReplaces() {
+        Message.BuyPurchaseBuks = Message.BuyPurchaseBuks.replace("%currencyname%", BuyRankCurrencyName);
+        Message.NoAccess = PlayerWarnings + Message.NoAccess;
+        Message.NoLongerExists = PlayerWarnings + Message.NoLongerExists;
+        Message.HabilitySetFail = PlayerWarnings + Message.HabilitySetFail.replace("%colorreset%", PlayerWarnings);
+        Message.NotAvailable = PlayerWarnings + Message.NotAvailable;
+        Message.IgnoredRankLineSet = GeneralMessages + Message.IgnoredRankLineSet;
+        Message.CommandAttempt = PlayerWarnings + Message.CommandAttempt;
+        Message.Sucess = GeneralMessages + Message.Sucess;
+        Message.Demotion = GeneralMessages + Message.Demotion;
+        Message.Fail = GeneralMessages + Message.Fail;
+        Message.PromosIgnored = GeneralMessages + Message.PromosIgnored;
+        Message.LastQuitStatsFail = PlayerWarnings + Message.LastQuitStatsFail; 
+        Message.HabilitySet = GeneralMessages + Message.HabilitySet;
+    }
+
+    public HashMap<String, ArrayList<String>> GetRanks(ConfigAccessor ca) throws IOException {
+        HashMap<String, ArrayList<String>> Ranks = new HashMap<>();
+        ArrayList<String> Rank = new ArrayList<>();
+        for (String key : ca.getConfig().getConfigurationSection("RankUp.Male.").getKeys(false)) {
+            Rank.add(key + "," + ca.getConfig().getString("RankUp.Male." + key));
         }
         Ranks.put("Male", Rank);
-        Rank = new ArrayList<String>();
-        for (String key : ca.getConfig().getConfigurationSection("RankUp.Female.").getKeys(false)){
-          Rank.add(key + "," + ca.getConfig().getString("RankUp.Female." + key));
+
+        if (UseGenderClass) {						
+            Rank = new ArrayList<>();
+            for (String key : ca.getConfig().getConfigurationSection("RankUp.Female.").getKeys(false)) {
+                Rank.add(key + "," + ca.getConfig().getString("RankUp.Female." + key));
+            }
+            Ranks.put("Female", Rank);
         }
-        Ranks.put("Female", Rank);
         return Ranks;
     }
-    
-    public String parseColor(String message) {
-        try { 
-            for (ChatColor color : ChatColor.values()) {
-                message = message.replaceAll(String.format("&%c", color.getChar()), color.toString());
-            }
-            return message;
-        }catch(Exception ex) {
-            return message;
-        }
-    }
-    
-    public HashMap<String,String> getAlternativeBroadcast(ConfigAccessor ca){
-        HashMap<String,String> BroadCastCa = new HashMap<String, String>();
-        for (String key : ca.getConfig().getConfigurationSection("Broadcast.").getKeys(false)){
-          BroadCastCa.put(key, ca.getConfig().getString("Broadcast." + key));
-         // log.log(Level.INFO, logPrefix + "Group " + key + " will broadcast " + ca.getConfig().getString("RankUpConfig." + key));
+
+    public HashMap<String, String> GetAlternativeBroadcast(ConfigAccessor ca) throws IOException {
+        HashMap<String, String> BroadCastCa = new HashMap<>();
+        for (String key : ca.getConfig().getConfigurationSection("Broadcast.").getKeys(false)) {
+            BroadCastCa.put(key, ca.getConfig().getString("Broadcast." + key));
         }
         return BroadCastCa;
     }
-    public void SetupAccessor(String name,ConfigAccessor ca) {
+
+    public void SetupAccessor(String skill, ConfigAccessor ca) {
+        boolean canBuy = false;
+        
         try {
-            RankUpConfig.put(name,getRanks(ca));
-            if(UseAlternativeBroadcast) BroadCast.put(name,getAlternativeBroadcast(ca));
-            logger.log(Level.INFO, "{0}{1} Ranking Enabled!", new Object[]{logPrefix, name});
-            isHabilityRankExist.put(name,true);
-        }catch(Exception ex) {
-            logger.log(Level.INFO, "{0}{1} Rank file is either corrupt and/or missing.", new Object[]{logPrefix, name});
-            isHabilityRankExist.put(name,false);
+            if (isSkillEnable(skill)) {
+                RankUpConfig.put(skill, GetRanks(ca));
+                isRankExist.put(skill, true);
+                if (UseAlternativeBroadcast) {
+                    BroadCast.put(skill, GetAlternativeBroadcast(ca));
+                }
+                ca.setupConfig();
+                
+                BuyRankUsePerms.put(skill, ca.getConfig().getConfigurationSection("BuyRank").getBoolean("usepermissions") );
+                
+                if (AllowBuyingRanks && ca.getConfig().getConfigurationSection("BuyRank").getBoolean("enabled") ) {
+                    BuyRankEnabled.put(skill, true);
+                    XpRanks.put(skill, BuyRanks.getRankBuyXP(ca));
+                    BuksRanks.put(skill, BuyRanks.getRankBuyBuks(ca));
+                    canBuy = true;
+                }
+
+                if (mruStartupSummary) {
+                    logger.log(Level.INFO, "{0} {1} - Loaded | BuyRanks {2}", new Object[]{logPrefix, skill.toUpperCase(),canBuy ? "On" : "Off"});
+                }
+            } else {
+                if (mruStartupSummary) {
+                    logger.log(Level.INFO, "{0} {1} is disabled.", new Object[]{logPrefix, skill});
+                }
+                isRankExist.put(skill, false);
+                BuyRankEnabled.put(skill, false);
+            }
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, "{0} {1} - Ability Rank file is either corrupt and/or missing.", new Object[]{logPrefix, skill});
+            isRankExist.put(skill, false);
+            BuyRankEnabled.put(skill, false);
         }
+    }
+
+    private boolean isSkillEnable(String skill) {
+        boolean enabled = config.getConfig().getBoolean("Config.Skills." + skill + ".enabled");
+
+        if (!enabled && skill.equalsIgnoreCase(DefaultSkill)) {
+            logger.log(Level.WARNING, "{0} - Default Skill ({1}) was disabled. Enabling...", new Object[]{logPrefix, skill.toUpperCase()});
+            config.getConfig().set("Config.Skills." + skill + ".enabled", true);
+            config.saveConfig();
+            enabled = true;
+        }
+
+        return enabled;
+    }
+
+    public boolean CheckRankExist(String Skill) {
+        boolean exists = false;
+        for (String key : isRankExist.keySet()) {
+            if (Skill.equalsIgnoreCase(key)) {
+                exists = isRankExist.get(key);
+            }
+        }
+        return exists;
+    }
+
+    public int GetRankStartLevel(String skill, String gender, String rank) {
+        int rankLevel = 0;
+        for (Iterator<String> it = RankUpConfig.get(skill).get(gender).iterator(); it.hasNext();) {
+            String entry = it.next();
+            String[] levelGroup = entry.split(",");
+            if (levelGroup[1].equalsIgnoreCase(rank)) {
+                rankLevel = Integer.parseInt(levelGroup[0]);
+                break;
+            }
+        }
+        return rankLevel;
+    }
+    
+    public boolean isRankMaxLevel(String skill, String gender,int level) {
+        for (Iterator<String> it = RankUpConfig.get(skill).get(gender).iterator(); it.hasNext();) {
+            String entry = it.next();
+            String[] levelGroup = entry.split(",");
+            if (Integer.parseInt(levelGroup[0]) > level) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    public long GetCurrentMilli() {
+        return System.currentTimeMillis();
+    }
+
+    public boolean hasPermission(Player player, String node) {
+        return permission.has(player.getWorld(), player.getName(), node.toLowerCase());
+    }
+
+    public int GetSkillLevel(Player player, String skill) {
+        if (skill.equalsIgnoreCase("POWERLEVEL")) {
+            return McMMOApi.getPowerLevel(player);
+        } else {
+            return McMMOApi.getSkillLevel(player, skill);
+        }
+    }
+
+    public int GetSkillLevelOffline(String playerName, String skill) {
+        if (skill.equalsIgnoreCase("POWERLEVEL")) {
+            return McMMOApi.getPowerLevelOffline(playerName);
+        } else {
+            return McMMOApi.getSkillLevelOffline(playerName, skill);
+        }
+    }
+
+    public Boolean GroupToIgnore(Player player) {
+        for (String Group : GroupToIgnore) {
+            if (Group.equalsIgnoreCase(permission.getPrimaryGroup(player))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public double GetPlayerCurrency(Player pl) {
+        return economy.getBalance(pl.getName());
+    }
+
+    public String GetPlayerCurrentGroup(Player pl) {
+        return permission.getPrimaryGroup(pl.getWorld(), pl.getName());
+    }
+
+    public boolean isIgnored(Player pl) {
+        if (hasPermission(pl,"mru.ignore") || GroupToIgnore(pl)) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isRankAvailable(String skill, Player pl) {
+        if(skill.toLowerCase().contains("powerlevel")) return true;
+        return hasPermission(pl, "mru.rankup." + skill.toLowerCase()) && hasPermission(pl, "mcmmo.skills." + skill.toLowerCase());
     }
 }

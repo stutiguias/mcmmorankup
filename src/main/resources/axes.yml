@@ -1,0 +1,69 @@
+RankUp:
+  # Gender Classes, Male and Female - If you have configured the global configuration "UseGenderClass = True" then each of the
+  # Gender Classes needs to be configured as you see it below.  Otherwise, if UseGenderClass = False, a MALE Gender Class
+  # MUST be configured for each of your permission groups.
+  Male:
+   #Level : GroupName
+    42: Settler
+    245: L1_Worker
+    610: L2_Worker
+    830: Resident
+    1200: Dweller
+    12300: Asst_Mayor
+    35000: Mayor
+    265000: Admin
+  Female:
+    42: Settler
+    245: L1_Worker
+    610: L2_Worker
+    830: Resident
+    1200: Dweller
+    12300: Asst_Mayor
+    35000: Mayor
+    265000: Admin
+Ladders:
+  # STILL UNDER DEVELOPMENT - NOT YET AVAILABLE OR FUNCTIONAL
+  enabled: false
+  Settler: Settler2,Settler3
+  Settler2: archery[200]+woodcutting[400]
+  Settler3: swords[300]+unarmed[150]
+BuyRank:
+  # Buying ranks has just gotten easier for you and your players.  Ranks configured below can be for both XP and/or Currency
+  # If you do not want a rank to be purchased for Xp or Currency just make the cost of that rank a value of zero (0). Doing so
+  # will eliminate it from any of the purchasing lists and the player will not be able to purchased it
+  enabled: true
+  usepermissions: true  
+  XP:
+    # XP value for each group may be in experience points (1333) or in Experience Levels (100L) and > 0
+    Settler: 210L
+    L1_Worker: 420L
+    L2_Worker: 550L
+    Resident: 700L
+    Dweller: 900L
+    Asst_Mayor: 1500L
+    Mayor: 20000L
+    Admin: 60000L
+  BUKS:
+    # Curreny value can be any value > 0
+    Settler: 1000
+    L1_Worker: 3000
+    L2_Worker: 5100
+    Resident: 6200
+    Dweller: 9000
+    Asst_Mayor: 75000
+    Mayor: 240000
+    Admin: 900000
+Rewards:
+  enabled: false
+  usepermissions: true
+  cmds: give %player% diamond 64
+Broadcast:
+    #GroupName : Broadcast Name
+    Settler: Axes Settler
+    L1_Worker: Axes Worker Level I
+    L2_Worker: Axes Worker Level II
+    Resident: Axes Resident
+    Dweller: Axes Dweller
+    Asst_Mayor: Level 1 Axes Moderator (Mayor)
+    Mayor: Axes Moderator (Mayor)
+    Admin: Axes Administrator    

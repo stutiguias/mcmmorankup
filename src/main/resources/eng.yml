@@ -1,0 +1,133 @@
+  # ##########################################################################################################
+  # Message:          Color codes can be added to any message as well, utilitizing MineCrafts color codes
+  #                   and in-game chat methodologies.
+  # 
+  #                   If you see a tag in a message please don't alter the tag, just position.
+  #                   
+  #                   Message Tags: (case-sensitive!!)
+  #                                 %player% - Inserts the Players Name
+  #                                 %ability% - Inserts the Ability Name
+  #                                 %group% - Inserts the Players current group
+  #                                 %gender% - Inserts the Players current gender
+  #                                 %colorreset% - Resets all coloring at tag point
+  #                                 %cXp% - Inserts the Players current mcmmoXp
+  #                                 %rXp% - Inserts the Players remaining mcmmoXp until level up
+  #                                 %xp% - Inserts the Players current MC EXP points
+  #                                 %level% - Inserts the Players current MC XP Level
+  #                                 %command% - Inserts a command name
+  #                                 %buyflag% - Inserts the type of Purchase (Xp or Buks)
+  #                                 %rankname% - Inserts the name of a rank
+  #                                 %cost% - Inserts the cost of a rank
+  #                                 %rank% - Same as rankname above, but slightly different
+  #                                 %currencyname% - Inserts the name of the Server Currency
+  #                                 %currency% - Same as currencyname
+  #                                 %action% - Inserts the name of a reward action
+  #                                 %promotedemote% - Inserts if promoted or demoted
+  #                                 %rankline% - Inserts a rank name (skill/ability)
+  #                                 %skillLevel% - Inserts the players current ability level (case-sensitive)
+  #                                 %nLevel% - Inserts the players next level (case-sensitive)
+  #                                 %nRank% - Inserts the players next rank (case-sensitive)
+  #                                 %pRank% - Inserts the players promoted/demoted rank (case-sensitive)
+  # ##########################################################################################################
+  # Skill or Ability - Refer to skill in mcmmo
+  # Rank - Refer to rank on mcmmorankup
+  # ##########################################################################################################
+  Error:
+    McMMONotHaveProfile: '%player% ranking profile could not be located!'
+    NotAvailable: This rank line is not available for ranking up...
+    NoLongerExists: '&4&lYour current rank line (&6%rankline%&4&l) is no longer available\n&6Please select a new rank line; &7/mru hab &6<&7ability&6>&7.'
+    NoAccess: '&4&lYour rank line (&6%rankline%&4&l) is not available to you\n&6Please select a new rank line; &7/mru hab &6<&7ability&6>&7.'
+    CommandAttempt: 'Command attempted too soon!'
+    NoPermPlayerFeeds: 'You dont have permission to Manage Feeds.'
+    PlayerFeedsDisabled: 'Player Feeds are disabled.'
+    IgnoredRankLineSet: 'Ignored Players/Groups can not set rank lines.'
+    
+  Rank:
+    PromosIgnored: 'Promotions are ignored for you and/or your group'
+    RankInfoTitle: 'RANK INFO'
+    PromoteTitle: 'PROMOTION'
+    DemoteTitle: 'DEMOTION'
+    RankInfoLine1: '&eRank Line: &c%ability%'
+    RankInfoLine2: '&eLevel: &c%skilllevel%&e ( &c%rankline%&e )'
+    RankInfoLine3: '&eNext Promotion Level: &c%nLevel%&e ( &c%nRank%&e )'
+    RankInfoHighest: 'Ranking Ability (%ability%) Achieved! You are top dog!!'
+  
+  RankChange:
+    Demotion: 'You have been demoted! Cmon, Step it up!'
+    Sucess: 'You have been promoted to your next level'
+    Promotion: '%player% was just %promotedemote% to %group%'
+    Fail: 'Promotion not possible... Level is too low!!'
+    BroadcastRankupTitle: 'RANKING UPDATE'
+    PromoteDemote: '%promotedemote% to:&e %pRank%'
+    Promote: 'Promote'
+    Demote: 'Demote'
+    
+  Hab:
+    Enabled: '&3 Available for Ranking Up'
+    Disabled: '&7 Not Available for Ranking Up'
+    CurRankLine: '&c&l Your Current Rank Line'
+    PrefixBuy: '&aB'
+    Level: '&8(&o&5lvl&3:&o&5%level%&8)'
+
+  Gender:
+    Set: 'Your Gender has been set to %gender%'
+    
+  Auto:
+    RankChecking: '&b%player%%colorreset%, checking your rank for promotion/demotion...'
+    RankCheckingIgnore: '&b%player%%colorreset%, you are being ignored for promotions!'
+
+  Mcmmo:
+    LevelUp: '&6Ranking ability, &5%ability% &6has leveled up to: &5%skilllevel%'
+    XpGain: '&3Ability XP: &8(&5%cXp%&8/&5%rXp%&8)'
+    
+  Stats:  
+    LastQuitFail: 'Last Quit stats could not be retrieved. Creating...'
+
+  Rewarded: 
+    Message: '%action% for your %promotedemote%'    
+    Give: 'You were just given'
+    Take: 'has been taken from you'
+  
+  Hability:
+    Title: 'BASE RANK ABILITIES'
+    Set: '%ability% is now your chosen path for ranking up...'
+    SetFail: '&2%ability% %colorreset%is not an ability you have just yet!'
+    NotShowInfo: '&c*&7abilities not shown are either not available to you or disabled'
+    DefaultSkilltoRank: '&c**&7default rank line is: %ability%'
+    
+  Buy:
+    PurchaseInfo: '&3Your Purchasing Profile:'
+    PurchaseBuks: '&3%currencyname%: &6'
+    PurchaseXp: '&3XP: &6%xp% &3points &3(Level &6%level%&3)'
+    Profile: '&6%group%&3 ( &6%rankline% &3@ level: &6 %level%&3 )'
+    Menu: Buy a rank for XP or %currencyname%
+    PurchaseConfirm: '&3You purchased Rank &6%rank% &3for &6%cost%&3...'
+    PurchaseReq: '&3Type &f%command% %buyflag% &3<&frankname&3> of the rank you wish to buy!'
+    PurchaseNot: '&cYour a little short on &e%buymethod% &cto buy ranks!'
+    IgnoreNoPurchase: '&cIgnored Players and/or Groups can not purcahse ranks!!'
+    Disabled: '&c&cYour Rank Line does not allow the buying of Ranks'
+    ListEntry: '&f :> &6%cost% &3 to buy  &6%rank% &3 Rank'
+    InvalidEntry: '&cInvalid Rank. Type exactly how you see it!'
+    InvalidEntryRedo: '&7Re-enter your purchase command (case sensitive)'
+    NoPermBuks: '&f&lNo permission to purchase ranks with %currency%'
+    NoPermXp: '&f&lNo permission to purchase ranks with XP'
+    Levels: ' levels'
+    Points: ' points'
+    Purchase: '&3purchase '
+    
+  Display:
+    InformAll: 'You need to inform all parameters'
+    ValidGender: 'Please enter a valid gender'
+    ValidSkill: 'Please enter a valid skill'
+    Title: 'Showing skill %skill% %gender%'
+    Line: '&6Rank &c%point%&6 with &c%rank%&6 or more'
+
+  Help:
+    View: 'ScoreBoard Rank Points'
+    Rank: 'Show and Execute rank-up or down'
+    MaleFemale: 'Set your gender to Male/Female'
+    Hab: 'List all available abilities'
+    Sethab: 'Set your rank base ability to <ability>'
+    SethabIgnore: 'Not Available | you are being ignored'
+    DisplayHab: 'Show ability rank'
+    Feeds: 'Show / Manage your Messaging Feeds'

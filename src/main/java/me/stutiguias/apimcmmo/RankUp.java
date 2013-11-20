@@ -1,255 +1,273 @@
 package me.stutiguias.apimcmmo;
 
-import com.gmail.nossr50.api.ExperienceAPI;
-import com.gmail.nossr50.datatypes.PlayerProfile;
-import com.gmail.nossr50.datatypes.SkillType;
-import com.gmail.nossr50.util.Users;
+import me.stutiguias.mcmmorankup.Mcmmorankup;
+import me.stutiguias.mcmmorankup.Utilities;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.logging.Level;
-
-import me.stutiguias.mcmmorankup.ChatTools;
-import me.stutiguias.mcmmorankup.Mcmmorankup;
 import me.stutiguias.profile.Profile;
-
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-
 
 public class RankUp {
-    
+
     private static Mcmmorankup plugin;
-    
-    public RankUp(Mcmmorankup instance)
-    {
+    private static HashMap<String, String> infoSettings = new HashMap<>();
+    private Profile profile;
+
+    public RankUp(Mcmmorankup instance) {
         plugin = instance;
-        Plugin pl = plugin.getServer().getPluginManager().getPlugin("mcMMO");
-        if(pl != null) {
-            Mcmmorankup.logger.log(Level.INFO, plugin.logPrefix + " mcMMO found--- hooking");
+        if (plugin.getServer().getPluginManager().getPlugin("mcMMO") != null) {
+            Mcmmorankup.logger.log(Level.INFO, "{0} mcMMO has been hooked", new Object[]{Mcmmorankup.logPrefix});
         }
+
     }
     
-    public String tryRankUp(Player player, String skill, String gender) {
-        try{
-              if(PlayerToIgnore(player)) return "ignore";
-              if(GroupToIgnore(player))  return "ignore";
+    public void SendFormatMessage(String msg) {
+        profile.player.sendMessage(Utilities.parseColor(msg));
+    }
+    
+    public String TryRankUp(Player player, String skill, String gender) {
+        try {
+            if (plugin.isIgnored(player)) return "ignore";
 
-              PlayerProfile _McMMOPlayerProfile =  Users.getProfile(player);
-              Integer SkillLevel;
-              
-              if (skill.equalsIgnoreCase("POWERLEVEL")) {
-                  SkillLevel = getPowerLevel(player);
-              } else {
-                  SkillLevel = _McMMOPlayerProfile.getSkillLevel(getSkillType(skill));
-              }
-              
-              // zrocweb:
-              String title;
-              StringBuilder msg = new StringBuilder();
-              String group = "";
-              String nextGroup = "none";
-              Integer nextLevel = 0;
-              Integer level;
-              String result = "failed";
-              
-              Boolean reachMaxLevel = false;
-              
-              String OldplayerGroup = plugin.permission.getPrimaryGroup(player);
-              String NewplayerGroup = OldplayerGroup;
+            profile = new Profile(plugin, player);
+            
+            boolean broadCast = false;
 
-              for (Iterator<String> it = plugin.RankUpConfig.get(skill).get(gender).iterator(); it.hasNext();) {
-                  String entry = it.next();
-                  String[] levelGroup = entry.split(",");
-                  
-                  level = Integer.parseInt(levelGroup[0]);
-                  group = levelGroup[1];
+            String rank;		
+            String nextGroup = "";				              
+            int nextLevel = 0;				
+            int level;					
 
-                  if(SkillLevel >= level) {                	  
-                        NewplayerGroup = group;
-                  }
-      
-                  if(SkillLevel <= level && nextGroup.equalsIgnoreCase("none")) {
-                        nextGroup = group;
-                        nextLevel = level;
-                  }                	  
-                                                                 
-              }
-              
-              if(nextGroup.equalsIgnoreCase("none")) {
-            	  reachMaxLevel=true;    
-                  result="already";                  
-              }
-                            
-              if (OldplayerGroup.equalsIgnoreCase(NewplayerGroup)) {
-              	  title = plugin.promoteTitle;
-              } else {  
-                  if(ChangeGroup(player, NewplayerGroup, skill)) result = "promoted";  
-            	  title = plugin.rankinfoTitle;
-              }
-              
-              // Color Formatting init
-              String ht = ChatTools.getAltColor(plugin.titleHeaderTextColor);
-              String rt = ChatTools.getAltColor(plugin.rankinfoTextColor);
-              String ra = ChatTools.getAltColor(plugin.rankinfoAltColor);
-              String pt = ChatTools.getAltColor(plugin.promoteTextColor);
-              String pp = ChatTools.getAltColor(plugin.promotePreTextColor);
-              Boolean pb = plugin.promoteTextBold;
+            boolean demote = false;			
+            boolean promote = false;							
+            boolean maxLvl = false;					
+            boolean hasPurchased = false;	
+            
+            int purchaseLevel = 0;
 
-              msg.append("Base Ability: ").append(skill);
-              msg.append(" @ Level: ").append(SkillLevel).append(" ( ").append(NewplayerGroup).append(" )\n");
-              if(reachMaxLevel) {
-                  msg.append("Ability ( ").append(skill).append(" ) Achieved!\n");
-                  msg.append("Use /mru hab <ability> to select a new Ability\n");
-              }else if(plugin.displayNextPromo) {
-                  msg.append("Your next promotion will achieve greatness in this ability!\n");
-                  msg.append("Next Promotion @ Level: ").append(nextLevel+1).append(" ( ").append(nextGroup).append(" ) ");
-              }
-              
-              player.sendMessage("\n" + ChatTools.formatTitle(title, plugin.titleHeader, plugin.titleHeaderLineColor, plugin.titleHeaderTextColor, plugin.titleHeaderAltColorBold,plugin.titleHeaderAltColor, plugin.titleHeaderAltColorBold));
-              player.sendMessage(msg.toString());
-              player.sendMessage(ChatTools.getAltColor(plugin.titleFooterLineColor) + plugin.titleFooter);
-              return result;
-
-        } catch (NullPointerException ex) {
-              Mcmmorankup.logger.log(Level.WARNING,"{tryRankUp} - Error trying to rank up " + ex.getMessage());
-              ex.printStackTrace();
-              return "error";
-        } catch (Exception ex) {
-              Mcmmorankup.logger.log(Level.WARNING,"{tryRankUp} - Error trying to rank up " + ex.getMessage());
-              ex.printStackTrace();
-              return "error";
-        }
-      }
-
-    public boolean tryRankUpWithoutGroup(Player player,String skill,String gender) {
-        try{
-            if(PlayerToIgnore(player)) return false;
-            if(GroupToIgnore(player)) return false;
-            PlayerProfile _McMMOPlayerProfile =  Users.getProfile(player);
-            Integer SkillLevel;
-            if(skill.equalsIgnoreCase("POWERLEVEL")) {
-                SkillLevel = getPowerLevel(player);
-            }else{
-                SkillLevel = _McMMOPlayerProfile.getSkillLevel(getSkillType(skill));
+            String rankNow = plugin.TagSystem ? profile.GetTag() : plugin.permission.getPrimaryGroup(player);
+            
+            if (profile.GetPurchasedRanks().size() > 0 && plugin.BuyRank.GetLastPurchasedSkill( profile.GetPurchasedRanks() ).equalsIgnoreCase(skill)) {
+                hasPurchased = true;	
+                String lastPurchasedRank = plugin.BuyRank.getLastPurchasedRank( profile.GetPurchasedRanks() );		
+                purchaseLevel = plugin.GetRankStartLevel(skill, gender, lastPurchasedRank);
             }
-            String Tag = "";
+            
+            int playerSkillLevel = plugin.GetSkillLevel(player, skill);
+            int StartLevel = plugin.GetRankStartLevel(skill, gender, rankNow);
+ 
+            String updatedRank = rankNow;
+            int updatedLevel = 0;
+            boolean willbreak = false;
+
             for (Iterator<String> it = plugin.RankUpConfig.get(skill).get(gender).iterator(); it.hasNext();) {
                 String entry = it.next();
-                String[] values = entry.split(",");
-                if(Integer.parseInt(values[0]) < SkillLevel){
-                    Tag = values[1]; 
+                String[] levelRank = entry.split(",");
+
+                level = Integer.parseInt(levelRank[0]);
+                rank = levelRank[1];
+
+                if (playerSkillLevel >= level) {
+                    if(level < StartLevel) {
+                        demote = true;
+                    }else{
+                        demote = false;
+                    }
+                    if(demote && plugin.hasPermission(player, "mru.exemptdemotions") ) continue;
+                    if(hasPurchased && level < purchaseLevel && !plugin.AllowBuyRankDemotions ) continue;
+
+                    maxLvl = plugin.isRankMaxLevel(skill, gender, level);
+                    
+                    if(!demote) promote = true;
+                    updatedRank = rank;
+                    updatedLevel = level;
+                    willbreak = true;
+                }else if(!maxLvl && level > updatedLevel && nextLevel == 0) {
+                    nextGroup = rank;
+                    nextLevel = level;
+                    if(willbreak) break;
                 }
             }
-            System.out.print(Tag);
-            if(!Tag.equalsIgnoreCase("")) return ChangeTag(player,Tag,skill);
-      }catch(NullPointerException ex) {
-            Mcmmorankup.logger.log(Level.WARNING,"{tryRankUpW/OutGroup} - Error trying to rank up " + ex.getMessage());
-            return false;
-      }catch(Exception ex) {
-            Mcmmorankup.logger.log(Level.WARNING,"{tryRankUpW/OutGroup} - Error trying to rank up " + ex.getMessage());
+
+            String title;
+                     
+
+            if (!updatedRank.equalsIgnoreCase(rankNow)) {
+                
+                if (!plugin.hasPermission(player, "mru.rankup")) return null;
+                title = promote ? plugin.Message.PromoteTitle : demote ? plugin.Message.DemoteTitle : plugin.Message.RankInfoTitle;
+                
+                if (plugin.globalBroadcastFeed) {					
+                    broadCast = profile.GetPlayerGlobalFeed();
+                }
+            
+                if (plugin.TagSystem) {
+                    ChangeTag(updatedRank, skill, broadCast, demote);
+                } else {
+                    ChangeGroup(updatedRank, skill, broadCast, demote);
+                }
+                
+            }else{
+                title = plugin.Message.RankInfoTitle;
+                promote = false;
+                demote = false;
+            }		
+
+            if (plugin.playerBroadcastFeed) {
+                broadCast = profile.GetPlayerRankupFeed();
+            }
+
+            if (broadCast) {
+                infoSettings.put("title", title);
+                infoSettings.put("promote", (promote ? "t" : "f"));
+                infoSettings.put("skill", skill);
+                infoSettings.put("playerGroup", updatedRank);
+                infoSettings.put("nGroup", nextGroup);
+                infoSettings.put("nLevel", String.valueOf(nextLevel));
+                infoSettings.put("skilllevel", String.valueOf(playerSkillLevel));
+                infoSettings.put("maxLvl", (maxLvl ? "t" : "f"));
+                infoSettings.put("xpNeeded", String.valueOf(McMMOApi.getXpToNextLevel(player, skill)));
+                infoSettings.put("cXp", String.valueOf(McMMOApi.getXp(player, skill)));
+
+                ShowRankingInfo(player);
+
+                infoSettings.clear();
+            }
+
+            if (promote || demote) {
+                return promote ? "promoted" : "demoted";
+            }
+            return "fail";
+            
+        } catch (Exception ex) {
+            Mcmmorankup.logger.log(Level.WARNING, "-=tryRankUp=- Error trying to rank up {0}", ex.getMessage());
             ex.printStackTrace();
-            return false;
-      }
-      return false;
-    }
-    
-    private boolean ChangeTag(Player player,String tag,String skill) {
-         Profile _profile = new Profile(plugin, player);
-         String tagnow = _profile.getTag();
-         if(tagnow == null) tagnow = "Default"; 
-         if(!tag.equalsIgnoreCase(tagnow))  {
-            _profile.setTag(tag);
-            //plugin.getServer().broadcastMessage("-=-=-=-=-=-=-=-=- [ RANK UP] -=-=-=-=-=-=-=-=-=-=-=-");
-            plugin.getServer().broadcastMessage("\n"+ChatTools.formatTitle(plugin.globalBroadcastRankupTitle, plugin.titleHeader, plugin.titleHeaderLineColor, plugin.titleHeaderTextColor, plugin.titleHeaderAltColorBold,
-				       																						  plugin.titleHeaderAltColor, plugin.titleHeaderAltColorBold));
-            //plugin.getServer().broadcastMessage(plugin.parseColor(BroadcastMessage(player, tag, skill)));
-            plugin.getServer().broadcastMessage(ChatTools.getAltColor(plugin.generalMessages) + BroadcastMessage(player, tag, skill));
-            //plugin.getServer().broadcastMessage("----------------------------------------------------");
-            plugin.getServer().broadcastMessage(ChatTools.getAltColor(plugin.titleFooterLineColor) + plugin.titleFooter);
-            return true;
-        }else{
-            return false;
+            return "error";
         }
     }
-    
-    private boolean ChangeGroup(Player player,String newgroup,String skill)
-    {
-        String groupnow = plugin.permission.getPrimaryGroup(player);
+
+    public void ShowRankingInfo(Player player) {
+
+        String title = infoSettings.get("title");
+        String skill = infoSettings.get("skill");
+        String playerGroup = infoSettings.get("playerGroup");
+        String nGroup = infoSettings.get("nGroup");
+
+        String line;
+
+        String maxAchieved;
+        String promoteDemote;
+
+        HashMap<Integer, String> rankInfo = new HashMap<>();		
+        
+        boolean promote =       infoSettings.get("promote").equalsIgnoreCase("t") ? true : false;
+        boolean maxLvl =        infoSettings.get("maxLvl").equalsIgnoreCase("t") ? true : false;
+
+        int nLevel = Integer.valueOf(infoSettings.get("nLevel"));
+        int SkillLevel = Integer.valueOf(infoSettings.get("skilllevel"));
+
+        try {
+            
+            line = plugin.Message.RankInfoLine1.replaceAll("%ability%", skill);
+            rankInfo.put(1, line);
+            
+            line = plugin.Message.RankInfoLine2.replaceAll("%skilllevel%", String.valueOf(SkillLevel)).replaceAll("%rankline%", playerGroup);
+            rankInfo.put(2, line);
+
+            line = plugin.Message.RankInfoLine3.replaceAll("%nLevel%", String.valueOf(nLevel + 1)).replaceAll("%nRank%", nGroup);
+            rankInfo.put(3, line);
+
+            maxAchieved = plugin.Message.RankInfoMax;
+            maxAchieved = maxAchieved.replaceAll("%ability%", skill);
+
+            promoteDemote = plugin.Message.RankPromoteDemote;
+            promoteDemote = promoteDemote.replaceAll("%promotedemote%", promote ? plugin.Message.Promote : plugin.Message.Demote).replaceAll("%pRank%", playerGroup);
+            
+            SendFormatMessage(plugin.MessageSeparator);
+            SendFormatMessage(title);
+
+            for (int ln = 1; ln <= 5; ln++) {
+                
+                String info = "";
+                
+                switch(ln) {
+                    case 1:
+                    case 2:
+                        info = rankInfo.get(ln);
+                        break;
+                    case 3:
+                        if(maxLvl)
+                            info = maxAchieved;
+                        else if (plugin.displayNextPromo) 
+                            info = rankInfo.get(ln);                        
+                        break;
+                    case 4:
+                        if( promote )
+                            info = promoteDemote;
+                        break;
+                }
+                
+                if (!info.isEmpty()) {
+                    SendFormatMessage(info);
+                }
+            }
+            
+            SendFormatMessage(plugin.MessageSeparator);
+            
+        } catch (NullPointerException ex) {
+            ex.printStackTrace();
+        } finally {
+            rankInfo.clear();
+        }
+    }
+
+    private void ChangeTag(String promoteTag, String skill, boolean bCast, boolean demote) {
+        profile.SetTag(promoteTag);
+        if (bCast) {
+            plugin.getServer().broadcastMessage(plugin.Message.BroadcastRankupTitle);
+            plugin.getServer().broadcastMessage(Utilities.parseColor(plugin.GeneralMessages + BroadcastMessage(promoteTag, skill, demote)));
+            plugin.getServer().broadcastMessage(Utilities.parseColor(plugin.MessageSeparator));
+        }
+    }
+
+    private boolean ChangeGroup(String newgroup, String skill, boolean bCast, boolean demote) {
+
+        String groupnow = plugin.permission.getPrimaryGroup(profile.player);
         boolean state;
-        
-        if(plugin.RemoveOnlyPluginGroup) {
-            plugin.permission.playerRemoveGroup(player.getWorld(), player.getName(), groupnow);
-        }else{
-            String[] playergroups = plugin.permission.getPlayerGroups(player);
-            for(String playergroup:playergroups) {
-                plugin.permission.playerRemoveGroup(player.getWorld(), player.getName(), playergroup);
+
+        if (plugin.RemoveOnlyPluginGroup) {
+            plugin.permission.playerRemoveGroup(profile.player.getWorld(), profile.player.getName(), groupnow);
+        } else {
+            String[] playergroups = plugin.permission.getPlayerGroups(profile.player);
+            for (String playergroup : playergroups) {
+                plugin.permission.playerRemoveGroup(profile.player.getWorld(), profile.player.getName(), playergroup);
             }
         }
-        state = plugin.permission.playerAddGroup(player.getWorld(),player.getName(),newgroup);
+        state = plugin.permission.playerAddGroup(profile.player.getWorld(), profile.player.getName(), newgroup);
         
-        if(!groupnow.equalsIgnoreCase(newgroup))  {
-        	plugin.getServer().broadcastMessage("\n"+ChatTools.formatTitle(plugin.globalBroadcastRankupTitle, plugin.titleFooter, plugin.titleHeaderLineColor, plugin.titleHeaderTextColor, plugin.titleHeaderAltColorBold,plugin.titleHeaderAltColor, plugin.titleHeaderAltColorBold));
-        	plugin.getServer().broadcastMessage(ChatTools.getAltColor(plugin.generalMessages) + BroadcastMessage(player, newgroup, skill));
-                plugin.getServer().broadcastMessage(ChatTools.getAltColor(plugin.titleFooterLineColor) + plugin.titleFooter);
+        if (bCast && state && !groupnow.equalsIgnoreCase(newgroup)) {
+            plugin.getServer().broadcastMessage(plugin.Message.BroadcastRankupTitle);
+            plugin.getServer().broadcastMessage(Utilities.parseColor(plugin.GeneralMessages + BroadcastMessage(newgroup, skill, demote)));
+            plugin.getServer().broadcastMessage(Utilities.parseColor(plugin.MessageSeparator));
         }
-        
-        return state;   
+
+        return state;
     }
-    
-    private static int getPowerLevel(Player player)
-    {
-        return ExperienceAPI.getPowerLevel(player);
-    }
-    
-    private String BroadcastMessage(Player player, String group, String skill)
-    {
-        if(plugin.UseAlternativeBroadcast) {
+
+    private String BroadcastMessage(String group, String skill, boolean demote) {
+        if (plugin.UseAlternativeBroadcast) {
             try {
-               HashMap<String,String> _BroadCast = plugin.BroadCast.get(skill);
-               String bc = _BroadCast.get(group);               
-               return plugin.MPromote.replace("%player%", player.getName()).replace("%group%", bc);
+                HashMap<String, String> broadCast = plugin.BroadCast.get(skill);
+                String bc = broadCast.get(group);
+                return plugin.Message.Promotion.replace("%player%", profile.player.getName()).replace("%promotedemote%",demote ? plugin.Message.Demote : plugin.Message.Promote).replace("%group%", bc);
             } catch (Exception ex) {
-                Mcmmorankup.logger.log(Level.WARNING,"Error trying to broadcast Alternative " + ex.getMessage());
+                Mcmmorankup.logger.log(Level.WARNING, "Error trying to broadcast Alternative Messaging {0}", ex.getMessage());
                 ex.printStackTrace();
-                return "Error try to broadcast Alternative";
+                return "Error trying to Broadcast Alternative Messaging";
             }
-        }else {
-            return plugin.MPromote.replace("%player%", player.getName()).replace("%group%", group);
+        } else {
+            return plugin.Message.Promotion.replace("%player%", profile.player.getName()).replace("%promotedemote%", demote ? plugin.Message.Demote : plugin.Message.Promote).replace("%group%", group);
         }
-    }
-    
-    
-    public SkillType getSkillType(String skill) {
-         if(skill.equalsIgnoreCase("EXCAVATION")) return SkillType.EXCAVATION;
-         if(skill.equalsIgnoreCase("FISHING")) return SkillType.FISHING;
-         if(skill.equalsIgnoreCase("HERBALISM")) return SkillType.HERBALISM;
-         if(skill.equalsIgnoreCase("MINING")) return SkillType.MINING;
-         if(skill.equalsIgnoreCase("AXES")) return SkillType.AXES;
-         if(skill.equalsIgnoreCase("ARCHERY")) return SkillType.ARCHERY;
-         if(skill.equalsIgnoreCase("SWORDS")) return SkillType.SWORDS;
-         if(skill.equalsIgnoreCase("TAMING")) return SkillType.TAMING;
-         if(skill.equalsIgnoreCase("UNARMED")) return SkillType.UNARMED;
-         if(skill.equalsIgnoreCase("ACROBATICS")) return SkillType.ACROBATICS;
-         if(skill.equalsIgnoreCase("REPAIR")) return SkillType.REPAIR;
-         return null;
-    }
-    
-    public Boolean PlayerToIgnore(Player player) {
-        for(String PlayerToIgnore:plugin.PlayerToIgnore) {
-            if(player.getName().equalsIgnoreCase(PlayerToIgnore)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    public Boolean GroupToIgnore(Player player) {
-        for (String GroupToIgnore  : plugin.GroupToIgnore) {
-            if(GroupToIgnore.equalsIgnoreCase(plugin.permission.getPrimaryGroup(player))) {
-                return true;
-            }
-        }
-        return false;
     }
 }

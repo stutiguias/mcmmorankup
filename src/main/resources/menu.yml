@@ -1,0 +1,7 @@
+Formatting:
+  # The Separator on each Message
+  MessageSeparator: '&e-----------------------------------------------------'
+  #Color por general messages
+  GeneralMessages: '&6'
+  #Color por player warnings
+  PlayerWarnings: '&c'

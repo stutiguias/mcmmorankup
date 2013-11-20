@@ -2,9 +2,6 @@
 ## Eclipse
 #################
 /target/
-build.xml
-manifest.mf
-nbproject/
 *.pydevproject
 .project
 .metadata

@@ -1,17 +1,135 @@
 name: Mcmmorankup
 main: me.stutiguias.mcmmorankup.Mcmmorankup
-version: 0.6.1-DEV
+version: 0.6.7
 author: Stutiguias, zrocweb
 depend: [Vault,mcMMO]
 commands:
   mru:
-   description: RankUp in your skills
-   usage:
-   
+    description: Auto Rankup Commands and Settings
+    usage: Use /mru for Help,  /mru hab to view rankings abilities, /mru hab <ability> sets your rank line ability
+    permission: mru.hability
+    permission-message: You don't seem to have permission to use Auto Ranking yet...
 permissions:
-    mru.hability:
-       description: Gives access to provide player option to choose ability skill
-       default: true
-    mru.reload:
-       description: reload the plugin
+    mru.user.simple:
+      children:
+        mru.buyrankbuks: false
+        mru.buyrankxp: false
+        mru.hability: true
+        mru.playerfeeds: false
+        mru.rankup: true
+        mru.stats: true
+        mru.stats.others: false
+        mru.rankup.*: true
+    mru.user.*:
+      description: Gives access to all WebAuction commands
+      children:
+        mru.buyrankbuks: true
+        mru.buyrankxp: true
+        mru.hability: true
+        mru.playerfeeds: true
+        mru.rankup: true
+        mru.stats: true
+        mru.stats.others: true
+        mru.rankup.*: true
+    mru.admin.*:
+      description: Gives access to all WebAuction commands
+      children:
+        mru.admin.config: true
+        mru.buyrankbuks: true
+        mru.buyrankxp: true
+        mru.hability: true
+        mru.playerfeeds: true
+        mru.rankup: true
+        mru.stats: true
+        mru.stats.others: true
+        mru.rankup.*: true
+    mru.admin.config:
+       description: Allow admins to update config settings in-game and reload.
        default: op
+    mru.buyrankbuks:
+       description: Allow a player to purchase a rank from their current server worlds money
+       default: false       
+    mru.buyrankxp:
+       description: Allow a player to purchase a rank from XP or XP Levels
+       default: false
+    mru.ignore:
+       description: Ignore Player
+       default: false
+    mru.exemptdemotions:
+       description: Players with this will not get demoted, regardless of rank line changes and skill levels
+       default: false
+    mru.hability:
+       description: Gives access to provide players the option to set their base rank line
+       default: true
+    mru.playerfeeds:
+       description: Gives players the access to manage their mcmmoRankup Player feeds
+       default: false
+    mru.rankup:
+       description: Allow a player to autorank or invoke ranking up themselves via cmd /mru rank
+       default: false
+    mru.stats:
+       description: Allow a player to view their current ranking stats, both current and previous
+       default: false
+    mru.stats.others:
+       description: Allow a player to view another players ranking stats, current and previous       
+       default: false
+    mru.rankup.*:
+       description : All Skill
+       default: true
+       children:
+        mru.rankup.acrobatics: true
+        mru.rankup.archery: true
+        mru.rankup.axes: true
+        mru.rankup.excavation: true
+        mru.rankup.fishing: true
+        mru.rankup.herbalism: true
+        mru.rankup.mining: true
+        mru.rankup.powerlevel: true
+        mru.rankup.repair: true
+        mru.rankup.smelting: true
+        mru.rankup.swords: true
+        mru.rankup.taming: true
+        mru.rankup.unarmed: true
+        mru.rankup.woodcutting: true
+    mru.rankup.acrobatics:
+       description: Acrobatics skill
+       default: false
+    mru.rankup.archery:
+       description: Archery skill
+       default: false
+    mru.rankup.axes:
+       description: Axes skill
+       default: false
+    mru.rankup.excavation:
+       description: Excavation skill
+       default: false
+    mru.rankup.fishing:
+       description: Fishing skill
+       default: false
+    mru.rankup.herbalism:
+       description: Herbalism skill
+       default: false
+    mru.rankup.mining:
+       description: Mining skill
+       default: false   
+    mru.rankup.powerlevel:
+       description: Powerlevel skill
+       default: false  
+    mru.rankup.repair:
+       description: Repair skill
+       default: false  
+    mru.rankup.smelting:
+       description: Smelting skill
+       default: false  
+    mru.rankup.swords:
+       description: Swords skill
+       default: false
+    mru.rankup.taming:
+       description: Taming skill
+       default: false  
+    mru.rankup.unarmed:
+       description: Unarmed skill
+       default: false  
+    mru.rankup.woodcutting:
+       description: Woodcutting skill
+       default: false         

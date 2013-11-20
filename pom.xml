@@ -1,10 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>me.stutiguias</groupId>
-  <artifactId>mcmmorankup</artifactId>
-  <version>0.6.1-DEV</version>
-  <name>mcmmorankup</name>
-  <description>Rank UP and DOWN for MCMMO</description>
+  <artifactId>Mcmmorankup</artifactId>
+  <version>0.6.7</version>
+  <name>Mcmmorankup</name>
+  <description>Mcmmorankup</description>
   
   <repositories>
     <!-- Bukkit -->
@@ -12,7 +12,7 @@
       <id>bukkit-repo</id>
       <url>http://repo.bukkit.org/content/groups/public/</url>
     </repository>
-	
+
   </repositories>
   
   <dependencies>
@@ -23,20 +23,21 @@
   </dependency>
 	
   <dependency>
-      <groupId>com.gmail.nossr50</groupId>
+      <groupId>com.gmail.nossr50.mcMMO</groupId>
       <artifactId>mcMMO</artifactId>
-      <version>1.3.11</version>
-	  <scope>system</scope>
-      <systemPath>${project.basedir}/lib/mcMMO.jar</systemPath>
+      <version>1.4.07</version>
+      <scope>system</scope>
+      <systemPath>${basedir}/lib/mcMMO.jar</systemPath>   
   </dependency>
 	
     <dependency>
       <groupId>net.milkbowl.vault</groupId>
       <artifactId>Vault</artifactId>
-      <version>1.2.22</version>
-	  <scope>system</scope>
-      <systemPath>${project.basedir}/lib/Vault.jar</systemPath>
+      <version>1.2.27</version>
+      <scope>system</scope>
+      <systemPath>${basedir}/lib/Vault.jar</systemPath>
     </dependency>
+
   </dependencies>
   
   <build>
@@ -50,8 +51,26 @@
         <directory>${basedir}/src/main/resources/</directory>
         <includes>
           <include>plugin.yml</include>
+          <include>acrobatics.yml</include>
+          <include>archery.yml</include>
+          <include>axes.yml</include>
+          <include>excavation.yml</include>
+          <include>fishing.yml</include>
+          <include>herbalism.yml</include>
+          <include>mining.yml</include>
+          <include>powerlevel.yml</include>
+          <include>repair.yml</include>
+          <include>smelting.yml</include>
+          <include>swords.yml</include>
+          <include>taming.yml</include>
+          <include>unarmed.yml</include>
+          <include>woodcutting.yml</include>
+          <include>eng.yml</include>
+          <include>menu.yml</include>
+          <include>config.yml</include>
         </includes>
       </resource>
+
     </resources>
     
     <plugins>
@@ -60,8 +79,9 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>2.3.2</version>
         <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
+          <source>1.7</source>
+          <target>1.7</target>
+          <showDeprecation>false</showDeprecation>
         </configuration>
       </plugin>
       
@@ -75,6 +95,7 @@
   </build>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <bukkit.version>1.4.6-R0.2</bukkit.version>
+    <bukkit.version>1.6.4-R2.0</bukkit.version>
+    <mcmmo.version>1.4.06</mcmmo.version>
   </properties>
 </project>

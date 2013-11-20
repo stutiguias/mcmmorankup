@@ -1,0 +1,147 @@
+Config:
+  # Config Section:   The 'AutoUpdateTime' setting is critical of the trailing character of either an
+  #                   'm' for minutes or an 'h' for hours
+  #                   The 'OnJoinDelay' setting is a number setting and needs to stay that way.
+  #                   This value is in MineCraft Ticks. 24000 Ticks is equivelant to 20 minutes.
+  #
+  # If false, very limited messaging will be shown in the console 
+  # and the server log during server starts or /mru reload
+  mruStartupSummary: true
+  
+  # "true" for players promote only by Tag Based Promotion. 
+  # No Groups for the player will be add/removed on your
+  # permission system, the tag will show on chat.
+  # you can use "-mru" in your chat plugin
+  UseTagOnlySystem: true
+  
+  # "true" then McmmoRankUp will only remove the group you have defined 
+  # in your ability/powerlevel.yml files from the players permissions group. 
+  # Otherwise, all groups upon promotion/demotion will be removed and only
+  # the defined group per your ability/powerlevel.yml files will be added back 
+  # to the player upon the players promotion/demotion.
+  RemoveOnlyPluginGroup: true
+  
+  # "true" when a player joins your server, McmmoRankUp will
+  # try to Promote the Player
+  PromoteOnJoin: true
+  
+  # This setting controls if players will get demoted 
+  # if their level falls below your ability levels 
+  # and/or when they change their rank line ability
+  AllowDemotions: true
+  
+  # If enabled, players that have purchased ranks will 
+  # be subject to natural means of demotions
+  AllowBuyRankDemotions: false
+  
+  # Set when McmmoRankUp will attempt to promote the newly joined player.  
+  # 150 equals about 7.5 seconds after joining the server.
+  OnJoinDelay: 210
+  
+  # This option is not yet enabled in v0.6+
+  # This option will give the player the option to toggle 
+  # Global Promotion/Demotion Broadcasting
+  # on/off, for that player only.
+  GlobalBroadcastFeed: true
+  
+  # This option is not yet enabled in v0.6+
+  # This option will give the player the option to toggle in-game Player 
+  # Promotion/Demotion messaging
+  # on/off, for that player only.
+  PlayerBroadcastFeed: true
+  
+  
+  PlayerAbilityXpUpdateFeed: true
+  
+  # This option set if players will see when their next promotion is 
+  # and what level / group is will be.
+  DisplayNextPromo: true
+  
+  # If enabled, titles and footers for the players Rank Info, will be shown.
+  RankInfoTitles: true
+  
+  # This option allows you to control if players will be able to see 
+  # any ability that you have set to a disabled state. 
+  DisplayDisabledRanks: true
+  
+  # "true" then depending on the setting you configure below, 
+  # McmmoRankUp will automatically attempt to promote/demote
+  # all players currently on-line at the specified time interval.
+  AutoUpdate: true
+  
+  # AutoUpdateTime, as described for Auto-Update 
+  # is to be set as follows:  h=hours and m=minutes.
+  # No other intervals are coded.
+  AutoUpdateTime: 1h
+  
+  # "true" mcmmoRankUp will attempt to Broadcast, including to the Console, 
+  # all promotions/demotions when a player is promoted/demoted 
+  # and at the time of Auto-Update base on Alternative Name Group on yml file.
+  UseAlternativeBroadCast: true
+
+  # If set to 'false', all players will default to the 'male' gender.
+  UseGenderClass: true
+  
+  # Set it to 'false' if you don't want to allow buy ranks at all 
+  # and the configuration in the skill files will be ignored.
+  AllowBuyingRanks: false
+  
+  # Set it to 'false' if you don't want to allow rewards when ranking up 
+  # and the configuration in the skill files will be ignored.
+  AllowRankRewards: false
+  
+  # The name of your Currency
+  BuyRankCurrencyName: Buks
+  
+  # This is the DEFAULT ability file (powerlevel.yml) that the player will 
+  # automatically be based on.  Each player can select how he/she wants 
+  # to rank-up on using the "/mry hab <ability>" command.  
+  # Each of the ability files needs to be edited in order for players to use
+  # those abilities and each file needs to be placed in your
+  # plugins/Mcmmorankup/skills/ folder.
+  DefaultSkill: POWERLEVEL
+  
+  # The TAG to start new players
+  StartTagName: Visitor
+  
+  # Any GROUP listed in the GroupToIgnore section will not be promoted,
+  # after they have become of this group, not before.
+  GroupToIgnore: ''
+
+  # if you want help translate the plugin to your langague 
+  # post your xxx.yml and i will add to the project
+  # this is the xxx.yml file, default is eng
+  # Available : eng
+  Language: 'eng'
+
+  # if you have the file on skills folder and need
+  # to deactive the skill, do it here !
+  Skills:
+    ACROBATICS:
+      enabled: false
+    ARCHERY:
+      enabled: false
+    AXES:
+      enabled: false
+    EXCAVATION:
+      enabled: false
+    FISHING:
+      enabled: false
+    HERBALISM:
+      enabled: false
+    MINING:
+      enabled: false
+    POWERLEVEL:
+      enabled: true
+    REPAIR:
+      enabled: false
+    SMELTING:
+      enabled: false
+    SWORDS:
+      enabled: false
+    TAMING:
+      enabled: false
+    UNARMED:
+      enabled: false
+    WOODCUTTING:
+      enabled: false

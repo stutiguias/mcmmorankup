@@ -18,18 +18,47 @@ public class ConfigAccessor {
         if (!plugin.isInitialized())
             throw new IllegalArgumentException("plugin must be initiaized");
         this.plugin = plugin;
-        this.fileName = fileName;
+        this.fileName = fileName;         
     }
 
     public void setupConfig() throws IOException {
-        configFile = new File(plugin.getDataFolder(), fileName);
+        if(fileName.equalsIgnoreCase("config.yml") || 
+           fileName.equalsIgnoreCase("menu.yml") || 
+           fileName.equalsIgnoreCase("eng.yml")) 
+        {
+            configFile = new File(Mcmmorankup.PluginDir, fileName.toLowerCase());            
+        }else{
+            configFile = new File(Mcmmorankup.PluginSkillsDir, fileName.toLowerCase());            
+        }    	    	
         
         if(!configFile.exists()) {
-            configFile.createNewFile();
+            configFile.createNewFile();            
             copy(plugin.getResource(fileName), configFile);
         }
     }
-    
+
+    public void reloadConfig() {    	
+    	if (configFile == null) {
+            if(fileName.equalsIgnoreCase("config.yml") || 
+               fileName.equalsIgnoreCase("menu.yml") || 
+               fileName.equalsIgnoreCase("eng.yml")) 
+            {
+                configFile = new File(Mcmmorankup.PluginDir, fileName.toLowerCase());            
+            }else{
+                configFile = new File(Mcmmorankup.PluginSkillsDir, fileName.toLowerCase());            
+            }    	    
+        }        
+
+        fileConfiguration = YamlConfiguration.loadConfiguration(configFile);
+
+        InputStream defConfigStream = plugin.getResource(fileName);
+
+        if (defConfigStream != null) {
+            YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
+            fileConfiguration.setDefaults(defConfig);
+        }
+    }
+
     private void copy(java.io.InputStream input, File file) {
         try {
             OutputStream out = new FileOutputStream(file);
@@ -44,47 +73,21 @@ public class ConfigAccessor {
             e.printStackTrace();
         }
     }
-    
-    public void reloadConfig() {
-        if (configFile == null) {
-            File dataFolder = plugin.getDataFolder();
-            if (dataFolder == null)
-                throw new IllegalStateException();
-            configFile = new File(dataFolder, fileName);
-        }
-        fileConfiguration = YamlConfiguration.loadConfiguration(configFile);
-
-        // Look for defaults in the jar
-        InputStream defConfigStream = plugin.getResource(fileName);
-
-        if (defConfigStream != null) {
-            YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
-            fileConfiguration.setDefaults(defConfig);
-            
-	        // zrocweb:
-            try {
-	        	defConfigStream.close();
-	        } catch (IOException x) {
-	        	// do nothing...
-	        }
-        }
-    }
 
     public FileConfiguration getConfig() {
-        if (fileConfiguration == null) {
+    	if (fileConfiguration == null) {
             this.reloadConfig();
         }
-        return fileConfiguration;
+
+    	return fileConfiguration;
     }
 
     public void saveConfig() {
-        if (fileConfiguration == null || configFile == null) {
-            return;
-        } else {
+        if (fileConfiguration != null || configFile != null) {
             try {
                 getConfig().save(configFile);
             } catch (IOException ex) {
-                plugin.getLogger().log(Level.SEVERE, "Could not save config to " + configFile, ex);
+                plugin.getLogger().log(Level.SEVERE, "{0} {1} - Could not save config to {2}: {3}", new Object[]{Mcmmorankup.logPrefix, "[Ability Config]", configFile, ex});
             }
         }
     }
