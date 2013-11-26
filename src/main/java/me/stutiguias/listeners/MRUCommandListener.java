@@ -51,6 +51,9 @@ public class MRUCommandListener implements CommandExecutor {
                 if (args.length == 3) return BuyRank(args, true);
             case "view":
                 return  View(args);
+            case "update":
+                if(!plugin.hasPermission(_player,"mru.update")) return false;
+                return Update();
             case "rank":
                 if (!plugin.hasPermission(_player, "mru.rankup")) return false;
                 return RankUp();
@@ -129,6 +132,11 @@ public class MRUCommandListener implements CommandExecutor {
         }
     }
 
+    public boolean Update() {
+        plugin.Update();
+        return true;
+    }
+    
     public boolean isPromotionalSetCommand(){
         plugin.displayNextPromo = !plugin.displayNextPromo;
         plugin.config.getConfig().set("Config.DisplayNextPromo",plugin.displayNextPromo);
@@ -357,7 +365,11 @@ public class MRUCommandListener implements CommandExecutor {
             SendFormatMessage("&6/mru set <setting> <value> &7Set Config. Settings");
             SendFormatMessage("&6/mru pinfo &7Toggle Next Promotion Info. &e" + (plugin.displayNextPromo ? "OFF" : "ON"));
         }
-
+        
+        if (plugin.hasPermission(player,"mru.update")) {
+            SendFormatMessage("&6/mru update - Update plugin");
+        }
+        
         if (plugin.hasPermission(player, "mru.admin.reload")) {
             SendFormatMessage("&6/mru reload &7Reload the all configs...");
         }

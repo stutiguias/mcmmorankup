@@ -17,6 +17,7 @@ import me.stutiguias.listeners.MRUPlayerListener;
 import me.stutiguias.mcmmorankup.rank.BuyRanks;
 import me.stutiguias.mcmmorankup.task.UpdateTask;
 import me.stutiguias.metrics.Metrics;
+import me.stutiguias.updater.Updater;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -85,12 +86,18 @@ public class Mcmmorankup extends JavaPlugin {
     public boolean AllowRankRewards;
     public String BuyRankCurrencyName;
     public String[] GroupToIgnore;
-    
+    public boolean UpdaterNotify;
     // Formatting
     public String MessageSeparator;
     public String GeneralMessages;
     public String PlayerWarnings;
 
+    public static boolean update = false;
+    public static String name = "";
+    public static String type = "";
+    public static String version = "";
+    public static String link = "";
+    
     @Override
     public void onEnable() {
         File dir = getDataFolder();
@@ -171,6 +178,16 @@ public class Mcmmorankup extends JavaPlugin {
 
             getServer().getScheduler().scheduleSyncRepeatingTask(this, new UpdateTask(this), uptime, uptime);
         }
+        
+        if(UpdaterNotify){
+            Updater updater = new Updater(this, 41553, this.getFile(), Updater.UpdateType.NO_DOWNLOAD, false); // Start Updater but just do a version check
+            
+            update = updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE; // Determine if there is an update ready for us
+            name = updater.getLatestName(); // Get the latest name
+            version = updater.getLatestGameVersion(); // Get the latest game version
+            type = updater.getLatestType(); // Get the latest game version
+            link = updater.getLatestFileLink(); // Get the latest link
+        }
     }
 
     @Override
@@ -212,7 +229,13 @@ public class Mcmmorankup extends JavaPlugin {
             config = new ConfigAccessor(this, "config.yml");
             config.setupConfig();
             FileConfiguration fc = config.getConfig();
-
+            
+            if(!fc.isSet("configversion") || fc.getInt("configversion") != 1){ 
+                config.MakeOld();
+                config.setupConfig();
+                fc = config.getConfig();
+            }
+            
             // System Configurations
             mruStartupSummary = fc.getBoolean("Config.mruStartupSummary");
             UseAlternativeBroadcast = fc.getBoolean("Config.UseAlternativeBroadCast");
@@ -237,7 +260,7 @@ public class Mcmmorankup extends JavaPlugin {
             AllowBuyingRanks = fc.getBoolean("Config.AllowBuyingRanks");
             AllowRankRewards = fc.getBoolean("Config.AllowRankRewards");
             BuyRankCurrencyName = fc.getString("Config.BuyRankCurrencyName");
-
+            UpdaterNotify =fc.getBoolean("UpdaterNotify");
 
             menu = new ConfigAccessor(this, "menu.yml");
             menu.setupConfig();
@@ -476,5 +499,9 @@ public class Mcmmorankup extends JavaPlugin {
     public boolean isRankAvailable(String skill, Player pl) {
         if(skill.toLowerCase().contains("powerlevel")) return true;
         return hasPermission(pl, "mru.rankup." + skill.toLowerCase()) && hasPermission(pl, "mcmmo.skills." + skill.toLowerCase());
+    }
+    
+    public void Update() {
+        Updater updater = new Updater(this, 41553, this.getFile(), Updater.UpdateType.NO_VERSION_CHECK, true);
     }
 }

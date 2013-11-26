@@ -1,6 +1,6 @@
 name: Mcmmorankup
 main: me.stutiguias.mcmmorankup.Mcmmorankup
-version: 0.6.7
+version: 0.6.8
 author: Stutiguias, zrocweb
 depend: [Vault,mcMMO]
 commands:
@@ -132,4 +132,7 @@ permissions:
        default: false  
     mru.rankup.woodcutting:
        description: Woodcutting skill
-       default: false         
+       default: false    
+    mru.update:
+       description: Allow notify updater
+       default: false

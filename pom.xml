@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>me.stutiguias</groupId>
   <artifactId>Mcmmorankup</artifactId>
-  <version>0.6.7</version>
+  <version>0.6.8</version>
   <name>Mcmmorankup</name>
   <description>Mcmmorankup</description>
   
@@ -41,7 +41,7 @@
   </dependencies>
   
   <build>
-    <finalName>${project.name}.${project.version}</finalName>
+    <finalName>${project.name}</finalName>
     <sourceDirectory>${basedir}/src/main/java/</sourceDirectory>
     
     <resources>

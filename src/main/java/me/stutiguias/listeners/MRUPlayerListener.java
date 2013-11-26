@@ -33,7 +33,13 @@ public class MRUPlayerListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         
         Player player = event.getPlayer();
-
+        
+        if(plugin.UpdaterNotify && plugin.hasPermission(player,"mru.update") && Mcmmorankup.update)
+        {
+          player.sendMessage(Utilities.parseColor("&6An update is available: " + Mcmmorankup.name + ", a " + Mcmmorankup.type + " for " + Mcmmorankup.version + " available at " + Mcmmorankup.link));
+          player.sendMessage(Utilities.parseColor("&6Type /mru update if you would like to automatically update."));
+        }
+        
         if (plugin.PromoteOnJoin && plugin.hasPermission(player, "mru.rankup")) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin,new OnJoinTask(plugin, player), plugin.onJoinDelay);
         }
