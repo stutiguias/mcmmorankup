@@ -17,10 +17,12 @@
   
   <dependencies>
     <dependency>
-      <groupId>org.bukkit</groupId>
-      <artifactId>bukkit</artifactId>
-      <version>${bukkit.version}</version>
-  </dependency>
+        <groupId>org.bukkit</groupId>
+        <artifactId>bukkit</artifactId>
+        <version>LATEST</version>
+        <type>jar</type>
+        <scope>compile</scope>
+    </dependency>
 	
   <dependency>
       <groupId>com.gmail.nossr50.mcMMO</groupId>
@@ -95,7 +97,6 @@
   </build>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <bukkit.version>1.6.4-R2.0</bukkit.version>
     <mcmmo.version>1.4.06</mcmmo.version>
   </properties>
 </project>

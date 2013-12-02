@@ -1,6 +1,6 @@
 name: Mcmmorankup
 main: me.stutiguias.mcmmorankup.Mcmmorankup
-version: 0.6.8
+version: ${project.version}
 author: Stutiguias, zrocweb
 depend: [Vault,mcMMO]
 commands:
