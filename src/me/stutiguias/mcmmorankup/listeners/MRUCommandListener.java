@@ -385,7 +385,6 @@ public class MRUCommandListener implements CommandExecutor {
 
         boolean rankupFeed  = profile.GetPlayerRankupFeed();
         boolean xpFeed      = profile.GetPlayerXpUpdateFeed();
-        boolean levelFeed   = profile.GetPlayerLevelUpsFeed();
         boolean globalFeed  = profile.GetPlayerGlobalFeed();
 
         if (args.length < 3) {
@@ -394,8 +393,7 @@ public class MRUCommandListener implements CommandExecutor {
             SendFormatMessage(plugin.PlayerWarnings + "Usage: /mru feeds <feedname> <on | off>");
             SendFormatMessage(plugin.MessageSeparator);
             SendFormatMessage("&aRankup &6(&f" + (rankupFeed ? "On" : "Off") + "&6)&a - Show your Promotion when you rank up");
-            SendFormatMessage("&aXp &6(&f" + (xpFeed ? "On" : "Off") + "&6)&a - Excluding Powerlevel, show your skills XP/Lvl Ups?");
-            SendFormatMessage("&aLevels &6(&f" + (levelFeed ? "On" : "Off") + "&6)&a - Celebrate Rank Line Ability Level Ups??");
+            SendFormatMessage("&aXp &6(&f" + (xpFeed ? "On" : "Off") + "&6)&a - Excluding Powerlevel, show your skills XP Ups?");
             SendFormatMessage("&aGlobal &6(&f" + (globalFeed ? "On" : "Off") + "&6)&a - Share your Promotions/Demotions with others??\n");
             SendFormatMessage(plugin.MessageSeparator);
             return true;
@@ -409,7 +407,7 @@ public class MRUCommandListener implements CommandExecutor {
             return false;
         }
         
-        toggle = (args[2].toUpperCase().matches("[oO]N|[tT]RUE") ? true : false);
+        toggle = (args[2].toUpperCase().matches("[oO]N|[tT]RUE"));
         
         switch(args[1].toLowerCase()) {
             case "rankup": 
@@ -430,12 +428,6 @@ public class MRUCommandListener implements CommandExecutor {
                     msg = "&3Ability Xp Updates";
                 }
                 break;
-            case "levels":
-                if (toggle != levelFeed) {
-                    profile.SetPlayerXpUpdateFeed(toggle);
-                    msg = "&3Celebratory Level Up";
-                }
-                break;
         }
 
         if (!msg.isEmpty()) {
@@ -449,10 +441,7 @@ public class MRUCommandListener implements CommandExecutor {
     }
 
     public boolean ParseToggleInput(String parse) {
-        if (!parse.matches("[oO]n|[oO]ff|[tT]rue|[fF]alse|[T]RUE|[F]ALSE")) {
-            return false;
-        }
-        return true;
+        return parse.matches("[oO]n|[oO]ff|[tT]rue|[fF]alse|[T]RUE|[F]ALSE");
     }
     
     public Boolean BuyRank(String[] args,Boolean isBuying) {

@@ -69,8 +69,6 @@ public class MessageConfig {
         
         LastQuitStatsFail           = fm.getString("Stats.LastQuitStatsFail");
         
-        
-        McmmoLevelUp                = fm.getString("Mcmmo.LevelUp");
         McmmoXpGain                 = fm.getString("Mcmmo.XpGain");
 
         BuyMenu                     = fm.getString("Buy.Menu");
@@ -156,7 +154,6 @@ public class MessageConfig {
     public String HabListLevel;
     public String HabListCurRankLine;
     public String HabListPrefixBuy;
-    public String McmmoLevelUp;
     public String McmmoXpGain;
     public String BuyMenu;
     public String BuyNoPermBuks;

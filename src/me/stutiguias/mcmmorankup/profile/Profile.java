@@ -136,12 +136,6 @@ public class Profile {
         return true;
     }
 
-    public boolean SetPlayerLevelUpsFeed(boolean levelUpFeed) {
-        PlayerYML.set("PlayerFeeds.LevelUps", levelUpFeed);
-        SaveYML();
-        return true;
-    }
-
     public String GetTag() {
         return PlayerYML.getString("Tag");
     }
@@ -204,10 +198,6 @@ public class Profile {
         return PlayerYML.getBoolean("PlayerFeeds.XpUpdates");
     }
 
-    public boolean GetPlayerLevelUpsFeed() {
-        return PlayerYML.getBoolean("PlayerFeeds.LevelUps");
-    }
-
     public void SendMessage(Player player, String Hability) {       
         SendFormatMessage("ABILITY SELECTED");
         SendFormatMessage(plugin.Message.HabilitySet.replace("%ability%", Hability.toUpperCase()));
@@ -250,7 +240,6 @@ public class Profile {
         if (!PlayerYML.isSet("PlayerFeeds.Rankup"))       PlayerYML.set("PlayerFeeds.Rankup", true);
         if (!PlayerYML.isSet("PlayerFeeds.Global"))       PlayerYML.set("PlayerFeeds.Global", true);
         if (!PlayerYML.isSet("PlayerFeeds.XpUpdates"))    PlayerYML.set("PlayerFeeds.XpUpdates", true);
-        if (!PlayerYML.isSet("PlayerFeeds.LevelUps"))     PlayerYML.set("PlayerFeeds.LevelUps", true);
         
         SaveYML();
 
@@ -295,7 +284,6 @@ public class Profile {
             PlayerYML.set("PlayerFeeds.Rankup", true);
             PlayerYML.set("PlayerFeeds.Global", true);
             PlayerYML.set("PlayerFeeds.XpUpdates", true);
-            PlayerYML.set("PlayerFeeds.LevelUps", true);
 
             if (SetInitRank()) {
                 Mcmmorankup.logger.log(Level.INFO, "Player {0}:- Set Auto Rank Line to: {1}", new Object[]{playerName, plugin.DefaultSkill});

@@ -1,7 +1,6 @@
 package me.stutiguias.mcmmorankup.listeners;
 
 import me.stutiguias.mcmmorankup.apimcmmo.McMMOApi;
-import me.stutiguias.mcmmorankup.Effects;
 import me.stutiguias.mcmmorankup.Mcmmorankup;
 import me.stutiguias.mcmmorankup.Utilities;
 import me.stutiguias.mcmmorankup.profile.Profile;
@@ -16,7 +15,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import com.gmail.nossr50.datatypes.skills.SkillType;
-import com.gmail.nossr50.events.experience.McMMOPlayerLevelUpEvent;
 import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
 import me.stutiguias.mcmmorankup.task.OnJoinTask;
 
@@ -50,25 +48,6 @@ public class MRUPlayerListener implements Listener {
     public void onPlayerLeave(PlayerQuitEvent event) {
         profile = new Profile(plugin, event.getPlayer() );
         profile.SetQuitStats();
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onMcMMOPlayerLevelUp(McMMOPlayerLevelUpEvent event) {
-        SkillType skillType = event.getSkill();
-
-        profile = new Profile(plugin, event.getPlayer());
-        String skill = profile.GetHabilityForRank();
-
-        if (!skillType.toString().equalsIgnoreCase(skill) || !skill.equalsIgnoreCase("POWERLEVEL")) return;
-        
-        if (profile.GetPlayerXpUpdateFeed()) {
-            String skilllevel = String.valueOf(plugin.GetSkillLevel(profile.player, skill));
-            profile.SendFormatMessage(plugin.Message.McmmoLevelUp.replaceAll("%skilllevel%", skilllevel ).replaceAll("%ability%", skill));
-        }
-
-        if (profile.GetPlayerLevelUpsFeed()) {
-            Effects.abilityLevelUpCelebration(profile.player, skill);
-        }
     }
 
     @EventHandler(priority = EventPriority.LOWEST)

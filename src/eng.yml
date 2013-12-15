@@ -77,7 +77,6 @@
     RankCheckingIgnore: '&b%player%%colorreset%, you are being ignored for promotions!'
 
   Mcmmo:
-    LevelUp: '&6Ranking ability, &5%ability% &6has leveled up to: &5%skilllevel%'
     XpGain: '&3Ability XP: &8(&5%cXp%&8/&5%rXp%&8)'
     
   Stats:  

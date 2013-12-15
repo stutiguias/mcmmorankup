@@ -66,7 +66,7 @@ public class RankUp {
 
                 level = Integer.parseInt(levelRank[0]);
                 rank = levelRank[1];
-
+// Erro here !
                 if (playerSkillLevel >= level) {
 
                     demote = level < StartLevel;
