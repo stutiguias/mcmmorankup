@@ -15,16 +15,15 @@ import org.bukkit.command.CommandSender;
 import com.google.common.collect.SortedSetMultimap;
 import com.google.common.collect.TreeMultimap;
 
-public class AdminProfiler {
+public class AdminProfiler extends Utilities {
 
     Player player;
-    Mcmmorankup plugin;
-    CommandSender sender;
     File playerfile;
     
     public SortedSetMultimap<String, String> report = TreeMultimap.create();
 
     public AdminProfiler(CommandSender sender, Mcmmorankup plugin, String type, String category) {
+        super(plugin);
         File folder = new File(Mcmmorankup.PluginPlayerDir);
         File[] listOfFiles = folder.listFiles();
 
@@ -41,7 +40,6 @@ public class AdminProfiler {
         List<String> purchasedRanks;
         boolean errorsDetected = false;
 
-        this.plugin = plugin;
         this.sender = sender;
 
         if (listOfFiles.length == 0) return;
@@ -85,7 +83,7 @@ public class AdminProfiler {
                         profileCategory = fileSkill;
                         break;
                     case "g":
-                        catList = String.format(categoryFormat, PlayerName, primaryGroup, fileLevel.toString(), Utilities.getCapitalized(fileSkill), fileLastPurchased, fileLastPurchasedDate, fileLastPurchasedCost);
+                        catList = String.format(categoryFormat, PlayerName, primaryGroup, fileLevel.toString(), Capitalized(fileSkill), fileLastPurchased, fileLastPurchasedDate, fileLastPurchasedCost);
                         profileCategory = profile.GetGender();
                         break;
                     default:
@@ -109,10 +107,10 @@ public class AdminProfiler {
 
         }
         
-        sender.sendMessage((Utilities.parseColor("&aPlayers Collected: &e" + report.size() + "&a, Categories: " + report.keys())));
+        SendMessage("&aPlayers Collected: &e%s&a, Categories: %s", new Object[]{ report.size(), report.keys() });
         
         if (errorsDetected) {
-            sender.sendMessage(Utilities.parseColor("&cWARNING: There was at least 1 error during report generation.\nCheck the server log or console for more detail"));
+            SendMessage("&cWARNING: There was at least 1 error during report generation.\nCheck the server log or console for more detail");
         }
     }
 
@@ -134,9 +132,9 @@ public class AdminProfiler {
 
         String filePlaced = UtilityReportWriter.SaveReportToFile(report, rName, cat);
         if (filePlaced != null) {
-            sender.sendMessage(Utilities.parseColor("&6Ranking report file saved: &e" + filePlaced));
+            SendMessage("&6Ranking report file saved: &e" + filePlaced);
         } else {
-            sender.sendMessage(Utilities.parseColor("&cReport contents was empty... Nothing was generated!!"));
+            SendMessage("&cReport contents was empty... Nothing was generated!!");
         }
         report.clear();
         return true;

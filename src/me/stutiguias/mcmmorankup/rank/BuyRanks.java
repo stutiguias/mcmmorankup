@@ -19,14 +19,13 @@ import me.stutiguias.mcmmorankup.profile.Profile;
 
 import org.bukkit.entity.Player;
 
-public class BuyRanks {
+public class BuyRanks extends Utilities {
 
-    private static Mcmmorankup plugin;
     private Profile _profile;
     private Player _player;
     
-    public BuyRanks(Mcmmorankup instance) {
-        plugin = instance;
+    public BuyRanks(Mcmmorankup plugin) {
+        super(plugin);
     }
 
     public boolean ShowBuyableRanks(Player player, String[] args) {
@@ -34,7 +33,7 @@ public class BuyRanks {
         _profile = new Profile(plugin, player);
         _player = player;
         String playerCurrentSkill = _profile.GetHabilityForRank();
-        boolean isXp = (args[1].equalsIgnoreCase("x")) ? true : false;
+        boolean isXp = (args[1].equalsIgnoreCase("x"));
 
         String rankNow = plugin.TagSystem ? _profile.GetTag() : plugin.permission.getPrimaryGroup(_player.getWorld(), _player.getName());
    
@@ -74,7 +73,7 @@ public class BuyRanks {
     }
     
     private void SendFormatMessage(String message) {
-        _player.sendMessage(Utilities.parseColor(message));
+        SendMessage(_player,message);
     }
     
     public boolean CanBuy(boolean isXp,boolean xpL,String cost) {
@@ -196,7 +195,7 @@ public class BuyRanks {
 
     public String PlayerCurrentProfile(String playerCurrentSkill, String grpNow) {
         return plugin.Message.BuyProfile.replace("%rankline%", playerCurrentSkill.toLowerCase())
-                .replace("%group%", Utilities.getCapitalized(grpNow))
+                .replace("%group%", Capitalized(grpNow))
                 .replace("%level%", String.valueOf(plugin.GetSkillLevel(_player, playerCurrentSkill)));
     }
     

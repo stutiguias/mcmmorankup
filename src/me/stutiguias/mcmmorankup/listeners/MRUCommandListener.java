@@ -24,13 +24,11 @@ import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 
-public class MRUCommandListener implements CommandExecutor {
-
-    public Mcmmorankup plugin;
-    private CommandSender sender;
+public class MRUCommandListener extends Utilities implements CommandExecutor {
     
-    public MRUCommandListener(Mcmmorankup instance) {
-        plugin = instance;
+    public MRUCommandListener(Mcmmorankup plugin) {
+        super(plugin);
+        
     }
 
     @Override
@@ -77,12 +75,12 @@ public class MRUCommandListener implements CommandExecutor {
                 return false;
             case "feeds":
                 if (!plugin.playerBroadcastFeed) {
-                    sender.sendMessage(Utilities.parseColor(plugin.PlayerWarnings + plugin.Message.PlayerFeedsDisabled));
+                    SendMessage(plugin.PlayerWarnings + plugin.Message.PlayerFeedsDisabled);
                     return true;
                 }
 
                 if (!plugin.hasPermission(_player, "mru.playerfeeds")) {
-                    sender.sendMessage(Utilities.parseColor(plugin.PlayerWarnings + plugin.Message.NoPermPlayerFeeds));
+                    SendMessage(plugin.PlayerWarnings + plugin.Message.NoPermPlayerFeeds);
                     return true;
                 } 
                 return managePlayerFeeds(args);
@@ -103,8 +101,8 @@ public class MRUCommandListener implements CommandExecutor {
                 if (args.length == 1) return ShowConfigSettting();
                 if (args.length > 1)  return isSetCommand(args);
             default:
-                SendFormatMessage("&3&lThis command don't exists or you don't have permission");
-                SendFormatMessage("&3&lTry /mru ? or help");
+                SendMessage("&3&lThis command don't exists or you don't have permission");
+                SendMessage("&3&lTry /mru ? or help");
                 return true;
         }
     }
@@ -141,7 +139,7 @@ public class MRUCommandListener implements CommandExecutor {
         plugin.displayNextPromo = !plugin.displayNextPromo;
         plugin.config.getConfig().set("Config.DisplayNextPromo",plugin.displayNextPromo);
         plugin.saveConfig(); 
-        SendFormatMessage("&6&lPromotional Info. Toggled &7&l" + (plugin.displayNextPromo ? "ON" : "OFF"));
+        SendMessage("&6&lPromotional Info. Toggled &7&l%s",new Object[]{ plugin.displayNextPromo ? "ON" : "OFF" });
         return true;
     }
     
@@ -158,7 +156,7 @@ public class MRUCommandListener implements CommandExecutor {
     public boolean isHabCommand(String[] args) {
         if (args.length > 1) {
             if (plugin.isIgnored((Player) sender)) {
-                SendFormatMessage(plugin.Message.IgnoredRankLineSet);
+                SendMessage(plugin.Message.IgnoredRankLineSet);
                 return true;
             } 
             return SetRankOnSkill(args[1]);
@@ -169,9 +167,9 @@ public class MRUCommandListener implements CommandExecutor {
     public boolean isDisplayCommand(String[] args) {
         
         if(args.length < 3) {
-            SendFormatMessage(plugin.MessageSeparator);
-            SendFormatMessage(plugin.Message.DisplayInformAll);
-            SendFormatMessage(plugin.MessageSeparator);
+            SendMessage(plugin.MessageSeparator);
+            SendMessage(plugin.Message.DisplayInformAll);
+            SendMessage(plugin.MessageSeparator);
             return true;
         }
         
@@ -181,9 +179,9 @@ public class MRUCommandListener implements CommandExecutor {
         gender = WordUtils.capitalize(gender);
         
         if(!gender.equalsIgnoreCase("male") && !gender.equalsIgnoreCase("female")) {
-            SendFormatMessage(plugin.MessageSeparator);
-            SendFormatMessage(plugin.Message.DisplayValidGender);
-            SendFormatMessage(plugin.MessageSeparator);
+            SendMessage(plugin.MessageSeparator);
+            SendMessage(plugin.Message.DisplayValidGender);
+            SendMessage(plugin.MessageSeparator);
             return true;
         }
         
@@ -191,21 +189,21 @@ public class MRUCommandListener implements CommandExecutor {
         try{
             ranks = plugin.RankUpConfig.get(skill).get(gender);
         }catch(Exception ex) {
-            SendFormatMessage(plugin.MessageSeparator);
-            SendFormatMessage(plugin.Message.DisplayValidSkill);
-            SendFormatMessage(plugin.MessageSeparator);
+            SendMessage(plugin.MessageSeparator);
+            SendMessage(plugin.Message.DisplayValidSkill);
+            SendMessage(plugin.MessageSeparator);
             return true; 
         }
         
-        SendFormatMessage(plugin.MessageSeparator);
-        SendFormatMessage(plugin.Message.DisplayTitle.replace("%skill%", skill).replace("%gender%", gender));
+        SendMessage(plugin.MessageSeparator);
+        SendMessage(plugin.Message.DisplayTitle.replace("%skill%", skill).replace("%gender%", gender));
         
         for (Iterator<String> it = ranks.iterator(); it.hasNext();) {
             String entry = it.next();
             String[] levelRank = entry.split(",");
-            SendFormatMessage(plugin.Message.DisplayLine.replace("%point%", levelRank[1]).replace("%rank%",levelRank[0]));
+            SendMessage(plugin.Message.DisplayLine.replace("%point%", levelRank[1]).replace("%rank%",levelRank[0]));
         }
-        SendFormatMessage(plugin.MessageSeparator);
+        SendMessage(plugin.MessageSeparator);
         return true;
     }
     
@@ -232,24 +230,24 @@ public class MRUCommandListener implements CommandExecutor {
     }
     
     public boolean Reload() {
-        SendFormatMessage(ChatColor.YELLOW + "Start reload...");
+        SendMessage(ChatColor.YELLOW + "Start reload...");
         plugin.onReload();
-        SendFormatMessage(ChatColor.YELLOW + "Reload complete...");
+        SendMessage(ChatColor.YELLOW + "Reload complete...");
         return true;
     }
 
     public boolean ShowConfigSettting() {
-        SendFormatMessage("&2Usage: &c/mru set <setting> <value>&2:");
-        SendFormatMessage(ShowConfigSettings());
+        SendMessage("&2Usage: &c/mru set <setting> <value>&2:");
+        SendMessage(ShowConfigSettings());
         return true;
     }
 
     public boolean RankUp() {
 
         if (plugin.Playertime.containsKey(sender.getName()) && plugin.Playertime.get(sender.getName()) + 5000 > plugin.GetCurrentMilli()) {
-            SendFormatMessage(plugin.MessageSeparator);
-            SendFormatMessage(plugin.Message.CommandAttempt);
-            SendFormatMessage(plugin.MessageSeparator);
+            SendMessage(plugin.MessageSeparator);
+            SendMessage(plugin.Message.CommandAttempt);
+            SendMessage(plugin.MessageSeparator);
             return true;
         }
 
@@ -258,12 +256,12 @@ public class MRUCommandListener implements CommandExecutor {
         String gender = profile.GetGender();
 
         if (!plugin.CheckRankExist(skill)) {
-            SendFormatMessage(plugin.Message.NoLongerExists.replace("%rankline%", skill.toUpperCase()));
+            SendMessage(plugin.Message.NoLongerExists.replace("%rankline%", skill.toUpperCase()));
             return false;
         }
 
         if (!plugin.isRankAvailable(skill,profile.player)) {
-            SendFormatMessage(plugin.Message.NoAccess.replace("%rankline%", skill.toUpperCase()));
+            SendMessage(plugin.Message.NoAccess.replace("%rankline%", skill.toUpperCase()));
             return true;
         }
 
@@ -291,9 +289,9 @@ public class MRUCommandListener implements CommandExecutor {
         }
 
         if (bCastMsg != null) {
-            SendFormatMessage(plugin.MessageSeparator);
-            SendFormatMessage(bCastMsg);
-            SendFormatMessage(plugin.MessageSeparator);
+            SendMessage(plugin.MessageSeparator);
+            SendMessage(bCastMsg);
+            SendMessage(plugin.MessageSeparator);
         }
         
         return true;
@@ -305,14 +303,14 @@ public class MRUCommandListener implements CommandExecutor {
         Profile profile = new Profile(plugin, (Player) sender);
 
         if (!plugin.isRankAvailable(Skill, profile.player)) {
-            SendFormatMessage(plugin.Message.HabilitySetFail.replace("%ability%", Utilities.getCapitalized(Skill)));
+            SendMessage(plugin.Message.HabilitySetFail.replace("%ability%", Capitalized(Skill)));
             return true;
         }
         
         if (!plugin.CheckRankExist(Skill)) {
-            SendFormatMessage(plugin.MessageSeparator);
-            SendFormatMessage(plugin.Message.NotAvailable);
-            SendFormatMessage(plugin.MessageSeparator);
+            SendMessage(plugin.MessageSeparator);
+            SendMessage(plugin.Message.NotAvailable);
+            SendMessage(plugin.MessageSeparator);
             return false;
         }
         return profile.SetHabilityForRank(Skill);
@@ -320,61 +318,61 @@ public class MRUCommandListener implements CommandExecutor {
 
     public boolean Help() {
         Player player = (Player) sender;
-        SendFormatMessage(plugin.MessageSeparator);
-        SendFormatMessage(" &7RANKING HELP ");
+        SendMessage(plugin.MessageSeparator);
+        SendMessage(" &7RANKING HELP ");
         
-        SendFormatMessage("&6/mru view <on|off> &7" + plugin.Message.HelpView);
+        SendMessage("&6/mru view <on|off> &7" + plugin.Message.HelpView);
         
         if (plugin.hasPermission(player, "mru.rankup")) {
-            SendFormatMessage("&6/mru rank &7" + plugin.Message.HelpRank);
+            SendMessage("&6/mru rank &7" + plugin.Message.HelpRank);
         }
 
         if (plugin.UseGenderClass) {
-            SendFormatMessage("&6/mru <male|female> &7" + plugin.Message.HelpMaleFemale);
+            SendMessage("&6/mru <male|female> &7" + plugin.Message.HelpMaleFemale);
         }
 
         if (plugin.hasPermission(player, "mru.hability")) {
-            SendFormatMessage("&6/mru hab &7" + plugin.Message.HelpHab);
+            SendMessage("&6/mru hab &7" + plugin.Message.HelpHab);
             String outMsg = "&6/mru hab <ability> ";
             if (!plugin.isIgnored(player)) {
                 outMsg += "&7" + plugin.Message.HelpSethab;
             } else {
                 outMsg += "&c" + plugin.Message.HelpSethabIgnore;
             }
-            SendFormatMessage(outMsg);
-            SendFormatMessage("&6/mru display <ability> <gender> &7" + plugin.Message.HelpDisplayHab);
+            SendMessage(outMsg);
+            SendMessage("&6/mru display <ability> <gender> &7" + plugin.Message.HelpDisplayHab);
         }
 
         if (plugin.hasPermission(player, "mru.playerfeeds") && plugin.playerBroadcastFeed) {
-            SendFormatMessage("&6/mru feeds &7" + plugin.Message.HelpFeeds);
+            SendMessage("&6/mru feeds &7" + plugin.Message.HelpFeeds);
         }
 
         if (plugin.hasPermission(player, "mru.buyrankxp") || plugin.hasPermission(player, "mru.buyrankbuks")) {
-            SendFormatMessage("&6/mru buy <x | b> &7" + plugin.Message.BuyMenu.replace("%currencyname%", plugin.BuyRankCurrencyName));
+            SendMessage("&6/mru buy <x | b> &7" + plugin.Message.BuyMenu.replace("%currencyname%", plugin.BuyRankCurrencyName));
         }
 
         if (plugin.hasPermission(player, "mru.admin.config") || plugin.hasPermission(player, "mru.stats") || plugin.hasPermission(player, "mru.stats.others")) {
-            SendFormatMessage(plugin.MessageSeparator);
-            SendFormatMessage(" &7ADMIN HELP ");
-            SendFormatMessage("&6/mru ver &7Show mcmmoRankup version information");
-            SendFormatMessage("&6/mru stats [player] &7Stats Skill Check. [player] Optional");
+            SendMessage(plugin.MessageSeparator);
+            SendMessage(" &7ADMIN HELP ");
+            SendMessage("&6/mru ver &7Show mcmmoRankup version information");
+            SendMessage("&6/mru stats [player] &7Stats Skill Check. [player] Optional");
         }
         
         if (plugin.hasPermission(player, "mru.admin.config")) {
-            SendFormatMessage("&6/mru report &7Admin Ranking Report Options");
-            SendFormatMessage("&6/mru set <setting> <value> &7Set Config. Settings");
-            SendFormatMessage("&6/mru pinfo &7Toggle Next Promotion Info. &e" + (plugin.displayNextPromo ? "OFF" : "ON"));
+            SendMessage("&6/mru report &7Admin Ranking Report Options");
+            SendMessage("&6/mru set <setting> <value> &7Set Config. Settings");
+            SendMessage("&6/mru pinfo &7Toggle Next Promotion Info. &e" + (plugin.displayNextPromo ? "OFF" : "ON"));
         }
         
         if (plugin.hasPermission(player,"mru.update")) {
-            SendFormatMessage("&6/mru update - Update plugin");
+            SendMessage("&6/mru update - Update plugin");
         }
         
         if (plugin.hasPermission(player, "mru.admin.reload")) {
-            SendFormatMessage("&6/mru reload &7Reload the all configs...");
+            SendMessage("&6/mru reload &7Reload the all configs...");
         }
 
-        SendFormatMessage(plugin.MessageSeparator);
+        SendMessage(plugin.MessageSeparator);
 
         return true;
     }
@@ -388,14 +386,14 @@ public class MRUCommandListener implements CommandExecutor {
         boolean globalFeed  = profile.GetPlayerGlobalFeed();
 
         if (args.length < 3) {
-            SendFormatMessage(plugin.MessageSeparator);
-            SendFormatMessage("&3Manage Your mcmmoRank Feeds &a(&f&lcurrent status&a)");
-            SendFormatMessage(plugin.PlayerWarnings + "Usage: /mru feeds <feedname> <on | off>");
-            SendFormatMessage(plugin.MessageSeparator);
-            SendFormatMessage("&aRankup &6(&f" + (rankupFeed ? "On" : "Off") + "&6)&a - Show your Promotion when you rank up");
-            SendFormatMessage("&aXp &6(&f" + (xpFeed ? "On" : "Off") + "&6)&a - Excluding Powerlevel, show your skills XP Ups?");
-            SendFormatMessage("&aGlobal &6(&f" + (globalFeed ? "On" : "Off") + "&6)&a - Share your Promotions/Demotions with others??\n");
-            SendFormatMessage(plugin.MessageSeparator);
+            SendMessage(plugin.MessageSeparator);
+            SendMessage("&3Manage Your mcmmoRank Feeds &a(&f&lcurrent status&a)");
+            SendMessage(plugin.PlayerWarnings + "Usage: /mru feeds <feedname> <on | off>");
+            SendMessage(plugin.MessageSeparator);
+            SendMessage("&aRankup &6(&f %s& 6)&a - Show your Promotion when you rank up",new Object[] { rankupFeed ? "On" : "Off" });
+            SendMessage("&aXp &6(&f %s& &6)&a - Excluding Powerlevel, show your skills XP Ups?",new Object[] { xpFeed ? "On" : "Off" });
+            SendMessage("&aGlobal &6(&f %s& &6)&a - Share your Promotions/Demotions with others??\n",new Object[] { globalFeed ? "On" : "Off" });
+            SendMessage(plugin.MessageSeparator);
             return true;
         }
 
@@ -403,7 +401,7 @@ public class MRUCommandListener implements CommandExecutor {
         boolean toggle = ParseToggleInput(args[2]);
 
         if (!toggle) {
-            SendFormatMessage(plugin.GeneralMessages + "Invalid setting: Expected On, Off, True or False");
+            SendMessage(plugin.GeneralMessages + "Invalid setting: Expected On, Off, True or False");
             return false;
         }
         
@@ -436,7 +434,7 @@ public class MRUCommandListener implements CommandExecutor {
             msg = plugin.PlayerWarnings + "Was already " + (toggle ? "On" : "Off") + " or not a valid feed!";
         }
         
-        SendFormatMessage(msg);
+        SendMessage(msg);
         return true;
     }
 
@@ -451,38 +449,38 @@ public class MRUCommandListener implements CommandExecutor {
         Boolean canBuy;
 
         if (!plugin.AllowBuyingRanks || !plugin.BuyRankEnabled.get(skill.toUpperCase())) {
-            SendFormatMessage(plugin.Message.BuyDisabled);
+            SendMessage(plugin.Message.BuyDisabled);
             return false;
         }
         
         if (plugin.hasPermission(profile.player, "mru.ignore")) {
-            SendFormatMessage("&3&lYou r setting to ignore!(Permission)");
+            SendMessage("&3&lYou r setting to ignore!(Permission)");
             return false;
         }
         
         if (plugin.GroupToIgnore(profile.player)) {
-            SendFormatMessage("&3&lYou r setting to ignore!(Group)");
+            SendMessage("&3&lYou r setting to ignore!(Group)");
             return false;
         }
 	
         if (plugin.BuyRankUsePerms.get(skill.toUpperCase()) && args.length > 1) {
             if (!plugin.hasPermission(profile.player, "mru.buyrankxp") && args[1].equalsIgnoreCase("x")) {
-                SendFormatMessage(plugin.Message.BuyNoPermXp);
+                SendMessage(plugin.Message.BuyNoPermXp);
                 return true;
             }
 
             if (!plugin.hasPermission(profile.player, "mru.buyrankbuks") && args[1].equalsIgnoreCase("b")) {
-                SendFormatMessage(plugin.Message.BuyNoPermBuks.replace("%currency%", plugin.BuyRankCurrencyName));
+                SendMessage(plugin.Message.BuyNoPermBuks.replace("%currency%", plugin.BuyRankCurrencyName));
                 return true;
             }
         }
 
         if (args.length < 2 || !args[1].toLowerCase().matches("[xb]")) {
-            SendFormatMessage(plugin.MessageSeparator);
-            SendFormatMessage("&6Usage: /mru buy <x | b>");
-            SendFormatMessage("&3'x' to buy using 'XP'");
-            SendFormatMessage("&3'b' to buy using ' " + plugin.BuyRankCurrencyName + " '");
-            SendFormatMessage(plugin.MessageSeparator);
+            SendMessage(plugin.MessageSeparator);
+            SendMessage("&6Usage: /mru buy <x | b>");
+            SendMessage("&3'x' to buy using 'XP'");
+            SendMessage("&3'b' to buy using '%s'",new Object[] { plugin.BuyRankCurrencyName });
+            SendMessage(plugin.MessageSeparator);
             return true;
         }
 
@@ -490,8 +488,8 @@ public class MRUCommandListener implements CommandExecutor {
             canBuy = plugin.BuyRank.ShowBuyableRanks(profile.player, args);
 
             if (canBuy) {
-                SendFormatMessage(plugin.MessageSeparator);
-                SendFormatMessage(plugin.Message.BuyPurchaseReq.replace("%buyflag%", args[1]).replace("%command%", "/mru buy") + "\n");
+                SendMessage(plugin.MessageSeparator);
+                SendMessage(plugin.Message.BuyPurchaseReq.replace("%buyflag%", args[1]).replace("%command%", "/mru buy") + "\n");
             } else {
 
                 String noBuyMsg = plugin.Message.BuyPurchaseNot;
@@ -503,7 +501,7 @@ public class MRUCommandListener implements CommandExecutor {
                     noBuyMsg = noBuyMsg.replace("%buymethod%", plugin.BuyRankCurrencyName);
                 }
 
-                SendFormatMessage(noBuyMsg);
+                SendMessage(noBuyMsg);
 
             }
         } else {
@@ -513,11 +511,9 @@ public class MRUCommandListener implements CommandExecutor {
     }
 
     public boolean showVersionInfo() {
-        SendFormatMessage("VERSION INFO.");
-        SendFormatMessage(plugin.getDescription().getVersion());
-        SendFormatMessage("&6Report an Issue??:\n&3" + plugin.verIssues);
-        SendFormatMessage("&6\nDownload today at:\n&3" + plugin.verLink);
-        SendFormatMessage(plugin.MessageSeparator);
+        SendMessage("VERSION INFO.");
+        SendMessage(plugin.getDescription().getVersion());
+        SendMessage(plugin.MessageSeparator);
         return true;
     }
 
@@ -530,12 +526,12 @@ public class MRUCommandListener implements CommandExecutor {
         if (args.length == 2 && !args[1].isEmpty()) {
             OfflinePlayer ckPlayer = Bukkit.getOfflinePlayer(args[1].toString());
             if (!ckPlayer.hasPlayedBefore()) {
-                SendFormatMessage(plugin.PlayerWarnings + "Not a player of the server...");
+                SendMessage(plugin.PlayerWarnings + "Not a player of the server...");
                 return true;
             } 
             if (!ckPlayer.isOnline()) {
-                SendFormatMessage("&2&l" + ckPlayer.getName() + plugin.PlayerWarnings + " is not online!");
-                SendFormatMessage(plugin.PlayerWarnings + "\nStats are restricted to online players!");
+                SendMessage("&2&l" + ckPlayer.getName() + plugin.PlayerWarnings + " is not online!");
+                SendMessage(plugin.PlayerWarnings + "\nStats are restricted to online players!");
                 return true;
             } 			
             profile = new Profile(plugin,(Player)ckPlayer.getPlayer());
@@ -556,7 +552,7 @@ public class MRUCommandListener implements CommandExecutor {
         double balance         = plugin.GetPlayerCurrency(profile.player);
 
         if (lastSkill.isEmpty() || lastSkill.equalsIgnoreCase("N/A")) {
-            SendFormatMessage(plugin.Message.LastQuitStatsFail + "\n\n");
+            SendMessage(plugin.Message.LastQuitStatsFail + "\n\n");
             profile.SetQuitStats();
             lastSet = true;
         }	
@@ -567,7 +563,7 @@ public class MRUCommandListener implements CommandExecutor {
         if (!lastSet) {
             outPut.append("\n&3").append(plugin.BuyRankCurrencyName).append(" &6").append(String.format("$%.2f", lastBalance));
             outPut.append("\n").append(plugin.Message.BuyPurchaseXp.replace("%xp%", String.valueOf(lastXp)).replace("%level%", String.valueOf(lastXpL)));
-            outPut.append("\n&3 Rank: &6").append(plugin.Message.BuyProfile.replace("%rankline%", lastSkill.toLowerCase()).replace("%group%", Utilities.getCapitalized(lastRank)).replace("%level%", String.valueOf(lastSkillLevel)));
+            outPut.append("\n&3 Rank: &6").append(plugin.Message.BuyProfile.replace("%rankline%", lastSkill.toLowerCase()).replace("%group%", Capitalized(lastRank)).replace("%level%", String.valueOf(lastSkillLevel)));
         } else {
             outPut.append("\n").append(plugin.PlayerWarnings).append("No last stats available - Profile just migrated...");
         }
@@ -575,24 +571,24 @@ public class MRUCommandListener implements CommandExecutor {
         outPut.append(String.format("%1$45s", "&a&oCURRENT STATS:"));
         outPut.append("\n&3").append(plugin.BuyRankCurrencyName).append(" &6").append(String.format("$%.2f", balance));
         outPut.append("\n").append(plugin.Message.BuyPurchaseXp.replace("%xp%", String.valueOf(Xp)).replace("%level%", String.valueOf(XpL)));
-        outPut.append("\n&3 Rank: &6").append(plugin.Message.BuyProfile.replace("%rankline%", skill.toLowerCase()).replace("%group%", Utilities.getCapitalized(rank)).replace("%level%", String.valueOf(skillLevel)));
+        outPut.append("\n&3 Rank: &6").append(plugin.Message.BuyProfile.replace("%rankline%", skill.toLowerCase()).replace("%group%", Capitalized(rank)).replace("%level%", String.valueOf(skillLevel)));
         outPut.append("\n").append(plugin.MessageSeparator).append("\n");
 
-        SendFormatMessage(outPut.toString());
+        SendMessage(outPut.toString());
         return true;
     }
 
     public boolean SetGender(String gender) {
         Profile profile = new Profile(plugin, (Player)sender);
         profile.SetGender(gender);
-        SendFormatMessage("GENDER SELECTED");
-        SendFormatMessage(plugin.GeneralMessages + plugin.Message.SetGender.replace("%gender%", gender));
-        SendFormatMessage(plugin.MessageSeparator);
+        SendMessage("GENDER SELECTED");
+        SendMessage(plugin.GeneralMessages + plugin.Message.SetGender.replace("%gender%", gender));
+        SendMessage(plugin.MessageSeparator);
         return true;
     }
 
     public boolean ListHability() {
-        SendFormatMessage(plugin.Message.BaseRanksListing);
+        SendMessage(plugin.Message.BaseRanksListing);
         String outMsg;
         String preFix="";
         Profile profile = new Profile(plugin, (Player)sender);
@@ -621,23 +617,23 @@ public class MRUCommandListener implements CommandExecutor {
                 } 
 
                 String playerLevel = String.valueOf(plugin.GetSkillLevel(profile.player, key));
-                SendFormatMessage(String.format(fmt, preFix, key + plugin.Message.HabListLevel.replace("%level%", " " + playerLevel) , outMsg));
+                SendMessage(fmt, new Object[] { preFix, key + plugin.Message.HabListLevel.replace("%level%", " " + playerLevel) , outMsg });
             }
 
         }
 
-        SendFormatMessage(("\n" + plugin.Message.DefaultSkilltoRank).replace("%ability%", plugin.DefaultSkill));
+        SendMessage(("\n" + plugin.Message.DefaultSkilltoRank).replace("%ability%", plugin.DefaultSkill));
         if (!plugin.displayDisabledRanks || noPerm) {
-            SendFormatMessage("\n" + plugin.Message.NotShowInfo);
+            SendMessage("\n" + plugin.Message.NotShowInfo);
         }
-        SendFormatMessage(plugin.MessageSeparator);
+        SendMessage(plugin.MessageSeparator);
  	    	
         if (!plugin.isRankAvailable(skill, profile.player)) {
-            SendFormatMessage(plugin.Message.NoAccess.replaceAll("%rankline%", skill.toUpperCase()));
+            SendMessage(plugin.Message.NoAccess.replaceAll("%rankline%", skill.toUpperCase()));
         }
 
         if (!plugin.CheckRankExist(skill.toUpperCase())) {
-            SendFormatMessage(plugin.Message.NoLongerExists.replaceAll("%rankline%", skill.toUpperCase()));
+            SendMessage(plugin.Message.NoLongerExists.replaceAll("%rankline%", skill.toUpperCase()));
         }
 
         return true;
@@ -665,14 +661,14 @@ public class MRUCommandListener implements CommandExecutor {
         }
 
         if (args.length == 2) {
-            SendFormatMessage(plugin.MessageSeparator);
-            SendFormatMessage("&6RankUp Files and Status: (default: &c" + plugin.DefaultSkill + "&6)" + rankSkills);
-            SendFormatMessage("&7  ** (ability names are not case sensitive)");
-            SendFormatMessage(plugin.MessageSeparator);
+            SendMessage(plugin.MessageSeparator);
+            SendMessage("&6RankUp Files and Status: (default: &c%s&6) %s", new Object[] { plugin.DefaultSkill, rankSkills });
+            SendMessage("&7  ** (ability names are not case sensitive)");
+            SendMessage(plugin.MessageSeparator);
         }
         
         if (args.length == 3 && !validSkill) {
-            sender.sendMessage(Utilities.parseColor("&4" + "Invalid ability section..."));
+            SendMessage("&4" + "Invalid ability section...");
             return true;
         }
         
@@ -689,12 +685,12 @@ public class MRUCommandListener implements CommandExecutor {
     
     private boolean SetSkillStatus(String[] args,String skill) {
         if (args.length < 4) {
-             SendFormatMessage("&6Usage: &f/mru set ability &6<&7ability&6> <&7on &6or &7off&6>");
-             SendFormatMessage("&6Type: &f/mru set ability &6for Rank File Listings");
+             SendMessage("&6Usage: &f/mru set ability &6<&7ability&6> <&7on &6or &7off&6>");
+             SendMessage("&6Type: &f/mru set ability &6for Rank File Listings");
              return true;
          }
          if (!ParseToggleInput(args[3])) {
-             SendFormatMessage("&6&lInvalid ability setting. &6Values allowed: &eon,off,true,false");
+             SendMessage("&6&lInvalid ability setting. &6Values allowed: &eon,off,true,false");
              return true;
          }
 
@@ -702,9 +698,9 @@ public class MRUCommandListener implements CommandExecutor {
          if (UpdateSetConfig("Config.Skills." + skill + ".enabled", toggle)) {
 
              if (skill.equalsIgnoreCase(plugin.DefaultSkill)) {
-                 SendFormatMessage("&cYou disabled the current default skill.");
-                 SendFormatMessage("&cDefault Skill reset back to POWERLEVEL, if it");
-                 SendFormatMessage("&cis disabled, POWERLEVEL will be enabled on reload");
+                 SendMessage("&cYou disabled the current default skill.");
+                 SendMessage("&cDefault Skill reset back to POWERLEVEL, if it");
+                 SendMessage("&cis disabled, POWERLEVEL will be enabled on reload");
                  plugin.DefaultSkill = "POWERLEVEL";
                  plugin.config.getConfig().set("Config.DefaultSkill", plugin.DefaultSkill);
                  plugin.config.saveConfig();
@@ -712,18 +708,18 @@ public class MRUCommandListener implements CommandExecutor {
                  Mcmmorankup.logger.log(Level.INFO, "{0} {1} just updated Default Skill: {2} to a {3} status", new Object[]{Mcmmorankup.logPrefix, sender.getName(), skill,toggle});
              }
 
-             SendFormatMessage("&fRanking Ability ' &3" + skill + " &f' has been set: &3" + args[3].toUpperCase());
-             SendFormatMessage("&cNote: &6Ability files disabled &cARE NOT DELETED&6!!");
+             SendMessage("&fRanking Ability ' &3%s &f' has been set: &3%s", new Object[] { skill, args[3].toUpperCase() });
+             SendMessage("&cNote: &6Ability files disabled &cARE NOT DELETED&6!!");
              Mcmmorankup.logger.log(Level.INFO, "{0} {1} just updated ability: {2} to a {3} status", new Object[]{Mcmmorankup.logPrefix, sender.getName(), skill,toggle});
          }
-         SendFormatMessage(plugin.MessageSeparator);
+         SendMessage(plugin.MessageSeparator);
          return true;
     }
     
     private boolean SetDefaultSkill(String[] args,String skill) {
         if (args.length < 3) {
-           SendFormatMessage("&6" + "Usage: &f/mru set &6<&7setting&6> <&7value&6>");
-           SendFormatMessage("&6" + "Type: &f/mru set &6For Configuration settings");
+           SendMessage("&6Usage: &f/mru set &6<&7setting&6> <&7value&6>");
+           SendMessage("&6Type: &f/mru set &6For Configuration settings");
            return true;
        }
 
@@ -731,11 +727,11 @@ public class MRUCommandListener implements CommandExecutor {
        plugin.config.getConfig().set("Config.DefaultSkill", plugin.DefaultSkill);
        plugin.config.saveConfig();
        plugin.config.reloadConfig();
-       SendFormatMessage("&f" + "DefaultSkill updated to: &3" + skill);
-       SendFormatMessage("&cNote: Players who were using previous default skill will be");
-       SendFormatMessage("&c       notified to change their rank-up ability to new default");
-       SendFormatMessage("&cNote: If new default skill is currently disabled, it will");
-       SendFormatMessage("&c       be enabled upon reload or server restart.");
+       SendMessage("&fDefaultSkill updated to: &3" + skill);
+       SendMessage("&cNote: Players who were using previous default skill will be");
+       SendMessage("&c       notified to change their rank-up ability to new default");
+       SendMessage("&cNote: If new default skill is currently disabled, it will");
+       SendMessage("&c       be enabled upon reload or server restart.");
        return true;
     }
 
@@ -751,7 +747,7 @@ public class MRUCommandListener implements CommandExecutor {
             plugin.onLoadConfig();
             return true;
         } catch (Exception e) {
-            SendFormatMessage("&4There was a problem setting that configuration setting!");
+            SendMessage("&4There was a problem setting that configuration setting!");
         }
         return false;
     }
@@ -767,8 +763,8 @@ public class MRUCommandListener implements CommandExecutor {
 
     private boolean ChangeOtherConfigs(String[] args) {
         if (args.length < 3) {
-            SendFormatMessage("&6" + "Usage: &f/mru set &6<&7setting&6> <&7value&6>");
-            SendFormatMessage("&6" + "Type: &f/mru set &6For Configuration settings");
+            SendMessage("&6Usage: &f/mru set &6<&7setting&6> <&7value&6>");
+            SendMessage("&6Type: &f/mru set &6For Configuration settings");
             return true;
         }
 
@@ -849,7 +845,7 @@ public class MRUCommandListener implements CommandExecutor {
             case "onjoindelay":
                 cfg = "OnJoinDelay";
                 stdParse = false;
-                if (Utilities.isNumeric(args[2])) {
+                if (isNumeric(args[2])) {
                     int delay = Integer.parseInt(args[2]);
                     if (delay >= 0 && delay <= 72000) {
                         invalid = false;
@@ -860,7 +856,7 @@ public class MRUCommandListener implements CommandExecutor {
             case "starttag":
                 cfg = "StartTagName";
                 stdParse = false;
-                if (Utilities.isChar(args[2])) {
+                if (isChar(args[2])) {
                     invalid = false;
                 }
                 eMsg += "'chars' for Starting Tag Name for new players";
@@ -868,7 +864,7 @@ public class MRUCommandListener implements CommandExecutor {
         }
 
         if (cfg.isEmpty()) {
-            SendFormatMessage(plugin.GeneralMessages + "Invalid configuration setting. Type /mru set for settings");
+            SendMessage(plugin.GeneralMessages + "Invalid configuration setting. Type /mru set for settings");
             return true;
         }
         
@@ -883,19 +879,19 @@ public class MRUCommandListener implements CommandExecutor {
         }
 
         if (invalid) {
-            SendFormatMessage(plugin.MessageSeparator);
-            SendFormatMessage(plugin.GeneralMessages + eMsg);
+            SendMessage(plugin.MessageSeparator);
+            SendMessage(plugin.GeneralMessages + eMsg);
             return false;
         } 
         
         cfg = "Config." + cfg;
         if (UpdateSetConfig(cfg, value)) {
-            SendFormatMessage(plugin.MessageSeparator);
-            SendFormatMessage(plugin.GeneralMessages + cfg + " has been updated to: &7" + value);
+            SendMessage(plugin.MessageSeparator);
+            SendMessage(plugin.GeneralMessages + "%s has been updated to: &7%s" , new Object[] { cfg, value });
             Mcmmorankup.logger.log(Level.INFO, "{0} {1} just updated Configuration Setting: {2} to a {3} status", new Object[]{Mcmmorankup.logPrefix, sender.getName(), args[1],value});
         }
         
-        SendFormatMessage(plugin.MessageSeparator);
+        SendMessage(plugin.MessageSeparator);
         return true;
     }
 
@@ -906,11 +902,11 @@ public class MRUCommandListener implements CommandExecutor {
         }
 
         if (args.length < 2 || args.length > 4) {
-            SendFormatMessage("&6Usage: /mru report <a | g | c> <skill> [filename]");
-            SendFormatMessage("&2  - a [filename] - all players grouped by ability report");
-            SendFormatMessage("&2  - g [filename] - all players grouped by gender report");
-            SendFormatMessage("&2  - c <skill> [filename] - Specific ability only report");
-            SendFormatMessage("&7** FileName is Optional.");
+            SendMessage("&6Usage: /mru report <a | g | c> <skill> [filename]");
+            SendMessage("&2  - a [filename] - all players grouped by ability report");
+            SendMessage("&2  - g [filename] - all players grouped by gender report");
+            SendMessage("&2  - c <skill> [filename] - Specific ability only report");
+            SendMessage("&7** FileName is Optional.");
             return true;
         }
         
@@ -920,7 +916,7 @@ public class MRUCommandListener implements CommandExecutor {
         switch(args[1].toLowerCase()) {
             case "c":
                 if (!plugin.isRankExist.containsKey(args[2].toUpperCase())) {
-                    SendFormatMessage(plugin.PlayerWarnings + "Huh! Expected a skill as the reports category and a valid skill!");
+                    SendMessage(plugin.PlayerWarnings + "Huh! Expected a skill as the reports category and a valid skill!");
                     return false;
                 }
                 cat = args[2];
@@ -937,7 +933,7 @@ public class MRUCommandListener implements CommandExecutor {
                 }
                 break;
             default:
-                SendFormatMessage(plugin.PlayerWarnings + "not a valid argument for this command.");
+                SendMessage(plugin.PlayerWarnings + "not a valid argument for this command.");
                 return true;
         }
 
@@ -950,8 +946,5 @@ public class MRUCommandListener implements CommandExecutor {
     public boolean asOtherStatsPerm(String[] args, Player player) {
         return args.length == 2 && plugin.hasPermission(player, "mru.stats.others");
     }
-    
-    public void SendFormatMessage(String msg) {
-        sender.sendMessage(Utilities.parseColor(msg));
-    }
+ 
 }

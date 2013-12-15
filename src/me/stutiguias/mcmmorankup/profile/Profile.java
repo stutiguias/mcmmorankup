@@ -17,19 +17,20 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
-public class Profile {
+public class Profile extends Utilities {
 
     public Player player;
-    Mcmmorankup plugin;
     File configplayerfile;
     YamlConfiguration PlayerYML;
 
     public Profile(Mcmmorankup plugin, String playerName) {
-        LoadPlayerProfile(playerName, plugin);
+        super(plugin);
+        LoadPlayerProfile(playerName);
     }
 
     public Profile(Mcmmorankup plugin, Player player) {
-        LoadPlayerProfile(player.getName(), plugin);
+        super(plugin);
+        LoadPlayerProfile(player.getName());
         this.player = player;
     }
 
@@ -72,7 +73,7 @@ public class Profile {
                 case "WOODCUTTING":
                 case "SMELTING":
                 case "POWERLEVEL":
-                    SendMessage(player, HabilityForRank);
+                    ChangeMessage(player, HabilityForRank);
                     break;
                 default:
                     return false;
@@ -198,14 +199,10 @@ public class Profile {
         return PlayerYML.getBoolean("PlayerFeeds.XpUpdates");
     }
 
-    public void SendMessage(Player player, String Hability) {       
-        SendFormatMessage("ABILITY SELECTED");
-        SendFormatMessage(plugin.Message.HabilitySet.replace("%ability%", Hability.toUpperCase()));
-        SendFormatMessage(plugin.MessageSeparator);
-    }
-
-    public void SendFormatMessage(String msg) {
-        player.sendMessage(Utilities.parseColor(msg));
+    public void ChangeMessage(Player player, String Hability) {       
+        SendMessage(player,"ABILITY SELECTED");
+        SendMessage(player,plugin.Message.HabilitySet.replace("%ability%", Hability.toUpperCase()));
+        SendMessage(player,plugin.MessageSeparator);
     }
     
     private void initLoadYML() {
@@ -239,7 +236,7 @@ public class Profile {
         if (!PlayerYML.isSet("PurchasedRanks"))           PlayerYML.set("PurchasedRanks", "");
         if (!PlayerYML.isSet("PlayerFeeds.Rankup"))       PlayerYML.set("PlayerFeeds.Rankup", true);
         if (!PlayerYML.isSet("PlayerFeeds.Global"))       PlayerYML.set("PlayerFeeds.Global", true);
-        if (!PlayerYML.isSet("PlayerFeeds.XpUpdates"))    PlayerYML.set("PlayerFeeds.XpUpdates", true);
+        if (!PlayerYML.isSet("PlayerFeeds.XpUpdates"))    PlayerYML.set("PlayerFeeds.XpUpdates", false);
         
         SaveYML();
 
@@ -255,7 +252,7 @@ public class Profile {
         }
     }
 
-    private void LoadPlayerProfile(String playerName, Mcmmorankup plugin) {
+    private void LoadPlayerProfile(String playerName) {
         configplayerfile = new File(Mcmmorankup.PluginPlayerDir + File.separator + playerName + ".yml");
         PlayerYML = new YamlConfiguration();
 
@@ -283,7 +280,7 @@ public class Profile {
             PlayerYML.set("PurchasedRanks", "");
             PlayerYML.set("PlayerFeeds.Rankup", true);
             PlayerYML.set("PlayerFeeds.Global", true);
-            PlayerYML.set("PlayerFeeds.XpUpdates", true);
+            PlayerYML.set("PlayerFeeds.XpUpdates", false);
 
             if (SetInitRank()) {
                 Mcmmorankup.logger.log(Level.INFO, "Player {0}:- Set Auto Rank Line to: {1}", new Object[]{playerName, plugin.DefaultSkill});
@@ -292,6 +289,5 @@ public class Profile {
         } else {
             CheckPlayerConfig();
         }
-        this.plugin = plugin;
     }
 }

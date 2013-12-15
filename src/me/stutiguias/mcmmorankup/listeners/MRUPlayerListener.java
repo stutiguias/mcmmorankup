@@ -18,13 +18,12 @@ import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
 import me.stutiguias.mcmmorankup.task.OnJoinTask;
 
-public class MRUPlayerListener implements Listener {
+public class MRUPlayerListener extends Utilities implements Listener {
 
-    private final Mcmmorankup plugin;
     private Profile profile;
     
     public MRUPlayerListener(Mcmmorankup plugin) {
-        this.plugin = plugin;
+        super(plugin);
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
@@ -34,8 +33,8 @@ public class MRUPlayerListener implements Listener {
         
         if(plugin.UpdaterNotify && plugin.hasPermission(player,"mru.update") && Mcmmorankup.update)
         {
-          player.sendMessage(Utilities.parseColor("&6An update is available: " + Mcmmorankup.name + ", a " + Mcmmorankup.type + " for " + Mcmmorankup.version + " available at " + Mcmmorankup.link));
-          player.sendMessage(Utilities.parseColor("&6Type /mru update if you would like to automatically update."));
+          SendMessage(player,"&6An update is available: " + Mcmmorankup.name + ", a " + Mcmmorankup.type + " for " + Mcmmorankup.version + " available at " + Mcmmorankup.link);
+          SendMessage(player,"&6Type /mru update if you would like to automatically update.");
         }
         
         if (plugin.PromoteOnJoin && plugin.hasPermission(player, "mru.rankup")) {
@@ -63,7 +62,7 @@ public class MRUPlayerListener implements Listener {
         String xp = String.valueOf((int)event.getRawXpGained() + McMMOApi.getXp(profile.player, skill));
         String toNextLevel = String.valueOf(McMMOApi.getXpToNextLevel(profile.player, skill));
         
-        profile.SendFormatMessage(plugin.Message.McmmoXpGain.replaceAll("%cXp%",xp).replaceAll("%rXp%",toNextLevel)); 
+        SendMessage(profile.player,plugin.Message.McmmoXpGain.replaceAll("%cXp%",xp).replaceAll("%rXp%",toNextLevel)); 
     }
 
     @EventHandler(priority = EventPriority.LOW)
@@ -77,9 +76,9 @@ public class MRUPlayerListener implements Listener {
         if (Tag == null) Tag = "";
         String format = event.getFormat();
         if(format.contains("-mru")) {
-            event.setFormat(format.replace("-mru",Utilities.parseColor(Tag)));
+            event.setFormat(format.replace("-mru",parseColor(Tag)));
         }else{
-            event.setFormat(Utilities.parseColor(Tag) + " " + format);
+            event.setFormat(parseColor(Tag) + " " + format);
         }
     }
     

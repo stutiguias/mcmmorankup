@@ -3,19 +3,17 @@ package me.stutiguias.mcmmorankup.apimcmmo;
 import me.stutiguias.mcmmorankup.Mcmmorankup;
 import me.stutiguias.mcmmorankup.Utilities;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.logging.Level;
 import me.stutiguias.mcmmorankup.profile.Profile;
 import org.bukkit.entity.Player;
 
-public class RankUp {
+public class RankUp extends Utilities {
 
-    private static Mcmmorankup plugin;
     private static final HashMap<String, String> infoSettings = new HashMap<>();
     private Profile profile;
 
-    public RankUp(Mcmmorankup instance) {
-        plugin = instance;
+    public RankUp(Mcmmorankup plugin) {
+        super(plugin);
         if (plugin.getServer().getPluginManager().getPlugin("mcMMO") != null) {
             Mcmmorankup.logger.log(Level.INFO, "{0} mcMMO has been hooked", new Object[]{Mcmmorankup.logPrefix});
         }
@@ -23,7 +21,7 @@ public class RankUp {
     }
     
     public void SendFormatMessage(String msg) {
-        profile.player.sendMessage(Utilities.parseColor(msg));
+        SendMessage(profile.player,msg);
     }
     
     public String TryRankUp(Player player, String skill, String gender) {
@@ -222,9 +220,9 @@ public class RankUp {
     private void ChangeTag(String promoteTag, String skill, boolean bCast, boolean demote) {
         profile.SetTag(promoteTag);
         if (bCast) {
-            plugin.getServer().broadcastMessage(plugin.Message.BroadcastRankupTitle);
-            plugin.getServer().broadcastMessage(Utilities.parseColor(plugin.GeneralMessages + BroadcastMessage(promoteTag, skill, demote)));
-            plugin.getServer().broadcastMessage(Utilities.parseColor(plugin.MessageSeparator));
+            BrcstMsg(plugin.Message.BroadcastRankupTitle);
+            BrcstMsg(plugin.GeneralMessages + BroadcastMessage(promoteTag, skill, demote));
+            BrcstMsg(plugin.MessageSeparator);
         }
     }
 
@@ -244,9 +242,9 @@ public class RankUp {
         state = plugin.permission.playerAddGroup(profile.player.getWorld(), profile.player.getName(), newgroup);
         
         if (bCast && state && !groupnow.equalsIgnoreCase(newgroup)) {
-            plugin.getServer().broadcastMessage(plugin.Message.BroadcastRankupTitle);
-            plugin.getServer().broadcastMessage(Utilities.parseColor(plugin.GeneralMessages + BroadcastMessage(newgroup, skill, demote)));
-            plugin.getServer().broadcastMessage(Utilities.parseColor(plugin.MessageSeparator));
+            BrcstMsg(plugin.Message.BroadcastRankupTitle);
+            BrcstMsg(plugin.GeneralMessages + BroadcastMessage(newgroup, skill, demote));
+            BrcstMsg(plugin.MessageSeparator);
         }
 
         return state;

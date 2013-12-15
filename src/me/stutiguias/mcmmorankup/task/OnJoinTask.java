@@ -5,6 +5,7 @@
 package me.stutiguias.mcmmorankup.task;
 
 import me.stutiguias.mcmmorankup.Mcmmorankup;
+import me.stutiguias.mcmmorankup.Utilities;
 import me.stutiguias.mcmmorankup.profile.Profile;
 import org.bukkit.entity.Player;
 
@@ -12,13 +13,12 @@ import org.bukkit.entity.Player;
  *
  * @author Daniel
  */
-public class OnJoinTask implements Runnable {
+public class OnJoinTask extends Utilities implements Runnable {
 
-    Mcmmorankup plugin;
     Profile profile;
 
     public OnJoinTask(Mcmmorankup plugin, Player player) {
-        this.plugin = plugin;
+        super(plugin);
         this.profile = new Profile(plugin, player);
     }
 
@@ -31,13 +31,13 @@ public class OnJoinTask implements Runnable {
         
         if (plugin.isIgnored(profile.player)) {
             if(plugin.playerBroadcastFeed) {
-                profile.SendFormatMessage(plugin.Message.RankCheckingIgnore.replace("%player%", profile.player.getName()).replace("%colorreset%", plugin.GeneralMessages));
+                SendMessage(profile.player,plugin.Message.RankCheckingIgnore.replace("%player%", profile.player.getName()).replace("%colorreset%", plugin.GeneralMessages));
             }
             return;
         }
         
         if (plugin.playerBroadcastFeed) {
-            profile.SendFormatMessage(plugin.Message.RankChecking.replace("%player%", profile.player.getName()).replace("%colorreset%", plugin.GeneralMessages));
+            SendMessage(profile.player,plugin.Message.RankChecking.replace("%player%", profile.player.getName()).replace("%colorreset%", plugin.GeneralMessages));
         }
         
         if (plugin.playerBroadcastFeed) {
@@ -45,12 +45,12 @@ public class OnJoinTask implements Runnable {
         }
 
         if (!plugin.CheckRankExist(skill))  {
-            profile.SendFormatMessage(plugin.Message.NoLongerExists.replaceAll("%rankline%", skill.toUpperCase()));
+            SendMessage(profile.player,plugin.Message.NoLongerExists.replaceAll("%rankline%", skill.toUpperCase()));
             return;
         }
         
         if (!plugin.isRankAvailable(skill, profile.player)) {
-            profile.SendFormatMessage(plugin.Message.NoAccess.replaceAll("%rankline%", skill));
+            SendMessage(profile.player,plugin.Message.NoAccess.replaceAll("%rankline%", skill));
             return;
         } 
 
@@ -60,10 +60,10 @@ public class OnJoinTask implements Runnable {
 
         switch (status.toLowerCase()) {
             case "promoted":
-                profile.SendFormatMessage(plugin.Message.Sucess);
+                SendMessage(profile.player,plugin.Message.Sucess);
                 break;
             case "demoted":
-                profile.SendFormatMessage(plugin.Message.Demotion);
+                SendMessage(profile.player,plugin.Message.Demotion);
                 break;
         }
 
