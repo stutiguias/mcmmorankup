@@ -1,9 +1,11 @@
-package me.stutiguias.mcmmorankup.apimcmmo;
+package me.stutiguias.mcmmorankup.updaterank;
 
 import me.stutiguias.mcmmorankup.Mcmmorankup;
 import me.stutiguias.mcmmorankup.Utilities;
 import java.util.HashMap;
 import java.util.logging.Level;
+import me.stutiguias.mcmmorankup.apimcmmo.McMMOApi;
+
 import me.stutiguias.mcmmorankup.profile.Profile;
 import org.bukkit.entity.Player;
 
@@ -64,7 +66,7 @@ public class RankUp extends Utilities {
 
                 level = Integer.parseInt(levelRank[0]);
                 rank = levelRank[1];
-                // TODO : Fix logical Erro here not demote for first rank  !
+
                 if (playerSkillLevel >= level) {
 
                     demote = level < StartLevel;

@@ -13,7 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import me.stutiguias.mcmmorankup.apimcmmo.McMMOApi;
-import me.stutiguias.mcmmorankup.apimcmmo.RankUp;
+import me.stutiguias.mcmmorankup.updaterank.RankUp;
 import me.stutiguias.mcmmorankup.listeners.MRUCommandListener;
 import me.stutiguias.mcmmorankup.listeners.MRUPlayerListener;
 import me.stutiguias.mcmmorankup.rank.BuyRanks;
@@ -396,7 +396,7 @@ public class Mcmmorankup extends JavaPlugin {
                 isRankExist.put(skill, false);
                 BuyRankEnabled.put(skill, false);
             }
-        } catch (Exception ex) {
+        } catch (IOException ex) {
             logger.log(Level.SEVERE, "{0} {1} - Ability Rank file is either corrupt and/or missing.", new Object[]{logPrefix, skill});
             isRankExist.put(skill, false);
             BuyRankEnabled.put(skill, false);
@@ -428,8 +428,7 @@ public class Mcmmorankup extends JavaPlugin {
 
     public int GetRankStartLevel(String skill, String gender, String rank) {
         int rankLevel = 0;
-        for (Iterator<String> it = RankUpConfig.get(skill).get(gender).iterator(); it.hasNext();) {
-            String entry = it.next();
+        for (String entry : RankUpConfig.get(skill).get(gender)) {
             String[] levelGroup = entry.split(",");
             if (levelGroup[1].equalsIgnoreCase(rank)) {
                 rankLevel = Integer.parseInt(levelGroup[0]);
@@ -440,8 +439,7 @@ public class Mcmmorankup extends JavaPlugin {
     }
     
     public boolean isRankMaxLevel(String skill, String gender,int level) {
-        for (Iterator<String> it = RankUpConfig.get(skill).get(gender).iterator(); it.hasNext();) {
-            String entry = it.next();
+        for (String entry : RankUpConfig.get(skill).get(gender)) {
             String[] levelGroup = entry.split(",");
             if (Integer.parseInt(levelGroup[0]) > level) {
                 return false;
