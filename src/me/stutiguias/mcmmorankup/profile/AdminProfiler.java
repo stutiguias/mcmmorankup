@@ -1,4 +1,4 @@
-package me.stutiguias.profile;
+package me.stutiguias.mcmmorankup.profile;
 
 import java.io.File;
 import java.util.List;

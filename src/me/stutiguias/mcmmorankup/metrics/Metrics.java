@@ -26,7 +26,7 @@
  * either expressed or implied, of anybody else.
  */
 
-package me.stutiguias.metrics;
+package me.stutiguias.mcmmorankup.metrics;
 
 import java.io.*;
 import java.net.Proxy;

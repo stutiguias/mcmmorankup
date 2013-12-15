@@ -1,4 +1,4 @@
-package me.stutiguias.apimcmmo;
+package me.stutiguias.mcmmorankup.apimcmmo;
 
 import org.bukkit.entity.Player;
 import com.gmail.nossr50.api.ExperienceAPI;

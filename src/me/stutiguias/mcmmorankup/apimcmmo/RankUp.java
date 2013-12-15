@@ -1,11 +1,11 @@
-package me.stutiguias.apimcmmo;
+package me.stutiguias.mcmmorankup.apimcmmo;
 
 import me.stutiguias.mcmmorankup.Mcmmorankup;
 import me.stutiguias.mcmmorankup.Utilities;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.logging.Level;
-import me.stutiguias.profile.Profile;
+import me.stutiguias.mcmmorankup.profile.Profile;
 import org.bukkit.entity.Player;
 
 public class RankUp {

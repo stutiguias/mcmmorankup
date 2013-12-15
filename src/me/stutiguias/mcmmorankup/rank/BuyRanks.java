@@ -15,7 +15,7 @@ import me.stutiguias.mcmmorankup.ConfigAccessor;
 import me.stutiguias.mcmmorankup.Mcmmorankup;
 import me.stutiguias.mcmmorankup.Utilities;
 import me.stutiguias.mcmmorankup.XpCalc;
-import me.stutiguias.profile.Profile;
+import me.stutiguias.mcmmorankup.profile.Profile;
 
 import org.bukkit.entity.Player;
 

@@ -2,7 +2,7 @@ package me.stutiguias.mcmmorankup.task;
 
 import java.util.logging.Level;
 import me.stutiguias.mcmmorankup.Mcmmorankup;
-import me.stutiguias.profile.Profile;
+import me.stutiguias.mcmmorankup.profile.Profile;
 
 import org.bukkit.entity.Player;
 

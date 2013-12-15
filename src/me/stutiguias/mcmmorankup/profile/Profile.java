@@ -1,4 +1,4 @@
-package me.stutiguias.profile;
+package me.stutiguias.mcmmorankup.profile;
 
 import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 import com.gmail.nossr50.util.player.UserManager;
