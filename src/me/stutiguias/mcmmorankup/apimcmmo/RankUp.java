@@ -64,7 +64,7 @@ public class RankUp extends Utilities {
 
                 level = Integer.parseInt(levelRank[0]);
                 rank = levelRank[1];
-// Erro here !
+                // TODO : Fix logical Erro here not demote for first rank  !
                 if (playerSkillLevel >= level) {
 
                     demote = level < StartLevel;
