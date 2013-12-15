@@ -1,7 +1,8 @@
-package me.stutiguias.mcmmorankup;
+package me.stutiguias.mcmmorankup.config;
 
 import java.io.*;
 import java.util.logging.Level;
+import me.stutiguias.mcmmorankup.Mcmmorankup;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;

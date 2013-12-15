@@ -2,26 +2,27 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package me.stutiguias.mcmmorankup;
+package me.stutiguias.mcmmorankup.config;
 
 import java.io.IOException;
+import me.stutiguias.mcmmorankup.Mcmmorankup;
 import org.bukkit.configuration.file.FileConfiguration;
 
 /**
  *
  * @author Daniel
  */
-public class Message {
+public class MessageConfig {
     
-    private ConfigAccessor message;
+    private final ConfigAccessor message;
     
-    public Message(Mcmmorankup instance,String language) throws IOException {
+    public MessageConfig(Mcmmorankup instance,String language) throws IOException {
         
         message = new ConfigAccessor(instance,language + ".yml");
         message.setupConfig();
         FileConfiguration fm = message.getConfig();
 
-        // Message
+        // MessageConfig
         HabilitySet                 = fm.getString("Hability.Set");
         HabilitySetFail             = fm.getString("Hability.SetFail");
         BaseRanksListing            = fm.getString("Hability.Title");

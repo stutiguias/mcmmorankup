@@ -1,5 +1,7 @@
 package me.stutiguias.mcmmorankup;
 
+import me.stutiguias.mcmmorankup.config.ConfigAccessor;
+import me.stutiguias.mcmmorankup.config.MessageConfig;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -57,7 +59,7 @@ public class Mcmmorankup extends JavaPlugin {
     public HashMap<String, HashMap<String, String>> RewardsConfig;
     
     // Messaging
-    public Message Message;
+    public MessageConfig Message;
     
     public ConfigAccessor config;
     public ConfigAccessor menu;
@@ -271,7 +273,7 @@ public class Mcmmorankup extends JavaPlugin {
             GeneralMessages = ff.getString("Formatting.GeneralMessages");
             PlayerWarnings = ff.getString("Formatting.PlayerWarnings");
             
-            Message = new Message(this,fc.getString("Config.Language"));
+            Message = new MessageConfig(this,fc.getString("Config.Language"));
             MessagesReplaces();
             
         } catch (IOException ex) {
@@ -498,7 +500,7 @@ public class Mcmmorankup extends JavaPlugin {
 
     public boolean isRankAvailable(String skill, Player pl) {
         if(skill.toLowerCase().contains("powerlevel")) return true;
-        return hasPermission(pl, "mru.rankup." + skill.toLowerCase()) && hasPermission(pl, "mcmmo.skills." + skill.toLowerCase());
+        return hasPermission(pl, "mcmmo.skills." + skill.toLowerCase());
     }
     
     public void Update() {

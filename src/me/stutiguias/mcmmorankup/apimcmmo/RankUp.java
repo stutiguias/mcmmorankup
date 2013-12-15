@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 public class RankUp {
 
     private static Mcmmorankup plugin;
-    private static HashMap<String, String> infoSettings = new HashMap<>();
+    private static final HashMap<String, String> infoSettings = new HashMap<>();
     private Profile profile;
 
     public RankUp(Mcmmorankup instance) {
@@ -56,24 +56,21 @@ public class RankUp {
             
             int playerSkillLevel = plugin.GetSkillLevel(player, skill);
             int StartLevel = plugin.GetRankStartLevel(skill, gender, rankNow);
- 
+            
             String updatedRank = rankNow;
             int updatedLevel = 0;
             boolean willbreak = false;
 
-            for (Iterator<String> it = plugin.RankUpConfig.get(skill).get(gender).iterator(); it.hasNext();) {
-                String entry = it.next();
+            for (String entry : plugin.RankUpConfig.get(skill).get(gender)) {
                 String[] levelRank = entry.split(",");
 
                 level = Integer.parseInt(levelRank[0]);
                 rank = levelRank[1];
 
                 if (playerSkillLevel >= level) {
-                    if(level < StartLevel) {
-                        demote = true;
-                    }else{
-                        demote = false;
-                    }
+
+                    demote = level < StartLevel;
+
                     if(demote && plugin.hasPermission(player, "mru.exemptdemotions") ) continue;
                     if(hasPurchased && level < purchaseLevel && !plugin.AllowBuyRankDemotions ) continue;
 
@@ -140,7 +137,7 @@ public class RankUp {
             }
             return "fail";
             
-        } catch (Exception ex) {
+        } catch (NumberFormatException ex) {
             Mcmmorankup.logger.log(Level.WARNING, "-=tryRankUp=- Error trying to rank up {0}", ex.getMessage());
             ex.printStackTrace();
             return "error";
@@ -161,8 +158,8 @@ public class RankUp {
 
         HashMap<Integer, String> rankInfo = new HashMap<>();		
         
-        boolean promote =       infoSettings.get("promote").equalsIgnoreCase("t") ? true : false;
-        boolean maxLvl =        infoSettings.get("maxLvl").equalsIgnoreCase("t") ? true : false;
+        boolean promote =  infoSettings.get("promote").equalsIgnoreCase("t");
+        boolean maxLvl =   infoSettings.get("maxLvl").equalsIgnoreCase("t");
 
         int nLevel = Integer.valueOf(infoSettings.get("nLevel"));
         int SkillLevel = Integer.valueOf(infoSettings.get("skilllevel"));

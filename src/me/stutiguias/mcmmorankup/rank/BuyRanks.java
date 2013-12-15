@@ -11,7 +11,7 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.logging.Level;
 
-import me.stutiguias.mcmmorankup.ConfigAccessor;
+import me.stutiguias.mcmmorankup.config.ConfigAccessor;
 import me.stutiguias.mcmmorankup.Mcmmorankup;
 import me.stutiguias.mcmmorankup.Utilities;
 import me.stutiguias.mcmmorankup.XpCalc;

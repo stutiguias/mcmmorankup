@@ -304,7 +304,7 @@ public class MRUCommandListener implements CommandExecutor {
 
         Profile profile = new Profile(plugin, (Player) sender);
 
-        if (!Skill.equalsIgnoreCase("POWERLEVEL") && !plugin.isRankAvailable(Skill, profile.player)) {
+        if (!plugin.isRankAvailable(Skill, profile.player)) {
             SendFormatMessage(plugin.Message.HabilitySetFail.replace("%ability%", Utilities.getCapitalized(Skill)));
             return true;
         }

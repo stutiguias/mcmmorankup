@@ -21,12 +21,6 @@ RankUp:
     12300: Asst_Mayor
     35000: Mayor
     265000: Admin
-Ladders:
-  # STILL UNDER DEVELOPMENT - NOT YET AVAILABLE OR FUNCTIONAL
-  enabled: false
-  Settler: Settler2,Settler3
-  Settler2: archery[200]+woodcutting[400]
-  Settler3: swords[300]+unarmed[150]
 BuyRank:
   # Buying ranks has just gotten easier for you and your players.  Ranks configured below can be for both XP and/or Currency
   # If you do not want a rank to be purchased for Xp or Currency just make the cost of that rank a value of zero (0). Doing so

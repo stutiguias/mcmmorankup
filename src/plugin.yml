@@ -30,7 +30,6 @@ permissions:
         mru.rankup: true
         mru.stats: true
         mru.stats.others: true
-        mru.rankup.*: true
     mru.admin.*:
       description: Gives access to all WebAuction commands
       children:
@@ -42,7 +41,6 @@ permissions:
         mru.rankup: true
         mru.stats: true
         mru.stats.others: true
-        mru.rankup.*: true
     mru.admin.config:
        description: Allow admins to update config settings in-game and reload.
        default: op
@@ -73,66 +71,6 @@ permissions:
     mru.stats.others:
        description: Allow a player to view another players ranking stats, current and previous       
        default: false
-    mru.rankup.*:
-       description : All Skill
-       default: true
-       children:
-        mru.rankup.acrobatics: true
-        mru.rankup.archery: true
-        mru.rankup.axes: true
-        mru.rankup.excavation: true
-        mru.rankup.fishing: true
-        mru.rankup.herbalism: true
-        mru.rankup.mining: true
-        mru.rankup.powerlevel: true
-        mru.rankup.repair: true
-        mru.rankup.smelting: true
-        mru.rankup.swords: true
-        mru.rankup.taming: true
-        mru.rankup.unarmed: true
-        mru.rankup.woodcutting: true
-    mru.rankup.acrobatics:
-       description: Acrobatics skill
-       default: false
-    mru.rankup.archery:
-       description: Archery skill
-       default: false
-    mru.rankup.axes:
-       description: Axes skill
-       default: false
-    mru.rankup.excavation:
-       description: Excavation skill
-       default: false
-    mru.rankup.fishing:
-       description: Fishing skill
-       default: false
-    mru.rankup.herbalism:
-       description: Herbalism skill
-       default: false
-    mru.rankup.mining:
-       description: Mining skill
-       default: false   
-    mru.rankup.powerlevel:
-       description: Powerlevel skill
-       default: false  
-    mru.rankup.repair:
-       description: Repair skill
-       default: false  
-    mru.rankup.smelting:
-       description: Smelting skill
-       default: false  
-    mru.rankup.swords:
-       description: Swords skill
-       default: false
-    mru.rankup.taming:
-       description: Taming skill
-       default: false  
-    mru.rankup.unarmed:
-       description: Unarmed skill
-       default: false  
-    mru.rankup.woodcutting:
-       description: Woodcutting skill
-       default: false    
     mru.update:
        description: Allow notify updater
        default: false
