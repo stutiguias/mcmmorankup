@@ -13,6 +13,7 @@ import java.util.logging.Level;
 
 import me.stutiguias.mcmmorankup.config.ConfigAccessor;
 import me.stutiguias.mcmmorankup.Mcmmorankup;
+import static me.stutiguias.mcmmorankup.Mcmmorankup.Message;
 import me.stutiguias.mcmmorankup.Utilities;
 import me.stutiguias.mcmmorankup.XpCalc;
 import me.stutiguias.mcmmorankup.profile.Profile;
@@ -66,8 +67,8 @@ public class BuyRanks extends Utilities {
             if (rank.equalsIgnoreCase(rankNow)) continue;
 
             if (CanBuy(isXp,xpL,cost)) {
-                String costOut = cost + (!isXp ? " " + plugin.BuyRankCurrencyName : xpL ? plugin.Message.BuyLevels : plugin.Message.BuyPoints);
-                SendFormatMessage(plugin.Message.BuyListEntry.replace("%cost%", costOut).replace("%rank%", rank));
+                String costOut = cost + (!isXp ? " " + plugin.BuyRankCurrencyName : xpL ? Message.BuyLevels : Message.BuyPoints);
+                SendFormatMessage(Message.BuyListEntry.replace("%cost%", costOut).replace("%rank%", rank));
             }
         }
     }
@@ -101,7 +102,7 @@ public class BuyRanks extends Utilities {
             _player = player;
             _profile = new Profile(plugin, player);
 
-            boolean isXp = (purchaseMode.equalsIgnoreCase("x")) ? true : false;
+            boolean isXp = (purchaseMode.equalsIgnoreCase("x"));
             Map<String, String> rankCosts = isXp ? plugin.XpRanks.get(_profile.GetHabilityForRank()) : plugin.BuksRanks.get(_profile.GetHabilityForRank());
             
             String costOfRank = null;
@@ -137,12 +138,12 @@ public class BuyRanks extends Utilities {
 
                 if (xpLMode) {
                     player.setLevel(player.getLevel() - cost);
-                    costMsg.append(" ").append(plugin.Message.BuyLevels);
+                    costMsg.append(" ").append(Message.BuyLevels);
                 } else {
                     int totalPlayerXp = XpCalc.GetTotalExperience(player);
                     XpCalc.clearExperience(player);
                     XpCalc.setTotalExperience(player, totalPlayerXp - cost);
-                    costMsg.append(" ").append(plugin.Message.BuyPoints);
+                    costMsg.append(" ").append(Message.BuyPoints);
                 }
                 transactionStatus = true;
                 
@@ -152,7 +153,7 @@ public class BuyRanks extends Utilities {
                 transactionStatus = true;
             }
 
-            SendFormatMessage(plugin.Message.BuyPurchaseConfirm.replace("%rank%", rankToBuy)
+            SendFormatMessage(Message.BuyPurchaseConfirm.replace("%rank%", rankToBuy)
                                                            .replace("%cost%", costMsg));
 
             return transactionStatus;
@@ -179,28 +180,28 @@ public class BuyRanks extends Utilities {
             }
         }
 
-        SendFormatMessage(plugin.MessageSeparator);
-        SendFormatMessage(plugin.Message.BuyPurchaseInfo + "\n");
+        SendFormatMessage(Message.MessageSeparator);
+        SendFormatMessage(Message.BuyPurchaseInfo + "\n");
         if(!isXp) {
-            SendFormatMessage(plugin.Message.BuyPurchaseBuks + GetPlayerMoneyFormated() + "\n");
+            SendFormatMessage(Message.BuyPurchaseBuks + GetPlayerMoneyFormated() + "\n");
         }else{
             SendFormatMessage(ShowXp() + "\n");
         }
         
-        SendFormatMessage(plugin.MessageSeparator);
-        SendFormatMessage((hasPurchased ? "&f&l" + plugin.Message.BuyPurchase : "  &f&l:> ") + PlayerCurrentProfile(playerCurrentSkill,grpNow) + "\n");
-        SendFormatMessage(plugin.MessageSeparator);
+        SendFormatMessage(Message.MessageSeparator);
+        SendFormatMessage((hasPurchased ? "&f&l" + Message.BuyPurchase : "  &f&l:> ") + PlayerCurrentProfile(playerCurrentSkill,grpNow) + "\n");
+        SendFormatMessage(Message.MessageSeparator);
         
     }
 
     public String PlayerCurrentProfile(String playerCurrentSkill, String grpNow) {
-        return plugin.Message.BuyProfile.replace("%rankline%", playerCurrentSkill.toLowerCase())
+        return Message.BuyProfile.replace("%rankline%", playerCurrentSkill.toLowerCase())
                 .replace("%group%", Capitalized(grpNow))
                 .replace("%level%", String.valueOf(plugin.GetSkillLevel(_player, playerCurrentSkill)));
     }
     
     public String ShowXp() {
-        return plugin.Message.BuyPurchaseXp.replace("%xp%", String.valueOf(XpCalc.GetTotalExperience(_player))).replace("%level%", String.valueOf(XpCalc.GetPlayerXpl(_player)));
+        return Message.BuyPurchaseXp.replace("%xp%", String.valueOf(XpCalc.GetTotalExperience(_player))).replace("%level%", String.valueOf(XpCalc.GetPlayerXpl(_player)));
     }
     
     public String GetPlayerMoneyFormated() {

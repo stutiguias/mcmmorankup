@@ -130,3 +130,10 @@
     SethabIgnore: 'Not Available | you are being ignored'
     DisplayHab: 'Show ability rank'
     Feeds: 'Show / Manage your Messaging Feeds'
+  Menu:
+    # The Separator on each Message
+    MessageSeparator: '&e-----------------------------------------------------'
+    #Color por general messages
+    GeneralMessages: '&6'
+    #Color por player warnings
+    PlayerWarnings: '&c'

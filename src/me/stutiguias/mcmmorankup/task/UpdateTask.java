@@ -2,6 +2,7 @@ package me.stutiguias.mcmmorankup.task;
 
 import java.util.logging.Level;
 import me.stutiguias.mcmmorankup.Mcmmorankup;
+import static me.stutiguias.mcmmorankup.Mcmmorankup.Message;
 import me.stutiguias.mcmmorankup.Utilities;
 import me.stutiguias.mcmmorankup.profile.Profile;
 
@@ -32,13 +33,13 @@ public class UpdateTask extends Utilities implements Runnable {
                     String gender = _profile.GetGender();
 
                     if (plugin.playerBroadcastFeed) {
-                        SendMessage(_profile.player,plugin.Message.RankChecking.replace("%player%", player.getName()).replace("%colorreset%", plugin.GeneralMessages));						
+                        SendMessage(_profile.player,Message.RankChecking.replace("%player%", player.getName()).replace("%colorreset%", Message.GeneralMessages));						
                     }
 
                     if (!plugin.isRankAvailable(skill, player)) {
-                            SendMessage(_profile.player,plugin.Message.NoAccess.replaceAll("%rankline%", skill.toUpperCase()));
+                            SendMessage(_profile.player,Message.NoAccess.replaceAll("%rankline%", skill.toUpperCase()));
                     } else if(!plugin.CheckRankExist(skill.toUpperCase())) {
-                            SendMessage(_profile.player,plugin.Message.NoLongerExists.replaceAll("%rankline%", skill.toUpperCase()));
+                            SendMessage(_profile.player,Message.NoLongerExists.replaceAll("%rankline%", skill.toUpperCase()));
                     } else {
                             plugin.RankUp.TryRankUp(player, skill, gender);
                     }

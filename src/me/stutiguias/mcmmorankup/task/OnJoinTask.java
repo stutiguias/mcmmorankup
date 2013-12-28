@@ -5,6 +5,7 @@
 package me.stutiguias.mcmmorankup.task;
 
 import me.stutiguias.mcmmorankup.Mcmmorankup;
+import static me.stutiguias.mcmmorankup.Mcmmorankup.Message;
 import me.stutiguias.mcmmorankup.Utilities;
 import me.stutiguias.mcmmorankup.profile.Profile;
 import org.bukkit.entity.Player;
@@ -31,13 +32,13 @@ public class OnJoinTask extends Utilities implements Runnable {
         
         if (plugin.isIgnored(profile.player)) {
             if(plugin.playerBroadcastFeed) {
-                SendMessage(profile.player,plugin.Message.RankCheckingIgnore.replace("%player%", profile.player.getName()).replace("%colorreset%", plugin.GeneralMessages));
+                SendMessage(profile.player,Message.RankCheckingIgnore.replace("%player%", profile.player.getName()).replace("%colorreset%", Message.GeneralMessages));
             }
             return;
         }
         
         if (plugin.playerBroadcastFeed) {
-            SendMessage(profile.player,plugin.Message.RankChecking.replace("%player%", profile.player.getName()).replace("%colorreset%", plugin.GeneralMessages));
+            SendMessage(profile.player,Message.RankChecking.replace("%player%", profile.player.getName()).replace("%colorreset%", Message.GeneralMessages));
         }
         
         if (plugin.playerBroadcastFeed) {
@@ -45,12 +46,12 @@ public class OnJoinTask extends Utilities implements Runnable {
         }
 
         if (!plugin.CheckRankExist(skill))  {
-            SendMessage(profile.player,plugin.Message.NoLongerExists.replaceAll("%rankline%", skill.toUpperCase()));
+            SendMessage(profile.player,Message.NoLongerExists.replaceAll("%rankline%", skill.toUpperCase()));
             return;
         }
         
         if (!plugin.isRankAvailable(skill, profile.player)) {
-            SendMessage(profile.player,plugin.Message.NoAccess.replaceAll("%rankline%", skill));
+            SendMessage(profile.player,Message.NoAccess.replaceAll("%rankline%", skill));
             return;
         } 
 
@@ -60,10 +61,10 @@ public class OnJoinTask extends Utilities implements Runnable {
 
         switch (status.toLowerCase()) {
             case "promoted":
-                SendMessage(profile.player,plugin.Message.Sucess);
+                SendMessage(profile.player,Message.Sucess);
                 break;
             case "demoted":
-                SendMessage(profile.player,plugin.Message.Demotion);
+                SendMessage(profile.player,Message.Demotion);
                 break;
         }
 

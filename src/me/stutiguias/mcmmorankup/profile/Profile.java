@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 import me.stutiguias.mcmmorankup.Mcmmorankup;
+import static me.stutiguias.mcmmorankup.Mcmmorankup.Message;
 import me.stutiguias.mcmmorankup.Utilities;
 import me.stutiguias.mcmmorankup.XpCalc;
 
@@ -201,8 +202,8 @@ public class Profile extends Utilities {
 
     public void ChangeMessage(Player player, String Hability) {       
         SendMessage(player,"ABILITY SELECTED");
-        SendMessage(player,plugin.Message.HabilitySet.replace("%ability%", Hability.toUpperCase()));
-        SendMessage(player,plugin.MessageSeparator);
+        SendMessage(player,Message.HabilitySet.replace("%ability%", Hability.toUpperCase()));
+        SendMessage(player,Message.MessageSeparator);
     }
     
     private void initLoadYML() {

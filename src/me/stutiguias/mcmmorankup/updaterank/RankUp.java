@@ -4,6 +4,7 @@ import me.stutiguias.mcmmorankup.Mcmmorankup;
 import me.stutiguias.mcmmorankup.Utilities;
 import java.util.HashMap;
 import java.util.logging.Level;
+import static me.stutiguias.mcmmorankup.Mcmmorankup.Message;
 import me.stutiguias.mcmmorankup.apimcmmo.McMMOApi;
 
 import me.stutiguias.mcmmorankup.profile.Profile;
@@ -93,7 +94,7 @@ public class RankUp extends Utilities {
             if (!updatedRank.equalsIgnoreCase(rankNow)) {
                 
                 if (!plugin.hasPermission(player, "mru.rankup")) return null;
-                title = promote ? plugin.Message.PromoteTitle : demote ? plugin.Message.DemoteTitle : plugin.Message.RankInfoTitle;
+                title = promote ? Message.PromoteTitle : demote ? Message.DemoteTitle : Message.RankInfoTitle;
                 
                 if (plugin.globalBroadcastFeed) {					
                     broadCast = profile.GetPlayerGlobalFeed();
@@ -106,7 +107,7 @@ public class RankUp extends Utilities {
                 }
                 
             }else{
-                title = plugin.Message.RankInfoTitle;
+                title = Message.RankInfoTitle;
                 promote = false;
                 demote = false;
             }		
@@ -166,22 +167,22 @@ public class RankUp extends Utilities {
 
         try {
             
-            line = plugin.Message.RankInfoLine1.replaceAll("%ability%", skill);
+            line = Message.RankInfoLine1.replaceAll("%ability%", skill);
             rankInfo.put(1, line);
             
-            line = plugin.Message.RankInfoLine2.replaceAll("%skilllevel%", String.valueOf(SkillLevel)).replaceAll("%rankline%", playerGroup);
+            line = Message.RankInfoLine2.replaceAll("%skilllevel%", String.valueOf(SkillLevel)).replaceAll("%rankline%", playerGroup);
             rankInfo.put(2, line);
 
-            line = plugin.Message.RankInfoLine3.replaceAll("%nLevel%", String.valueOf(nLevel + 1)).replaceAll("%nRank%", nGroup);
+            line = Message.RankInfoLine3.replaceAll("%nLevel%", String.valueOf(nLevel + 1)).replaceAll("%nRank%", nGroup);
             rankInfo.put(3, line);
 
-            maxAchieved = plugin.Message.RankInfoMax;
+            maxAchieved = Message.RankInfoMax;
             maxAchieved = maxAchieved.replaceAll("%ability%", skill);
 
-            promoteDemote = plugin.Message.RankPromoteDemote;
-            promoteDemote = promoteDemote.replaceAll("%promotedemote%", promote ? plugin.Message.Promote : plugin.Message.Demote).replaceAll("%pRank%", playerGroup);
+            promoteDemote = Message.RankPromoteDemote;
+            promoteDemote = promoteDemote.replaceAll("%promotedemote%", promote ? Message.Promote : Message.Demote).replaceAll("%pRank%", playerGroup);
             
-            SendFormatMessage(plugin.MessageSeparator);
+            SendFormatMessage(Message.MessageSeparator);
             SendFormatMessage(title);
 
             for (int ln = 1; ln <= 5; ln++) {
@@ -210,7 +211,7 @@ public class RankUp extends Utilities {
                 }
             }
             
-            SendFormatMessage(plugin.MessageSeparator);
+            SendFormatMessage(Message.MessageSeparator);
             
         } catch (NullPointerException ex) {
             ex.printStackTrace();
@@ -222,9 +223,9 @@ public class RankUp extends Utilities {
     private void ChangeTag(String promoteTag, String skill, boolean bCast, boolean demote) {
         profile.SetTag(promoteTag);
         if (bCast) {
-            BrcstMsg(plugin.Message.BroadcastRankupTitle);
-            BrcstMsg(plugin.GeneralMessages + BroadcastMessage(promoteTag, skill, demote));
-            BrcstMsg(plugin.MessageSeparator);
+            BrcstMsg(Message.BroadcastRankupTitle);
+            BrcstMsg(Message.GeneralMessages + BroadcastMessage(promoteTag, skill, demote));
+            BrcstMsg(Message.MessageSeparator);
         }
     }
 
@@ -244,9 +245,9 @@ public class RankUp extends Utilities {
         state = plugin.permission.playerAddGroup(profile.player.getWorld(), profile.player.getName(), newgroup);
         
         if (bCast && state && !groupnow.equalsIgnoreCase(newgroup)) {
-            BrcstMsg(plugin.Message.BroadcastRankupTitle);
-            BrcstMsg(plugin.GeneralMessages + BroadcastMessage(newgroup, skill, demote));
-            BrcstMsg(plugin.MessageSeparator);
+            BrcstMsg(Message.BroadcastRankupTitle);
+            BrcstMsg(Message.GeneralMessages + BroadcastMessage(newgroup, skill, demote));
+            BrcstMsg(Message.MessageSeparator);
         }
 
         return state;
@@ -257,14 +258,14 @@ public class RankUp extends Utilities {
             try {
                 HashMap<String, String> broadCast = plugin.BroadCast.get(skill);
                 String bc = broadCast.get(group);
-                return plugin.Message.Promotion.replace("%player%", profile.player.getName()).replace("%promotedemote%",demote ? plugin.Message.Demote : plugin.Message.Promote).replace("%group%", bc);
+                return Message.Promotion.replace("%player%", profile.player.getName()).replace("%promotedemote%",demote ? Message.Demote : Message.Promote).replace("%group%", bc);
             } catch (Exception ex) {
                 Mcmmorankup.logger.log(Level.WARNING, "Error trying to broadcast Alternative Messaging {0}", ex.getMessage());
                 ex.printStackTrace();
                 return "Error trying to Broadcast Alternative Messaging";
             }
         } else {
-            return plugin.Message.Promotion.replace("%player%", profile.player.getName()).replace("%promotedemote%", demote ? plugin.Message.Demote : plugin.Message.Promote).replace("%group%", group);
+            return Message.Promotion.replace("%player%", profile.player.getName()).replace("%promotedemote%", demote ? Message.Demote : Message.Promote).replace("%group%", group);
         }
     }
 }

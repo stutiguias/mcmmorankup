@@ -15,6 +15,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 public class MessageConfig {
     
     private final ConfigAccessor message;
+
     
     public MessageConfig(Mcmmorankup instance,String language) throws IOException {
         
@@ -109,7 +110,24 @@ public class MessageConfig {
         HelpSethabIgnore            = fm.getString("Help.SethabIgnore");
         HelpDisplayHab              = fm.getString("Help.DisplayHab");
         HelpFeeds                   = fm.getString("Help.Feeds");
+                    
+        MessageSeparator            = fm.getString("Menu.MessageSeparator");
+        GeneralMessages             = fm.getString("Menu.GeneralMessages");
+        PlayerWarnings              = fm.getString("Menu.PlayerWarnings");
         
+        NotAvailable = PlayerWarnings + NotAvailable;
+        IgnoredRankLineSet = GeneralMessages + IgnoredRankLineSet;
+        CommandAttempt = PlayerWarnings + CommandAttempt;
+        Sucess = GeneralMessages + Sucess;
+        Demotion = GeneralMessages + Demotion;
+        Fail = GeneralMessages + Fail;
+        PromosIgnored = GeneralMessages + PromosIgnored;
+        LastQuitStatsFail = PlayerWarnings + LastQuitStatsFail; 
+        HabilitySet = GeneralMessages + HabilitySet;
+        PlayerFeedsDisabled = PlayerWarnings + PlayerFeedsDisabled;
+        NoPermPlayerFeeds = PlayerWarnings + NoPermPlayerFeeds;
+        NoAccess = PlayerWarnings + NoAccess;
+        NoLongerExists = PlayerWarnings + NoLongerExists;
     }
   
     public void Reload() {
@@ -192,4 +210,7 @@ public class MessageConfig {
     public String HelpFeeds;            
     public String Promote;
     public String Demote;
+    public String MessageSeparator;
+    public String GeneralMessages;
+    public String PlayerWarnings;
 }

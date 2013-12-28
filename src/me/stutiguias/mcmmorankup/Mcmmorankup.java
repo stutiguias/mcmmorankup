@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -59,10 +58,9 @@ public class Mcmmorankup extends JavaPlugin {
     public HashMap<String, HashMap<String, String>> RewardsConfig;
     
     // Messaging
-    public MessageConfig Message;
+    public static MessageConfig Message;
     
     public ConfigAccessor config;
-    public ConfigAccessor menu;
 
     // System Configurations
     public boolean mruStartupSummary;
@@ -89,10 +87,6 @@ public class Mcmmorankup extends JavaPlugin {
     public String BuyRankCurrencyName;
     public String[] GroupToIgnore;
     public boolean UpdaterNotify;
-    // Formatting
-    public String MessageSeparator;
-    public String GeneralMessages;
-    public String PlayerWarnings;
 
     public static boolean update = false;
     public static String name = "";
@@ -202,7 +196,6 @@ public class Mcmmorankup extends JavaPlugin {
     public void onReload() {
         config.reloadConfig();
         Message.Reload();
-        menu.reloadConfig();
         onLoadConfig();
         getServer().getPluginManager().disablePlugin(this);
         getServer().getPluginManager().enablePlugin(this);
@@ -264,15 +257,6 @@ public class Mcmmorankup extends JavaPlugin {
             BuyRankCurrencyName = fc.getString("Config.BuyRankCurrencyName");
             UpdaterNotify =fc.getBoolean("UpdaterNotify");
 
-            menu = new ConfigAccessor(this, "menu.yml");
-            menu.setupConfig();
-            FileConfiguration ff = menu.getConfig();
-
-            // Menu Formatting
-            MessageSeparator = ff.getString("Formatting.MessageSeparator");
-            GeneralMessages = ff.getString("Formatting.GeneralMessages");
-            PlayerWarnings = ff.getString("Formatting.PlayerWarnings");
-            
             Message = new MessageConfig(this,fc.getString("Config.Language"));
             MessagesReplaces();
             
@@ -325,18 +309,7 @@ public class Mcmmorankup extends JavaPlugin {
     
     public void MessagesReplaces() {
         Message.BuyPurchaseBuks = Message.BuyPurchaseBuks.replace("%currencyname%", BuyRankCurrencyName);
-        Message.NoAccess = PlayerWarnings + Message.NoAccess;
-        Message.NoLongerExists = PlayerWarnings + Message.NoLongerExists;
-        Message.HabilitySetFail = PlayerWarnings + Message.HabilitySetFail.replace("%colorreset%", PlayerWarnings);
-        Message.NotAvailable = PlayerWarnings + Message.NotAvailable;
-        Message.IgnoredRankLineSet = GeneralMessages + Message.IgnoredRankLineSet;
-        Message.CommandAttempt = PlayerWarnings + Message.CommandAttempt;
-        Message.Sucess = GeneralMessages + Message.Sucess;
-        Message.Demotion = GeneralMessages + Message.Demotion;
-        Message.Fail = GeneralMessages + Message.Fail;
-        Message.PromosIgnored = GeneralMessages + Message.PromosIgnored;
-        Message.LastQuitStatsFail = PlayerWarnings + Message.LastQuitStatsFail; 
-        Message.HabilitySet = GeneralMessages + Message.HabilitySet;
+        Message.HabilitySetFail = Message.PlayerWarnings + Message.HabilitySetFail.replace("%colorreset%", Message.PlayerWarnings);
     }
 
     public HashMap<String, ArrayList<String>> GetRanks(ConfigAccessor ca) throws IOException {

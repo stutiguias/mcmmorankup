@@ -53,6 +53,15 @@
         <directory>${basedir}/src/</directory>
         <includes>
           <include>plugin.yml</include>
+          <include>eng.yml</include>
+          <include>config.yml</include>
+        </includes>
+      </resource>
+      
+      <resource>
+        <targetPath>.</targetPath>
+        <directory>${basedir}/src/Skills/</directory>
+        <includes>
           <include>acrobatics.yml</include>
           <include>archery.yml</include>
           <include>axes.yml</include>
@@ -67,12 +76,9 @@
           <include>taming.yml</include>
           <include>unarmed.yml</include>
           <include>woodcutting.yml</include>
-          <include>eng.yml</include>
-          <include>menu.yml</include>
-          <include>config.yml</include>
         </includes>
       </resource>
-
+      
     </resources>
     
     <plugins>

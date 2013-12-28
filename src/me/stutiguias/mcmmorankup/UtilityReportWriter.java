@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.logging.Level;
 
 import com.google.common.collect.Multimap;
+import static me.stutiguias.mcmmorankup.Mcmmorankup.Message;
 
 public class UtilityReportWriter {
 
@@ -75,7 +76,7 @@ public class UtilityReportWriter {
             if (report.get(key) == null) continue;
             if (!key.equalsIgnoreCase(category)) {
                 if (category.isEmpty()) {
-                    reportContent.append(plugin.MessageSeparator).append("\n");
+                    reportContent.append(Message.MessageSeparator).append("\n");
                 }
                 category = key;
             }
