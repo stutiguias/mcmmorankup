@@ -9,6 +9,7 @@ package me.stutiguias.mcmmorankup.command;
 import me.stutiguias.mcmmorankup.Mcmmorankup;
 import me.stutiguias.mcmmorankup.Util;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 /**
  *
@@ -16,6 +17,7 @@ import org.bukkit.command.CommandSender;
  */
 public abstract class CommandHandler extends Util { 
     
+    public Player player;
     public final String MsgHr;
     
     public CommandHandler(Mcmmorankup plugin) {

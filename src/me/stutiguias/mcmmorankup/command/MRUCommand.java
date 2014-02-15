@@ -1,4 +1,4 @@
-package me.stutiguias.mcmmorankup.listeners;
+package me.stutiguias.mcmmorankup.command;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -25,9 +25,9 @@ import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 
-public class MRUCommandListener extends Util implements CommandExecutor {
+public class MRUCommand extends Util implements CommandExecutor {
     
-    public MRUCommandListener(Mcmmorankup plugin) {
+    public MRUCommand(Mcmmorankup plugin) {
         super(plugin);
         
     }
@@ -45,15 +45,15 @@ public class MRUCommandListener extends Util implements CommandExecutor {
         if (args.length == 0) return Help();
 
         switch(args[0].toLowerCase()){
-            case "buy":
+            case "buy": // Done
                 if (args.length < 3) return BuyRank(args, false);
                 if (args.length == 3) return BuyRank(args, true);
-            case "view":
+            case "view":// Done
                 return  View(args);
-            case "update":
+            case "update":// Done
                 if(!plugin.hasPermission(_player,"mru.update")) return false;
                 return Update();
-            case "rank":
+            case "rank":// Done
                 if (!plugin.hasPermission(_player, "mru.rankup")) return false;
                 return RankUp();
             case "display":
@@ -199,8 +199,7 @@ public class MRUCommandListener extends Util implements CommandExecutor {
         SendMessage(Message.MessageSeparator);
         SendMessage(Message.DisplayTitle.replace("%skill%", skill).replace("%gender%", gender));
         
-        for (Iterator<String> it = ranks.iterator(); it.hasNext();) {
-            String entry = it.next();
+        for (String entry : ranks) {
             String[] levelRank = entry.split(",");
             SendMessage(Message.DisplayLine.replace("%point%", levelRank[1]).replace("%rank%",levelRank[0]));
         }

@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 
 import me.stutiguias.mcmmorankup.apimcmmo.McMMOApi;
 import me.stutiguias.mcmmorankup.updaterank.RankUp;
-import me.stutiguias.mcmmorankup.listeners.MRUCommandListener;
+import me.stutiguias.mcmmorankup.command.MRUCommand;
 import me.stutiguias.mcmmorankup.listeners.MRUPlayerListener;
 import me.stutiguias.mcmmorankup.rank.BuyRanks;
 import me.stutiguias.mcmmorankup.task.UpdateTask;
@@ -120,7 +120,7 @@ public class Mcmmorankup extends JavaPlugin {
         }
         
         onLoadConfig();
-        getCommand("mru").setExecutor(new MRUCommandListener(this));
+        getCommand("mru").setExecutor(new MRUCommand(this));
 
         setupEconomy();
         setupPermissions();
