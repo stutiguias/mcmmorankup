@@ -6,7 +6,7 @@ import java.util.logging.Level;
 
 import me.stutiguias.mcmmorankup.Mcmmorankup;
 import static me.stutiguias.mcmmorankup.Mcmmorankup.Message;
-import me.stutiguias.mcmmorankup.Utilities;
+import me.stutiguias.mcmmorankup.Util;
 import me.stutiguias.mcmmorankup.XpCalc;
 import me.stutiguias.mcmmorankup.profile.AdminProfiler;
 import me.stutiguias.mcmmorankup.profile.Profile;
@@ -25,7 +25,7 @@ import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 
-public class MRUCommandListener extends Utilities implements CommandExecutor {
+public class MRUCommandListener extends Util implements CommandExecutor {
     
     public MRUCommandListener(Mcmmorankup plugin) {
         super(plugin);

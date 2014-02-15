@@ -14,13 +14,13 @@ import java.util.logging.Level;
 import me.stutiguias.mcmmorankup.config.ConfigAccessor;
 import me.stutiguias.mcmmorankup.Mcmmorankup;
 import static me.stutiguias.mcmmorankup.Mcmmorankup.Message;
-import me.stutiguias.mcmmorankup.Utilities;
+import me.stutiguias.mcmmorankup.Util;
 import me.stutiguias.mcmmorankup.XpCalc;
 import me.stutiguias.mcmmorankup.profile.Profile;
 
 import org.bukkit.entity.Player;
 
-public class BuyRanks extends Utilities {
+public class BuyRanks extends Util {
 
     private Profile _profile;
     private Player _player;

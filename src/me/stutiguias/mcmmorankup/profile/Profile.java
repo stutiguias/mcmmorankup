@@ -11,14 +11,14 @@ import java.util.logging.Level;
 
 import me.stutiguias.mcmmorankup.Mcmmorankup;
 import static me.stutiguias.mcmmorankup.Mcmmorankup.Message;
-import me.stutiguias.mcmmorankup.Utilities;
+import me.stutiguias.mcmmorankup.Util;
 import me.stutiguias.mcmmorankup.XpCalc;
 
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
-public class Profile extends Utilities {
+public class Profile extends Util {
 
     public Player player;
     File configplayerfile;

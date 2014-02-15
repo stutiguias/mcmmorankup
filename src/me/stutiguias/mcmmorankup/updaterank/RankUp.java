@@ -1,7 +1,7 @@
 package me.stutiguias.mcmmorankup.updaterank;
 
 import me.stutiguias.mcmmorankup.Mcmmorankup;
-import me.stutiguias.mcmmorankup.Utilities;
+import me.stutiguias.mcmmorankup.Util;
 import java.util.HashMap;
 import java.util.logging.Level;
 import static me.stutiguias.mcmmorankup.Mcmmorankup.Message;
@@ -10,7 +10,7 @@ import me.stutiguias.mcmmorankup.apimcmmo.McMMOApi;
 import me.stutiguias.mcmmorankup.profile.Profile;
 import org.bukkit.entity.Player;
 
-public class RankUp extends Utilities {
+public class RankUp extends Util {
 
     private static final HashMap<String, String> infoSettings = new HashMap<>();
     private Profile profile;

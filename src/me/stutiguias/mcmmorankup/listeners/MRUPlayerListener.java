@@ -2,7 +2,7 @@ package me.stutiguias.mcmmorankup.listeners;
 
 import me.stutiguias.mcmmorankup.apimcmmo.McMMOApi;
 import me.stutiguias.mcmmorankup.Mcmmorankup;
-import me.stutiguias.mcmmorankup.Utilities;
+import me.stutiguias.mcmmorankup.Util;
 import me.stutiguias.mcmmorankup.profile.Profile;
 
 import org.bukkit.Bukkit;
@@ -18,7 +18,7 @@ import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
 import me.stutiguias.mcmmorankup.task.OnJoinTask;
 
-public class MRUPlayerListener extends Utilities implements Listener {
+public class MRUPlayerListener extends Util implements Listener {
 
     private Profile profile;
     
@@ -62,7 +62,7 @@ public class MRUPlayerListener extends Utilities implements Listener {
         String xp = String.valueOf((int)event.getRawXpGained() + McMMOApi.getXp(profile.player, skill));
         String toNextLevel = String.valueOf(McMMOApi.getXpToNextLevel(profile.player, skill));
         
-        SendMessage(profile.player,plugin.Message.McmmoXpGain.replaceAll("%cXp%",xp).replaceAll("%rXp%",toNextLevel)); 
+        SendMessage(profile.player,Mcmmorankup.Message.McmmoXpGain.replaceAll("%cXp%",xp).replaceAll("%rXp%",toNextLevel)); 
     }
 
     @EventHandler(priority = EventPriority.LOW)

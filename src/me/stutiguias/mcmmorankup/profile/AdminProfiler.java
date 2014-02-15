@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 import me.stutiguias.mcmmorankup.Mcmmorankup;
-import me.stutiguias.mcmmorankup.Utilities;
+import me.stutiguias.mcmmorankup.Util;
 import me.stutiguias.mcmmorankup.UtilityReportWriter;
 
 import org.bukkit.Bukkit;
@@ -15,7 +15,7 @@ import org.bukkit.command.CommandSender;
 import com.google.common.collect.SortedSetMultimap;
 import com.google.common.collect.TreeMultimap;
 
-public class AdminProfiler extends Utilities {
+public class AdminProfiler extends Util {
 
     Player player;
     File playerfile;

@@ -6,7 +6,7 @@ package me.stutiguias.mcmmorankup.task;
 
 import me.stutiguias.mcmmorankup.Mcmmorankup;
 import static me.stutiguias.mcmmorankup.Mcmmorankup.Message;
-import me.stutiguias.mcmmorankup.Utilities;
+import me.stutiguias.mcmmorankup.Util;
 import me.stutiguias.mcmmorankup.profile.Profile;
 import org.bukkit.entity.Player;
 
@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
  *
  * @author Daniel
  */
-public class OnJoinTask extends Utilities implements Runnable {
+public class OnJoinTask extends Util implements Runnable {
 
     Profile profile;
 

@@ -3,12 +3,12 @@ package me.stutiguias.mcmmorankup.task;
 import java.util.logging.Level;
 import me.stutiguias.mcmmorankup.Mcmmorankup;
 import static me.stutiguias.mcmmorankup.Mcmmorankup.Message;
-import me.stutiguias.mcmmorankup.Utilities;
+import me.stutiguias.mcmmorankup.Util;
 import me.stutiguias.mcmmorankup.profile.Profile;
 
 import org.bukkit.entity.Player;
 
-public class UpdateTask extends Utilities implements Runnable {
+public class UpdateTask extends Util implements Runnable {
 
     public UpdateTask(Mcmmorankup plugin) {
     	super(plugin);       
