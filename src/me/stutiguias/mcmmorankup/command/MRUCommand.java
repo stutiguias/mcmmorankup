@@ -1,30 +1,13 @@
 package me.stutiguias.mcmmorankup.command;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.logging.Level;
 
 import me.stutiguias.mcmmorankup.Mcmmorankup;
-import static me.stutiguias.mcmmorankup.Mcmmorankup.Message;
 import me.stutiguias.mcmmorankup.Util;
-import me.stutiguias.mcmmorankup.XpCalc;
-import me.stutiguias.mcmmorankup.profile.AdminProfiler;
-import me.stutiguias.mcmmorankup.profile.Profile;
-import org.apache.commons.lang.WordUtils;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Score;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.ScoreboardManager;
 
 public class MRUCommand extends Util implements CommandExecutor {
     
