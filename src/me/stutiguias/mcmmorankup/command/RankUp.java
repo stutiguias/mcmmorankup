@@ -88,9 +88,9 @@ public class RankUp extends CommandHandler {
     protected Boolean isInvalid(CommandSender sender, String[] args) {
         if (!plugin.hasPermission(player, "mru.rankup")) {
             SendMessage("&4You don't have permission");
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
     
 }

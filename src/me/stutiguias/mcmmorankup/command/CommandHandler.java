@@ -24,6 +24,10 @@ public abstract class CommandHandler extends Util {
         super(plugin);
         this.MsgHr = "&e-----------------------------------------------------";
     }
+
+    protected boolean ParseToggleInput(String parse) {
+        return parse.matches("[oO]n|[oO]ff|[tT]rue|[fF]alse|[T]RUE|[F]ALSE");
+    }
     
     protected abstract Boolean OnCommand(CommandSender sender, String[] args);
     protected abstract Boolean isInvalid(CommandSender sender, String[] args);
