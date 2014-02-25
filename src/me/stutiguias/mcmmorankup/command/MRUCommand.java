@@ -33,7 +33,7 @@ public class MRUCommand extends Util implements CommandExecutor {
         avaibleCommands.put("?", help);
         avaibleCommands.put("male", new Male(plugin));
         avaibleCommands.put("pinfo", new Pinfo(plugin));
-        avaibleCommands.put("rankup", new RankUp(plugin));
+        avaibleCommands.put("rank", new RankUp(plugin));
         avaibleCommands.put("reload", reload);
         avaibleCommands.put("report", report);
         avaibleCommands.put("set", set);
