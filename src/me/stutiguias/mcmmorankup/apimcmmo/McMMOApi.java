@@ -23,46 +23,7 @@ public class McMMOApi {
     }
 
     public static SkillType getSkillType(String skill) {
-        if (skill.equalsIgnoreCase("EXCAVATION")) {
-            return SkillType.EXCAVATION;
-        }
-        if (skill.equalsIgnoreCase("FISHING")) {
-            return SkillType.FISHING;
-        }
-        if (skill.equalsIgnoreCase("HERBALISM")) {
-            return SkillType.HERBALISM;
-        }
-        if (skill.equalsIgnoreCase("MINING")) {
-            return SkillType.MINING;
-        }
-        if (skill.equalsIgnoreCase("AXES")) {
-            return SkillType.AXES;
-        }
-        if (skill.equalsIgnoreCase("ARCHERY")) {
-            return SkillType.ARCHERY;
-        }
-        if (skill.equalsIgnoreCase("SWORDS")) {
-            return SkillType.SWORDS;
-        }
-        if (skill.equalsIgnoreCase("TAMING")) {
-            return SkillType.TAMING;
-        }
-        if (skill.equalsIgnoreCase("UNARMED")) {
-            return SkillType.UNARMED;
-        }
-        if (skill.equalsIgnoreCase("ACROBATICS")) {
-            return SkillType.ACROBATICS;
-        }
-        if (skill.equalsIgnoreCase("REPAIR")) {
-            return SkillType.REPAIR;
-        }
-        if (skill.equalsIgnoreCase("WOODCUTTING")) {
-            return SkillType.WOODCUTTING;
-        }
-        if (skill.equalsIgnoreCase("SMELTING")) {
-            return SkillType.SMELTING;
-        }
-        return null;
+        return SkillType.getSkill(skill);
     }
 
     public static int getXp(Player pl, String skill) {
