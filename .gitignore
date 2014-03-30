@@ -28,6 +28,14 @@ local.properties
 # PDT-specific
 .buildpath
 
+#################
+## IntelliJ
+#################
+*.iml
+*.ipr
+*.iws
+.idea/
+
 
 #################
 ## Visual Studio
