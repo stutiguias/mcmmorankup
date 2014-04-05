@@ -1,5 +1,5 @@
 # Don't touch this
-configversion: 1
+configversion: 2
 # Want update notify ?
 UpdaterNotify: true
 Config:
@@ -118,6 +118,10 @@ Config:
   # Available : eng
   Language: 'eng'
 
+  # Use Permission Per World
+  # Set this if you want per world permission enable
+  PerWorldPermission : false
+  
   # if you have the file on skills folder and need
   # to deactive the skill, do it here !
   Skills:

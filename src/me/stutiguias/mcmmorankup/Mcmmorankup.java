@@ -87,7 +87,8 @@ public class Mcmmorankup extends JavaPlugin {
     public String BuyRankCurrencyName;
     public String[] GroupToIgnore;
     public boolean UpdaterNotify;
-
+    public boolean PerWorldPermission;
+    
     public static boolean update = false;
     public static String name = "";
     public static String type = "";
@@ -225,7 +226,7 @@ public class Mcmmorankup extends JavaPlugin {
             config.setupConfig();
             FileConfiguration fc = config.getConfig();
             
-            if(!fc.isSet("configversion") || fc.getInt("configversion") != 1){ 
+            if(!fc.isSet("configversion") || fc.getInt("configversion") != 2){ 
                 config.MakeOld();
                 config.setupConfig();
                 fc = config.getConfig();
@@ -256,7 +257,8 @@ public class Mcmmorankup extends JavaPlugin {
             AllowRankRewards = fc.getBoolean("Config.AllowRankRewards");
             BuyRankCurrencyName = fc.getString("Config.BuyRankCurrencyName");
             UpdaterNotify =fc.getBoolean("UpdaterNotify");
-
+            PerWorldPermission = fc.getBoolean("PerWorldPermission");
+            
             Message = new MessageConfig(this,fc.getString("Config.Language"));
             MessagesReplaces();
             

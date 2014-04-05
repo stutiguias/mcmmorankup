@@ -235,14 +235,14 @@ public class RankUp extends Util {
         boolean state;
 
         if (plugin.RemoveOnlyPluginGroup) {
-            plugin.permission.playerRemoveGroup(profile.player.getWorld(), profile.player.getName(), groupnow);
+            RemoveGroup(groupnow, profile.player);
         } else {
             String[] playergroups = plugin.permission.getPlayerGroups(profile.player);
             for (String playergroup : playergroups) {
-                plugin.permission.playerRemoveGroup(profile.player.getWorld(), profile.player.getName(), playergroup);
+                RemoveGroup(playergroup, profile.player);
             }
         }
-        state = plugin.permission.playerAddGroup(profile.player.getWorld(), profile.player.getName(), newgroup);
+        state = AddGroup(newgroup, profile.player);
         
         if (bCast && state && !groupnow.equalsIgnoreCase(newgroup)) {
             BrcstMsg(Message.BroadcastRankupTitle);
@@ -253,6 +253,21 @@ public class RankUp extends Util {
         return state;
     }
 
+    public void RemoveGroup(String groupnow,Player player) {
+        if(plugin.PerWorldPermission) {
+            plugin.permission.playerRemoveGroup(player.getWorld(), player.getName(), groupnow);
+        }else{
+            plugin.permission.playerRemoveGroup(player, groupnow);
+        }
+    }
+    
+    public boolean AddGroup(String group,Player player) {
+        if(plugin.PerWorldPermission) {
+            return plugin.permission.playerAddGroup(player.getWorld(), player.getName(), group);
+        }
+        return plugin.permission.playerAddGroup(player, group);
+    }
+    
     private String BroadcastMessage(String group, String skill, boolean demote) {
         if (plugin.UseAlternativeBroadcast) {
             try {
