@@ -13,6 +13,12 @@
       <url>http://repo.bukkit.org/content/groups/public/</url>
     </repository>
 
+    <!-- mcMMO -->
+    <repository>
+      <id>md_5-repo</id>
+      <url>http://repo.md-5.net/</url>
+    </repository>
+
   </repositories>
   
   <dependencies>
@@ -27,9 +33,9 @@
   <dependency>
       <groupId>com.gmail.nossr50.mcMMO</groupId>
       <artifactId>mcMMO</artifactId>
-      <version>1.4.07</version>
-      <scope>system</scope>
-      <systemPath>${basedir}/lib/mcMMO.jar</systemPath>   
+      <version>LATEST</version>
+      <type>jar</type>
+      <scope>compile</scope>
   </dependency>
 	
     <dependency>
@@ -103,6 +109,5 @@
   </build>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <mcmmo.version>1.4.06</mcmmo.version>
   </properties>
 </project>
