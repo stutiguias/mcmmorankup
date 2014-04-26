@@ -257,7 +257,7 @@ public class RankUp extends Util {
         if(plugin.PerWorldPermission) {
             plugin.permission.playerRemoveGroup(player.getWorld(), player.getName(), groupnow);
         }else{
-            plugin.permission.playerRemoveGroup(player, groupnow);
+            plugin.permission.playerRemoveGroup((String)null, player.getName(), groupnow);
         }
     }
     
@@ -265,7 +265,7 @@ public class RankUp extends Util {
         if(plugin.PerWorldPermission) {
             return plugin.permission.playerAddGroup(player.getWorld(), player.getName(), group);
         }
-        return plugin.permission.playerAddGroup(player, group);
+        return plugin.permission.playerAddGroup((String)null, player.getName(), group);
     }
     
     private String BroadcastMessage(String group, String skill, boolean demote) {
