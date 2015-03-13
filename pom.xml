@@ -16,7 +16,7 @@
     <!-- mcMMO -->
     <repository>
       <id>md_5-repo</id>
-      <url>http://repo.md-5.net/</url>
+      <url>http://repo.md-5.net/content/repositories/public/</url>
     </repository>
 
   </repositories>
@@ -30,20 +30,20 @@
         <scope>compile</scope>
     </dependency>
 	
-  <dependency>
-      <groupId>com.gmail.nossr50.mcMMO</groupId>
-      <artifactId>mcMMO</artifactId>
-      <version>LATEST</version>
-      <type>jar</type>
-      <scope>compile</scope>
-  </dependency>
+    <dependency>
+        <groupId>com.gmail.nossr50.mcMMO</groupId>
+        <artifactId>mcMMO</artifactId>
+        <version>1.5.00</version>
+        <type>jar</type>
+        <scope>compile</scope>
+    </dependency>
 	
     <dependency>
       <groupId>net.milkbowl.vault</groupId>
       <artifactId>Vault</artifactId>
       <version>1.2.27</version>
-      <scope>system</scope>
-      <systemPath>${basedir}/lib/Vault.jar</systemPath>
+	  <scope>system</scope>
+      <systemPath>${project.basedir}/lib/Vault.jar</systemPath>
     </dependency>
 
   </dependencies>
