@@ -14,6 +14,7 @@ import org.bukkit.command.CommandSender;
 
 import com.google.common.collect.SortedSetMultimap;
 import com.google.common.collect.TreeMultimap;
+import java.util.Collection;
 
 public class AdminProfiler extends Util {
 
@@ -116,7 +117,7 @@ public class AdminProfiler extends Util {
 
     private boolean GetOnlinePlayers(String playerName) {
         boolean isOnline = false;
-        Player[] onlinePlayers = Bukkit.getOnlinePlayers();
+        Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
         for (Player oplayer : onlinePlayers) {
             if (oplayer == null) continue;
             if (oplayer.getName().equalsIgnoreCase(playerName)) {

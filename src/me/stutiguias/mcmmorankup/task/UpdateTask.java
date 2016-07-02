@@ -1,5 +1,6 @@
 package me.stutiguias.mcmmorankup.task;
 
+import java.util.Collection;
 import java.util.logging.Level;
 import me.stutiguias.mcmmorankup.Mcmmorankup;
 import static me.stutiguias.mcmmorankup.Mcmmorankup.Message;
@@ -16,9 +17,9 @@ public class UpdateTask extends Util implements Runnable {
     
     @Override
     public void run() {
-        Player[] playerList = plugin.getServer().getOnlinePlayers();
+        Collection<? extends Player> playerList = plugin.getServer().getOnlinePlayers();
         
-        if (plugin.getServer().getOnlinePlayers().length == 0) return;
+        if (playerList.isEmpty()) return;
             
         if(plugin.globalBroadcastFeed) {
             Mcmmorankup.logger.log(Level.INFO,"{0} Attempting to rank up online players...", new Object[]{Mcmmorankup.logPrefix});
