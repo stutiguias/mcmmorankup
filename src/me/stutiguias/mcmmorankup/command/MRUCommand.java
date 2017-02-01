@@ -38,7 +38,6 @@ public class MRUCommand extends Util implements CommandExecutor {
         avaibleCommands.put("report", report);
         avaibleCommands.put("set", set);
         avaibleCommands.put("stats", new Stats(plugin));
-        avaibleCommands.put("update", new Update(plugin));
         avaibleCommands.put("ver", new Ver(plugin));
         avaibleCommands.put("view", new View(plugin));
         

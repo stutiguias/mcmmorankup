@@ -17,8 +17,6 @@ import me.stutiguias.mcmmorankup.command.MRUCommand;
 import me.stutiguias.mcmmorankup.listeners.MRUPlayerListener;
 import me.stutiguias.mcmmorankup.rank.BuyRanks;
 import me.stutiguias.mcmmorankup.task.UpdateTask;
-import me.stutiguias.mcmmorankup.metrics.Metrics;
-import me.stutiguias.mcmmorankup.updater.Updater;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -148,15 +146,7 @@ public class Mcmmorankup extends JavaPlugin {
             if(AutoUpdate) {
                 logger.log(Level.INFO, "{0} Auto Ranking every  : {1}", new Object[]{logPrefix, AutoUpdateTime});
             }
-            
-            // Metrics 
-            try {
-                logger.log(Level.INFO, "{0} {1} - Sending Metrics, Thank You!", new Object[]{logPrefix, "[Metrics]"});
-                Metrics metrics = new Metrics(this);
-                metrics.start();
-            } catch (IOException e) {
-                logger.log(Level.WARNING, "{0} {1} !! Failed to submit the stats !! ", new Object[]{logPrefix, "[Metrics]"});
-            }
+           
         } else {
             logger.log(Level.INFO, "{0} - has been initialized!", new Object[]{logPrefix});
         }
@@ -174,16 +164,6 @@ public class Mcmmorankup extends JavaPlugin {
             }
 
             getServer().getScheduler().scheduleSyncRepeatingTask(this, new UpdateTask(this), uptime, uptime);
-        }
-        
-        if(UpdaterNotify){
-            Updater updater = new Updater(this, 41553, this.getFile(), Updater.UpdateType.NO_DOWNLOAD, false); // Start Updater but just do a version check
-            
-            update = updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE; // Determine if there is an update ready for us
-            name = updater.getLatestName(); // Get the latest name
-            version = updater.getLatestGameVersion(); // Get the latest game version
-            type = updater.getLatestType(); // Get the latest game version
-            link = updater.getLatestFileLink(); // Get the latest link
         }
     }
 
@@ -475,8 +455,5 @@ public class Mcmmorankup extends JavaPlugin {
         if(skill.toLowerCase().contains("powerlevel")) return true;
         return hasPermission(pl, "mcmmo.skills." + skill.toLowerCase());
     }
-    
-    public void Update() {
-        Updater updater = new Updater(this, 41553, this.getFile(), Updater.UpdateType.NO_VERSION_CHECK, true);
-    }
+   
 }
