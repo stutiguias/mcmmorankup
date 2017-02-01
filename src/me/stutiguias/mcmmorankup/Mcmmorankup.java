@@ -206,7 +206,7 @@ public class Mcmmorankup extends JavaPlugin {
             config.setupConfig();
             FileConfiguration fc = config.getConfig();
             
-            if(!fc.isSet("configversion") || fc.getInt("configversion") != 2){ 
+            if(!fc.isSet("configversion") || fc.getInt("configversion") != 3){ 
                 config.MakeOld();
                 config.setupConfig();
                 fc = config.getConfig();
@@ -236,7 +236,6 @@ public class Mcmmorankup extends JavaPlugin {
             AllowBuyingRanks = fc.getBoolean("Config.AllowBuyingRanks");
             AllowRankRewards = fc.getBoolean("Config.AllowRankRewards");
             BuyRankCurrencyName = fc.getString("Config.BuyRankCurrencyName");
-            UpdaterNotify =fc.getBoolean("UpdaterNotify");
             PerWorldPermission = fc.getBoolean("PerWorldPermission");
             
             Message = new MessageConfig(this,fc.getString("Config.Language"));

@@ -1,7 +1,5 @@
 # Don't touch this
-configversion: 2
-# Want update notify ?
-UpdaterNotify: true
+configversion: 3
 Config:
   # Config Section:   The 'AutoUpdateTime' setting is critical of the trailing character of either an
   #                   'm' for minutes or an 'h' for hours

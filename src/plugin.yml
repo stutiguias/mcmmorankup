@@ -71,6 +71,3 @@ permissions:
     mru.stats.others:
        description: Allow a player to view another players ranking stats, current and previous       
        default: false
-    mru.update:
-       description: Allow notify updater
-       default: false
