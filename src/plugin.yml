@@ -21,7 +21,7 @@ permissions:
         mru.stats.others: false
         mru.rankup.*: true
     mru.user.*:
-      description: Gives access to all WebAuction commands
+      description: Gives access to all commands
       children:
         mru.buyrankbuks: true
         mru.buyrankxp: true
@@ -31,7 +31,7 @@ permissions:
         mru.stats: true
         mru.stats.others: true
     mru.admin.*:
-      description: Gives access to all WebAuction commands
+      description: Gives access to all commands
       children:
         mru.admin.config: true
         mru.buyrankbuks: true

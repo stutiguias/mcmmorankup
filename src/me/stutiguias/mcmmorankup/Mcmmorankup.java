@@ -84,15 +84,8 @@ public class Mcmmorankup extends JavaPlugin {
     public boolean AllowRankRewards;
     public String BuyRankCurrencyName;
     public String[] GroupToIgnore;
-    public boolean UpdaterNotify;
     public boolean PerWorldPermission;
-    
-    public static boolean update = false;
-    public static String name = "";
-    public static String type = "";
-    public static String version = "";
-    public static String link = "";
-    
+
     @Override
     public void onEnable() {
         File dir = getDataFolder();

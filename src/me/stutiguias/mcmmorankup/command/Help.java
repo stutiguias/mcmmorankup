@@ -28,8 +28,13 @@ public class Help extends CommandHandler {
         player = (Player) sender;
         SendMessage(Message.MessageSeparator);
         SendMessage(" &7RANKING HELP ");
-        
-        SendMessage("&6/mru view <on|off> &7" + Message.HelpView);
+
+        if (plugin.hasPermission(player, "mru.hability")) {
+            SendMessage("&6/mru view <on|off> &7" + Message.HelpView);
+            SendMessage("&6/mru hab &7" + Message.HelpHab);
+            SendMessage("&6/mru hab <ability> " + SetHelpForHab());
+            SendMessage("&6/mru display <ability> <gender> &7" + Message.HelpDisplayHab);
+        }
         
         if (plugin.hasPermission(player, "mru.rankup")) {
             SendMessage("&6/mru rank &7" + Message.HelpRank);
@@ -38,19 +43,7 @@ public class Help extends CommandHandler {
         if (plugin.UseGenderClass) {
             SendMessage("&6/mru <male|female> &7" + Message.HelpMaleFemale);
         }
-
-        if (plugin.hasPermission(player, "mru.hability")) {
-            SendMessage("&6/mru hab &7" + Message.HelpHab);
-            String outMsg = "&6/mru hab <ability> ";
-            if (!plugin.isIgnored(player)) {
-                outMsg += "&7" + Message.HelpSethab;
-            } else {
-                outMsg += "&c" + Message.HelpSethabIgnore;
-            }
-            SendMessage(outMsg);
-            SendMessage("&6/mru display <ability> <gender> &7" + Message.HelpDisplayHab);
-        }
-
+        
         if (plugin.hasPermission(player, "mru.playerfeeds") && plugin.playerBroadcastFeed) {
             SendMessage("&6/mru feeds &7" + Message.HelpFeeds);
         }
@@ -59,21 +52,17 @@ public class Help extends CommandHandler {
             SendMessage("&6/mru buy <x | b> &7" + Message.BuyMenu.replace("%currencyname%", plugin.BuyRankCurrencyName));
         }
 
-        if (plugin.hasPermission(player, "mru.admin.config") || plugin.hasPermission(player, "mru.stats") || plugin.hasPermission(player, "mru.stats.others")) {
-            SendMessage(Message.MessageSeparator);
-            SendMessage(" &7ADMIN HELP ");
-            SendMessage("&6/mru ver &7Show mcmmoRankup version information");
+        if (plugin.hasPermission(player, "mru.stats") || plugin.hasPermission(player, "mru.stats.others")) {
             SendMessage("&6/mru stats [player] &7Stats Skill Check. [player] Optional");
         }
         
         if (plugin.hasPermission(player, "mru.admin.config")) {
+            SendMessage(Message.MessageSeparator);
+            SendMessage(" &7ADMIN HELP ");
+            SendMessage("&6/mru ver &7Show mcmmoRankup version information");
             SendMessage("&6/mru report &7Admin Ranking Report Options");
             SendMessage("&6/mru set <setting> <value> &7Set Config. Settings");
             SendMessage("&6/mru pinfo &7Toggle Next Promotion Info. &e" + (plugin.displayNextPromo ? "OFF" : "ON"));
-        }
-        
-        if (plugin.hasPermission(player,"mru.update")) {
-            SendMessage("&6/mru update - Update plugin");
         }
         
         if (plugin.hasPermission(player, "mru.admin.reload")) {
@@ -85,6 +74,16 @@ public class Help extends CommandHandler {
         return true;
     }
 
+    private String SetHelpForHab(){
+        String outMsg;
+        if (!plugin.isIgnored(player)) {
+            outMsg = "&7" + Message.HelpSethab;
+        } else {
+            outMsg = "&c" + Message.HelpSethabIgnore;
+        }
+        return outMsg;
+    }
+    
     @Override
     protected Boolean isInvalid(CommandSender sender, String[] args) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

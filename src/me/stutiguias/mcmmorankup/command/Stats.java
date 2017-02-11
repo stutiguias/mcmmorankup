@@ -95,14 +95,17 @@ public class Stats extends CommandHandler {
 
     @Override
     protected Boolean isInvalid(CommandSender sender, String[] args) {
-        if (asOtherStatsPerm(args,player) || plugin.hasPermission(player, "mru.stats") || plugin.hasPermission(player, "mru.admin.config")) {
+        
+        if(args.length == 2 && !plugin.hasPermission(player, "mru.stats.others")) {
+            SendMessage("&4You don't have permission");
+            return true;
+        }
+        
+        if (plugin.hasPermission(player, "mru.stats") || plugin.hasPermission(player, "mru.admin.config")) {
             return false;
         }
         SendMessage("&4You don't have permission");
         return true;
     }
-       
-    private boolean asOtherStatsPerm(String[] args, Player player) {
-        return args.length == 2 && plugin.hasPermission(player, "mru.stats.others");
-    }
+
 }

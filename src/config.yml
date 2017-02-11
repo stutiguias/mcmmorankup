@@ -40,13 +40,11 @@ Config:
   # 150 equals about 7.5 seconds after joining the server.
   OnJoinDelay: 210
   
-  # This option is not yet enabled in v0.6+
   # This option will give the player the option to toggle 
   # Global Promotion/Demotion Broadcasting
   # on/off, for that player only.
   GlobalBroadcastFeed: true
   
-  # This option is not yet enabled in v0.6+
   # This option will give the player the option to toggle in-game Player 
   # Promotion/Demotion messaging
   # on/off, for that player only.
