@@ -64,6 +64,10 @@ player will just demote back down. (see setting up below for more detail on skil
 		<td>mru.stats.others</td>
 		<td>View another players ranking stats, current and previous</td>
 	</tr>
+	<tr>
+		<td>mru.setgender</td>
+		<td>Allow player to set gender</td>
+	</tr>
 </table> 
 
 #### WildCard Permission
@@ -81,6 +85,7 @@ If you want to use wildcard permission, do as follow
 	- mru.rankup
 	- mru.stats
 	- mru.stats.others
+	- mru.setgender
 
 ##### For Player
 
@@ -92,12 +97,13 @@ If you want to use wildcard permission, do as follow
 	- mru.rankup
 	- mru.stats
 	- mru.stats.others
-
+	- mru.setgender
   - mru.user.simple
 	- mru.hability
 	- mru.rankup
 	- mru.stats
-
+	- mru.setgender
+	
 ##### Others
 
   - mru.exemptdemotions ( bypass demotions )
