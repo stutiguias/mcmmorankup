@@ -38,6 +38,10 @@ public class Female extends CommandHandler {
 
     @Override
     protected Boolean isInvalid(CommandSender sender, String[] args) {
+        if(!plugin.hasPermission(player, "mru.setgender")){
+            SendMessage("&4You don't have permission");
+            return true;
+        }
         if(!plugin.UseGenderClass) {
             SendMessage("&4Your server not allow gender");
             return true;

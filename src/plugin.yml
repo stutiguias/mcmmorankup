@@ -20,6 +20,7 @@ permissions:
         mru.stats: true
         mru.stats.others: false
         mru.rankup.*: true
+        mru.setgender: true
     mru.user.*:
       description: Gives access to all commands
       children:
@@ -30,6 +31,7 @@ permissions:
         mru.rankup: true
         mru.stats: true
         mru.stats.others: true
+        mru.setgender: true
     mru.admin.*:
       description: Gives access to all commands
       children:
@@ -41,9 +43,13 @@ permissions:
         mru.rankup: true
         mru.stats: true
         mru.stats.others: true
+        mru.setgender: true
     mru.admin.config:
        description: Allow admins to update config settings in-game and reload.
        default: op
+    mru.setgender:
+       description: Allow set gender
+       default: true
     mru.buyrankbuks:
        description: Allow a player to purchase a rank from their current server worlds money
        default: false       

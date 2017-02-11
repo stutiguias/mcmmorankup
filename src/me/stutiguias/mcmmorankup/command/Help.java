@@ -40,7 +40,7 @@ public class Help extends CommandHandler {
             SendMessage("&6/mru rank &7" + Message.HelpRank);
         }
 
-        if (plugin.UseGenderClass) {
+        if (plugin.UseGenderClass && plugin.hasPermission(player, "mru.setgender")) {
             SendMessage("&6/mru <male|female> &7" + Message.HelpMaleFemale);
         }
         

@@ -24,7 +24,7 @@ public class Ver extends CommandHandler {
     protected Boolean OnCommand(CommandSender sender, String[] args) {
         this.sender = sender;
         SendMessage("VERSION INFO.");
-        SendMessage(plugin.getDescription().getVersion());
+        SendMessage("Server running version : " + plugin.getDescription().getVersion());
         SendMessage(Message.MessageSeparator);
         return true;
     }
