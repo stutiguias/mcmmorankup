@@ -40,9 +40,9 @@ public class Feeds extends CommandHandler {
             SendMessage("&3Manage Your mcmmoRank Feeds &a(&f&lcurrent status&a)");
             SendMessage(Message.PlayerWarnings + "Usage: /mru feeds <feedname> <on | off>");
             SendMessage(Message.MessageSeparator);
-            SendMessage("&aRankup &6(&f %s& 6)&a - Show your Promotion when you rank up",new Object[] { rankupFeed ? "On" : "Off" });
-            SendMessage("&aXp &6(&f %s& &6)&a - Excluding Powerlevel, show your skills XP Ups?",new Object[] { xpFeed ? "On" : "Off" });
-            SendMessage("&aGlobal &6(&f %s& &6)&a - Share your Promotions/Demotions with others??\n",new Object[] { globalFeed ? "On" : "Off" });
+            SendMessage("&aRankup &6(&f %s &6)&a - Show your Promotion when you rank up",new Object[] { rankupFeed ? "On" : "Off" });
+            SendMessage("&aXp &6(&f %s &6)&a - Excluding Powerlevel, show your skills XP Ups?",new Object[] { xpFeed ? "On" : "Off" });
+            SendMessage("&aGlobal &6(&f %s &6)&a - Share your Promotions/Demotions with others??\n",new Object[] { globalFeed ? "On" : "Off" });
             SendMessage(Message.MessageSeparator);
             return true;
         }
