@@ -1,5 +1,5 @@
 # Don't touch this
-configversion: 3
+configversion: 4
 Config:
   # Config Section:   The 'AutoUpdateTime' setting is critical of the trailing character of either an
   #                   'm' for minutes or an 'h' for hours
@@ -116,7 +116,15 @@ Config:
 
   # Use Permission Per World
   # Set this if you want per world permission enable
-  PerWorldPermission : false
+  PerWorldPermission: false
+  
+  # Use the gender first system if you need to 
+  # set a group for new players set gender first
+  # after the player set the gender will automatic
+  # send then to Default
+  GenderFirst: false
+  GenderOnlyGroup: ''
+  DefaultGroupAfterChoose: ''
   
   # if you have the file on skills folder and need
   # to deactive the skill, do it here !

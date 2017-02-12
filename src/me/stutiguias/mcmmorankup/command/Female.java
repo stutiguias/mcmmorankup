@@ -33,12 +33,21 @@ public class Female extends CommandHandler {
         SendMessage("GENDER SELECTED");
         SendMessage(Message.GeneralMessages + Message.SetGender.replace("%gender%", "Female"));
         SendMessage(Message.MessageSeparator);
+        
+        if(plugin.GenderFirst){
+           String group = plugin.GetPlayerCurrentGroup((Player)sender);
+           if(plugin.GenderOnlyGroup.equals(group)){
+               plugin.permission.playerAddGroup((Player)sender, plugin.DefaultGroupAfterChoose);
+               plugin.permission.playerRemoveGroup((Player)sender, group);
+           }
+        }
+        
         return true;
     }
 
     @Override
     protected Boolean isInvalid(CommandSender sender, String[] args) {
-        if(!plugin.hasPermission(player, "mru.setgender")){
+        if(!plugin.hasPermission((Player)sender, "mru.setgender")){
             SendMessage("&4You don't have permission");
             return true;
         }

@@ -7,7 +7,7 @@ commands:
   mru:
     description: Auto Rankup Commands and Settings
     usage: Use /mru for Help,  /mru hab to view rankings abilities, /mru hab <ability> sets your rank line ability
-    permission: mru.hability
+    permission: mru.setgender
     permission-message: You don't seem to have permission to use Auto Ranking yet...
 permissions:
     mru.user.simple:
@@ -64,7 +64,7 @@ permissions:
        default: false
     mru.hability:
        description: Gives access to provide players the option to set their base rank line
-       default: true
+       default: false
     mru.playerfeeds:
        description: Gives players the access to manage their mcmmoRankup Player feeds
        default: false

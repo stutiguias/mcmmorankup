@@ -28,8 +28,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class Mcmmorankup extends JavaPlugin {
 
-    public final String verLink = "http://dev.bukkit.org/server-mods/mcmmorankup/";
-    public final String verIssues = "https://github.com/McMmmoRankUp/mcmmoRankup/issues/";
     public static final String logPrefix = "[mcmmoRankUp] ";
     public static final String PluginDir = "plugins" + File.separator + "Mcmmorankup";
     public static String PluginPlayerDir = PluginDir + File.separator + "userdata";
@@ -85,7 +83,10 @@ public class Mcmmorankup extends JavaPlugin {
     public String BuyRankCurrencyName;
     public String[] GroupToIgnore;
     public boolean PerWorldPermission;
-
+    public boolean GenderFirst;
+    public String GenderOnlyGroup;
+    public String DefaultGroupAfterChoose;
+            
     @Override
     public void onEnable() {
         File dir = getDataFolder();
@@ -199,7 +200,7 @@ public class Mcmmorankup extends JavaPlugin {
             config.setupConfig();
             FileConfiguration fc = config.getConfig();
             
-            if(!fc.isSet("configversion") || fc.getInt("configversion") != 3){ 
+            if(!fc.isSet("configversion") || fc.getInt("configversion") != 4){ 
                 config.MakeOld();
                 config.setupConfig();
                 fc = config.getConfig();
@@ -229,7 +230,10 @@ public class Mcmmorankup extends JavaPlugin {
             AllowBuyingRanks = fc.getBoolean("Config.AllowBuyingRanks");
             AllowRankRewards = fc.getBoolean("Config.AllowRankRewards");
             BuyRankCurrencyName = fc.getString("Config.BuyRankCurrencyName");
-            PerWorldPermission = fc.getBoolean("PerWorldPermission");
+            PerWorldPermission = fc.getBoolean("Config.PerWorldPermission");
+            GenderFirst = fc.getBoolean("Config.GenderFirst");
+            GenderOnlyGroup = fc.getString("Config.GenderOnlyGroup");
+            DefaultGroupAfterChoose = fc.getString("Config.DefaultGroupAfterChoose");
             
             Message = new MessageConfig(this,fc.getString("Config.Language"));
             MessagesReplaces();
