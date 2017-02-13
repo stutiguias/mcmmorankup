@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>me.stutiguias</groupId>
   <artifactId>Mcmmorankup</artifactId>
-  <version>0.6.10</version>
+  <version>0.7.0</version>
   <name>Mcmmorankup-${project.version}</name>
   <description>Mcmmorankup</description>
   
