@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>me.stutiguias</groupId>
   <artifactId>Mcmmorankup</artifactId>
-  <version>0.7.0</version>
+  <version>0.7.1</version>
   <name>Mcmmorankup-${project.version}</name>
   <description>Mcmmorankup</description>
   
@@ -25,7 +25,7 @@
     <dependency>
         <groupId>org.bukkit</groupId>
         <artifactId>bukkit</artifactId>
-        <version>1.11.2-R0.1-SNAPSHOT</version>
+        <version>1.12.2-R0.1-SNAPSHOT</version>
     </dependency>
 	
     <dependency>

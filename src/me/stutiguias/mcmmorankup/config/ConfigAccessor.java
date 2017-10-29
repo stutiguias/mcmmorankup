@@ -23,41 +23,28 @@ public class ConfigAccessor {
     }
 
     public void setupConfig() throws IOException {
-        if(fileName.equalsIgnoreCase("config.yml") || 
-           fileName.equalsIgnoreCase("menu.yml") || 
-           fileName.equalsIgnoreCase("eng.yml")) 
-        {
-            configFile = new File(Mcmmorankup.PluginDir, fileName.toLowerCase());            
-        }else{
-            configFile = new File(Mcmmorankup.PluginSkillsDir, fileName.toLowerCase());            
-        }    	    	
+        configFile = new File(this.getPluginDir(), fileName.toLowerCase());   
         
-        if(!configFile.exists()) {
-            configFile.createNewFile();            
-            copy(plugin.getResource(fileName), configFile);
-        }
+        if(configFile.exists()) return;
+        
+        configFile.createNewFile();            
+        copy(plugin.getResource(fileName), configFile);
     }
 
     public void reloadConfig() {    	
     	if (configFile == null) {
-            if(fileName.equalsIgnoreCase("config.yml") || 
-               fileName.equalsIgnoreCase("menu.yml") || 
-               fileName.equalsIgnoreCase("eng.yml")) 
-            {
-                configFile = new File(Mcmmorankup.PluginDir, fileName.toLowerCase());            
-            }else{
-                configFile = new File(Mcmmorankup.PluginSkillsDir, fileName.toLowerCase());            
-            }    	    
+            configFile = new File(this.getPluginDir(), fileName.toLowerCase());            
         }        
 
         fileConfiguration = YamlConfiguration.loadConfiguration(configFile);
 
         InputStream defConfigStream = plugin.getResource(fileName);
-
-        if (defConfigStream != null) {
-            YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
-            fileConfiguration.setDefaults(defConfig);
-        }
+        
+        if (defConfigStream == null) return;
+        
+        Reader targetReader = new InputStreamReader(defConfigStream);
+        YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(targetReader);
+        fileConfiguration.setDefaults(defConfig);
     }
 
     private void copy(java.io.InputStream input, File file) {
@@ -84,12 +71,12 @@ public class ConfigAccessor {
     }
 
     public void saveConfig() {
-        if (fileConfiguration != null || configFile != null) {
-            try {
-                getConfig().save(configFile);
-            } catch (IOException ex) {
-                plugin.getLogger().log(Level.SEVERE, "{0} {1} - Could not save config to {2}: {3}", new Object[]{Mcmmorankup.logPrefix, "[Ability Config]", configFile, ex});
-            }
+        if (fileConfiguration == null && configFile == null) return;
+        
+        try {
+            getConfig().save(configFile);
+        } catch (IOException ex) {
+            plugin.getLogger().log(Level.SEVERE, "{0} {1} - Could not save config to {2}: {3}", new Object[]{Mcmmorankup.logPrefix, "[Ability Config]", configFile, ex});
         }
     }
     
@@ -103,5 +90,17 @@ public class ConfigAccessor {
         File file = new File(plugin.getDataFolder(),fileName + "_old");
         file.delete();
         return configFile.renameTo(new File(plugin.getDataFolder(),fileName + "_old"));
+    }
+
+    /**
+     * @return the pluginDir
+     */
+    public String getPluginDir() {
+        if(fileName.equalsIgnoreCase("config.yml") || fileName.equalsIgnoreCase("menu.yml") || fileName.equalsIgnoreCase("eng.yml")) 
+        {
+           return Mcmmorankup.PluginDir;
+        }else{
+           return Mcmmorankup.PluginSkillsDir;
+        }    
     }
 }
