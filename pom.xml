@@ -18,7 +18,12 @@
       <id>md_5-repo</id>
       <url>http://repo.md-5.net/content/repositories/public/</url>
     </repository>
-
+    
+    <repository>
+            <id>vault-repo</id>
+            <url>http://nexus.hc.to/content/repositories/pub_releases</url>
+    </repository>
+    
   </repositories>
   
   <dependencies>
@@ -39,9 +44,9 @@
     <dependency>
       <groupId>net.milkbowl.vault</groupId>
       <artifactId>Vault</artifactId>
-      <version>1.2.27</version>
-	  <scope>system</scope>
-      <systemPath>${project.basedir}/lib/Vault.jar</systemPath>
+      <version>1.5.6</version>
+      <type>jar</type>
+      <scope>compile</scope>
     </dependency>
 
   </dependencies>
