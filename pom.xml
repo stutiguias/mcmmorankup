@@ -19,6 +19,7 @@
       <url>http://repo.md-5.net/content/repositories/public/</url>
     </repository>
     
+    <!-- vault -->
     <repository>
             <id>vault-repo</id>
             <url>http://nexus.hc.to/content/repositories/pub_releases</url>
@@ -36,7 +37,7 @@
     <dependency>
         <groupId>com.gmail.nossr50.mcMMO</groupId>
         <artifactId>mcMMO</artifactId>
-        <version>1.5.00</version>
+        <version>1.5.01-SNAPSHOT</version>
         <type>jar</type>
         <scope>compile</scope>
     </dependency>
