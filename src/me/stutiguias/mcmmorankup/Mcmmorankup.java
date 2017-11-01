@@ -46,6 +46,7 @@ public class Mcmmorankup extends JavaPlugin {
     public HashMap<String, Boolean> isRankExist;
     public HashMap<String, HashMap<String, ArrayList<String>>> RankUpConfig;
     public HashMap<String, HashMap<String, String>> BroadCast;
+    public HashMap<String, HashMap<String, Double>> Health;
     public HashMap<String, Boolean> BuyRankUsePerms;
     public HashMap<String, Boolean> BuyRankEnabled;
     
@@ -262,6 +263,7 @@ public class Mcmmorankup extends JavaPlugin {
         
         RankUpConfig = new HashMap<>();
         BroadCast = new HashMap<>();
+        Health = new HashMap<>();
         isRankExist = new HashMap<>();
         BuyRankEnabled = new HashMap<>();
         BuyRankUsePerms = new HashMap<>();
@@ -315,13 +317,22 @@ public class Mcmmorankup extends JavaPlugin {
         }
         return BroadCastCa;
     }
-
+    
+    public HashMap<String, Double> GetHealth(ConfigAccessor ca) throws IOException {
+        HashMap<String, Double> HealthCa = new HashMap<>();
+        for (String key : ca.getConfig().getConfigurationSection("Health.").getKeys(false)) {
+            HealthCa.put(key.toUpperCase(), ca.getConfig().getDouble("Health." + key));
+        }
+        return HealthCa;
+    }
+    
     public void SetupAccessor(String skill, ConfigAccessor ca) {
         boolean canBuy = false;
         
         try {
             if (isSkillEnable(skill)) {
                 RankUpConfig.put(skill, GetRanks(ca));
+                Health.put(skill, GetHealth(ca));
                 isRankExist.put(skill, true);
                 if (UseAlternativeBroadcast) {
                     BroadCast.put(skill, GetAlternativeBroadcast(ca));

@@ -59,4 +59,13 @@ Broadcast:
     Dweller: Smelting Dweller
     Asst_Mayor: Level 1 Smelting Moderator (Mayor)
     Mayor: Smelting Moderator (Mayor)
-    Admin: Smelting Administrator    
+    Admin: Smelting Administrator
+Health:
+    Settler : 4
+    L1_Worker: 5
+    L2_Worker: 6
+    Resident: 7
+    Dweller: 8
+    Asst_Mayor: 9
+    Mayor: 10
+    Admin: 11

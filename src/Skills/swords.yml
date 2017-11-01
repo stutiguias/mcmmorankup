@@ -59,4 +59,13 @@ Broadcast:
     Dweller: Swordsman Dweller
     Asst_Mayor: Level 1 Swordsman Moderator (Mayor)
     Mayor: Swordsman Moderator (Mayor)
-    Admin: Swordsman Administrator    
+    Admin: Swordsman Administrator
+Health:
+    Settler : 4
+    L1_Worker: 5
+    L2_Worker: 6
+    Resident: 7
+    Dweller: 8
+    Asst_Mayor: 9
+    Mayor: 10
+    Admin: 11

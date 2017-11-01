@@ -59,4 +59,13 @@ Broadcast:
     Dweller: Axes Dweller
     Asst_Mayor: Level 1 Axes Moderator (Mayor)
     Mayor: Axes Moderator (Mayor)
-    Admin: Axes Administrator    
+    Admin: Axes Administrator
+Health:
+    Settler : 4
+    L1_Worker: 5
+    L2_Worker: 6
+    Resident: 7
+    Dweller: 8
+    Asst_Mayor: 9
+    Mayor: 10
+    Admin: 11

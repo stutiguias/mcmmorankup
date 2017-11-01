@@ -59,4 +59,13 @@ Broadcast:
     Dweller: Woodcutting Dweller
     Asst_Mayor: Level 1 Woodcutting Moderator (Mayor)
     Mayor: Woodcutting Moderator (Mayor)
-    Admin: Woodcutting Administrator    
+    Admin: Woodcutting Administrator
+Health:
+    Settler : 4
+    L1_Worker: 5
+    L2_Worker: 6
+    Resident: 7
+    Dweller: 8
+    Asst_Mayor: 9
+    Mayor: 10
+    Admin: 11

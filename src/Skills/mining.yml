@@ -59,4 +59,13 @@ Broadcast:
     Dweller: Miner Dweller
     Asst_Mayor: Level 1 Miner Moderator (Mayor)
     Mayor: Miner Moderator (Mayor)
-    Admin: Miner Administrator    
+    Admin: Miner Administrator
+Health:
+    Settler : 4
+    L1_Worker: 5
+    L2_Worker: 6
+    Resident: 7
+    Dweller: 8
+    Asst_Mayor: 9
+    Mayor: 10
+    Admin: 11    

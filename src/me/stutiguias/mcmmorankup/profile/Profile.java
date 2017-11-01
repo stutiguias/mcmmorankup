@@ -13,6 +13,8 @@ import me.stutiguias.mcmmorankup.Mcmmorankup;
 import static me.stutiguias.mcmmorankup.Mcmmorankup.Message;
 import me.stutiguias.mcmmorankup.Util;
 import me.stutiguias.mcmmorankup.XpCalc;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -87,9 +89,18 @@ public class Profile extends Util {
         return true;
     }
 
+    public void SetHealth() {
+        AttributeInstance healthAttributeInstance = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+        String skill = GetHabilityForRank().toUpperCase();
+        String rank = GetTag().toUpperCase();
+        double health = plugin.Health.get(skill).get(rank);
+        healthAttributeInstance.setBaseValue(health);
+    }
+    
     public Boolean SetTag(String Tag) {
         PlayerYML.set("Tag", Tag);
         SaveYML();
+        SetHealth();
         return true;
     }
 

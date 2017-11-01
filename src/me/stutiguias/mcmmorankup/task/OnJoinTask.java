@@ -8,6 +8,8 @@ import me.stutiguias.mcmmorankup.Mcmmorankup;
 import static me.stutiguias.mcmmorankup.Mcmmorankup.Message;
 import me.stutiguias.mcmmorankup.Util;
 import me.stutiguias.mcmmorankup.profile.Profile;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
 
 /**
@@ -28,6 +30,9 @@ public class OnJoinTask extends Util implements Runnable {
         String skill = profile.GetHabilityForRank().toUpperCase();
         String gender = profile.GetGender();
         String status;
+        
+        profile.SetHealth();
+        
         boolean canBroadCast = false;
         
         if (plugin.isIgnored(profile.player)) {
