@@ -93,7 +93,11 @@ public class Profile extends Util {
         AttributeInstance healthAttributeInstance = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
         String skill = GetHabilityForRank().toUpperCase();
         String rank = GetTag().toUpperCase();
-        double health = plugin.Health.get(skill).get(rank);
+        double health;
+        if(rank.equals("VISITOR")) 
+            health = 2;
+        else
+            health = plugin.Health.get(skill).get(rank);
         healthAttributeInstance.setBaseValue(health);
     }
     
