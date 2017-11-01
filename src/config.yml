@@ -1,5 +1,5 @@
 # Don't touch this
-configversion: 4
+configversion: 5
 Config:
   # Config Section:   The 'AutoUpdateTime' setting is critical of the trailing character of either an
   #                   'm' for minutes or an 'h' for hours
@@ -38,7 +38,7 @@ Config:
   
   # Set when McmmoRankUp will attempt to promote the newly joined player.  
   # 150 equals about 7.5 seconds after joining the server.
-  OnJoinDelay: 210
+  OnJoinDelay: 150
   
   # This option will give the player the option to toggle 
   # Global Promotion/Demotion Broadcasting
@@ -81,6 +81,9 @@ Config:
 
   # If set to 'false', all players will default to the 'male' gender.
   UseGenderClass: true
+
+  # If set to 'true', enable the health system on each skill.
+  UseHealthSystem: false
   
   # Set it to 'false' if you don't want to allow buy ranks at all 
   # and the configuration in the skill files will be ignored.

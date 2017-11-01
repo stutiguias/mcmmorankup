@@ -70,6 +70,7 @@ public class Mcmmorankup extends JavaPlugin {
     public boolean AllowBuyRankDemotions;
     public boolean PromoteOnJoin;
     public boolean AutoUpdate;
+    public boolean UseHealthSystem;
     public boolean RemoveOnlyPluginGroup;
     public long onJoinDelay;
     public boolean globalBroadcastFeed;
@@ -201,7 +202,7 @@ public class Mcmmorankup extends JavaPlugin {
             config.setupConfig();
             FileConfiguration fc = config.getConfig();
             
-            if(!fc.isSet("configversion") || fc.getInt("configversion") != 4){ 
+            if(!fc.isSet("configversion") || fc.getInt("configversion") != 5){ 
                 config.MakeOld();
                 config.setupConfig();
                 fc = config.getConfig();
@@ -214,6 +215,7 @@ public class Mcmmorankup extends JavaPlugin {
             AllowDemotions = fc.getBoolean("Config.AllowDemotions");
             AllowBuyRankDemotions = fc.getBoolean("Config.AllowBuyRankDemotions");
             AutoUpdate = fc.getBoolean("Config.AutoUpdate");
+            UseHealthSystem = fc.getBoolean("Config.UseHealthSystem");
             AutoUpdateTime = fc.getString("Config.AutoUpdateTime");
             GroupToIgnore = fc.getString("Config.GroupToIgnore").split((","));
             DefaultSkill = fc.getString("Config.DefaultSkill").toUpperCase();

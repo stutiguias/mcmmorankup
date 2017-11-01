@@ -90,6 +90,7 @@ public class Profile extends Util {
     }
 
     public void SetHealth() {
+        
         AttributeInstance healthAttributeInstance = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
         String skill = GetHabilityForRank().toUpperCase();
         String rank = GetTag().toUpperCase();
@@ -98,6 +99,7 @@ public class Profile extends Util {
             health = 2;
         else
             health = plugin.Health.get(skill).get(rank);
+        if(!plugin.UseHealthSystem) health = 20;
         healthAttributeInstance.setBaseValue(health);
     }
     
