@@ -75,6 +75,7 @@
           <include>acrobatics.yml</include>
           <include>archery.yml</include>
           <include>axes.yml</include>
+          <include>custom.yml</include>
           <include>excavation.yml</include>
           <include>fishing.yml</include>
           <include>herbalism.yml</include>

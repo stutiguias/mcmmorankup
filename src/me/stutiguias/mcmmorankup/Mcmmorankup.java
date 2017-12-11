@@ -50,6 +50,8 @@ public class Mcmmorankup extends JavaPlugin {
     public HashMap<String, Boolean> BuyRankUsePerms;
     public HashMap<String, Boolean> BuyRankEnabled;
     
+    public HashMap<String, Map<String,String>> CustomRequirements;
+    
     public HashMap<String, Map<String, String>> XpRanks;	
     public HashMap<String, Map<String, String>> BuksRanks;		
     public HashMap<String, HashMap<String, String>> RewardsConfig;
@@ -202,7 +204,7 @@ public class Mcmmorankup extends JavaPlugin {
             config.setupConfig();
             FileConfiguration fc = config.getConfig();
             
-            if(!fc.isSet("configversion") || fc.getInt("configversion") != 5){ 
+            if(!fc.isSet("configversion") || fc.getInt("configversion") != 6){ 
                 config.MakeOld();
                 config.setupConfig();
                 fc = config.getConfig();
@@ -287,6 +289,7 @@ public class Mcmmorankup extends JavaPlugin {
         SetupAccessor("WOODCUTTING", new ConfigAccessor(this, "woodcutting.yml"));
         SetupAccessor("SMELTING", new ConfigAccessor(this, "smelting.yml"));
         
+        SetupAccessor("CUSTOM", new ConfigAccessor(this, "custom.yml"));
     }    
     
     public void MessagesReplaces() {
@@ -340,6 +343,22 @@ public class Mcmmorankup extends JavaPlugin {
                     BroadCast.put(skill, GetAlternativeBroadcast(ca));
                 }
                 ca.setupConfig();
+                
+                if(skill.equalsIgnoreCase("CUSTOM")){
+                    // TODO : LOADING REQUERIMENTS
+                    CustomRequirements = new HashMap<>();
+                    for (String key : ca.getConfig().getConfigurationSection("Requirements.").getKeys(false)) {
+                        HashMap <String,String> newRequirement = new HashMap();
+                        for(String keyRequirement : ca.getConfig().getConfigurationSection("Requirements." + key).getKeys(false)) {
+                            newRequirement.put(keyRequirement, ca.getConfig().getString("Requirements." + key + "." + keyRequirement)); 
+                        }
+                        CustomRequirements.put(key.toUpperCase(),newRequirement);
+                    }
+                    if (mruStartupSummary) {
+                        logger.log(Level.INFO, "{0} {1} - Loaded", new Object[]{logPrefix, skill.toUpperCase()});
+                    }
+                    return;
+                }
                 
                 BuyRankUsePerms.put(skill, ca.getConfig().getConfigurationSection("BuyRank").getBoolean("usepermissions") );
                 
@@ -421,6 +440,7 @@ public class Mcmmorankup extends JavaPlugin {
     }
 
     public int GetSkillLevel(Player player, String skill) {
+        if (skill.equalsIgnoreCase("CUSTOM")) return GetCustomLevel(player);
         if (skill.equalsIgnoreCase("POWERLEVEL")) {
             return McMMOApi.getPowerLevel(player);
         } else {
@@ -428,6 +448,29 @@ public class Mcmmorankup extends JavaPlugin {
         }
     }
 
+    public int GetCustomLevel(Player player){
+        int PlayerNewLevel = 0;
+        
+        for(String level:CustomRequirements.keySet()){
+            Map<String,String> req = CustomRequirements.get(level);
+            int howmanyreq = req.size();
+            int passhowmany = 0;
+            for(String reqinfo:req.keySet()){
+                int qtd = Integer.parseInt(req.get(reqinfo));
+                if(reqinfo.equalsIgnoreCase("Powerlevel") && McMMOApi.getPowerLevel(player) > qtd){
+                    passhowmany++;
+                }
+                if(reqinfo.equalsIgnoreCase("Fishing") && McMMOApi.getSkillLevel(player, "Fishing") > qtd){
+                    passhowmany++;
+                }
+            }
+            if(passhowmany >= howmanyreq){
+                PlayerNewLevel = Integer.parseInt(level);
+            }
+        }
+        return PlayerNewLevel;
+    }
+    
     public int GetSkillLevelOffline(String playerName, String skill) {
         if (skill.equalsIgnoreCase("POWERLEVEL")) {
             return McMMOApi.getPowerLevelOffline(playerName);
@@ -462,6 +505,7 @@ public class Mcmmorankup extends JavaPlugin {
 
     public boolean isRankAvailable(String skill, Player pl) {
         if(skill.toLowerCase().contains("powerlevel")) return true;
+        if(skill.toLowerCase().contains("custom")) return true;
         return hasPermission(pl, "mcmmo.skills." + skill.toLowerCase());
     }
    

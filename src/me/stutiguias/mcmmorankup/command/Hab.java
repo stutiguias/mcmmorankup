@@ -70,26 +70,26 @@ public class Hab extends CommandHandler {
  		
             if (!plugin.isRankAvailable(key, profile.player)) {
                 noPerm = true;
-            } else {
-                if (plugin.BuyRankEnabled.size() == 0 && plugin.BuyRankEnabled.get(key)) {
-                    preFix = Message.HabListPrefixBuy;
-                }
-
-                if (plugin.isRankExist.get(key)) {
-                      outMsg = Message.AbilityEnabled;
-                }else{
-                      if(!plugin.displayDisabledRanks) continue;
-                      outMsg = Message.AbilityDisabled;
-                } 
-                
-                if (key.equalsIgnoreCase(skill)) {
-                      outMsg = Message.HabListCurRankLine;
-                } 
-
-                String playerLevel = String.valueOf(plugin.GetSkillLevel(profile.player, key));
-                SendMessage(fmt, new Object[] { preFix, key + Message.HabListLevel.replace("%level%", " " + playerLevel) , outMsg });
+                continue;
+            } 
+            
+            if (plugin.BuyRankEnabled.isEmpty() && plugin.BuyRankEnabled.get(key)) {
+                preFix = Message.HabListPrefixBuy;
             }
 
+            if (plugin.isRankExist.get(key)) {
+                  outMsg = Message.AbilityEnabled;
+            }else{
+                  if(!plugin.displayDisabledRanks) continue;
+                  outMsg = Message.AbilityDisabled;
+            } 
+
+            if (key.equalsIgnoreCase(skill)) {
+                  outMsg = Message.HabListCurRankLine;
+            } 
+
+            String playerLevel = String.valueOf(plugin.GetSkillLevel(profile.player, key));
+            SendMessage(fmt, new Object[] { preFix, key + Message.HabListLevel.replace("%level%", " " + playerLevel) , outMsg });
         }
 
         SendMessage(("\n" + Message.DefaultSkilltoRank).replace("%ability%", plugin.DefaultSkill));

@@ -27,6 +27,7 @@ public class McMMOApi {
     }
 
     public static int getXp(Player pl, String skill) {
+        if (skill.equalsIgnoreCase("CUSTOM")) return 0;
         if (skill.equalsIgnoreCase("POWERLEVEL")) {
             return getPowerLevel(pl);
         }
@@ -34,6 +35,7 @@ public class McMMOApi {
     }
 
     public static int getXpToNextLevel(Player pl, String skill) {
+        if (skill.equalsIgnoreCase("CUSTOM")) return 0;
         if (skill.equalsIgnoreCase("POWERLEVEL")) {
             return ExperienceAPI.getPowerLevelCap();
         }

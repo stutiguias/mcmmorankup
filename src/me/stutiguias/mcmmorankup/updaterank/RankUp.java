@@ -67,7 +67,7 @@ public class RankUp extends Util {
 
                 level = Integer.parseInt(levelRank[0]);
                 rank = levelRank[1];
-
+                // TODO CHECK CUSTOM
                 if (playerSkillLevel >= level) {
 
                     demote = level < StartLevel;
@@ -81,6 +81,7 @@ public class RankUp extends Util {
                     updatedRank = rank;
                     updatedLevel = level;
                     willbreak = true;
+                    
                 }else if(!maxLvl && level > updatedLevel && nextLevel == 0) {
                     nextGroup = rank;
                     nextLevel = level;
@@ -173,6 +174,7 @@ public class RankUp extends Util {
             line = Message.RankInfoLine2.replaceAll("%skilllevel%", String.valueOf(SkillLevel)).replaceAll("%rankline%", playerGroup);
             rankInfo.put(2, line);
 
+            if(skill.equalsIgnoreCase("CUSTOM")) nLevel = nLevel - 1;
             line = Message.RankInfoLine3.replaceAll("%nLevel%", String.valueOf(nLevel + 1)).replaceAll("%nRank%", nGroup);
             rankInfo.put(3, line);
 

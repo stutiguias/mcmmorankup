@@ -1,0 +1,53 @@
+RankUp:
+  # Male and Female - If you have configured the global configuration "UseGenderClass = True" then each of the
+  # Gender Classes needs to be configured as you see it below.  Otherwise, a MALE Gender Class
+  # MUST be configured for each of your permission groups.
+  Male:
+   #Level : GroupName
+    0: Stranger
+    1: Noob
+    2: Peasant
+    3: Serf
+    4: Citizen
+    5: Artisian
+    6: Soldier
+    7: Vassel
+  Female:
+    0: Stranger
+    1: Noob
+    2: Peasant
+    3: Serf
+    4: Citizen
+    5: Artisian
+    6: Soldier
+    7: Vassel
+Requirements:
+   1: 
+    Powerlevel: 42
+   2:
+    Powerlevel: 82
+    Fishing: 25
+   3:
+    Powerlevel: 160
+    Skelly: 50
+    Creeper: 25
+    Zombie: 50
+Broadcast:
+    #GroupName : Broadcast Name
+    Stranger: Axes Settler
+    Noob: Axes Worker Level I
+    Peasant: Axes Worker Level II
+    Serf: Axes Resident
+    Citizen: Axes Dweller
+    Artisian: Level 1 Axes Moderator (Mayor)
+    Soldier: Axes Moderator (Mayor)
+    Vassel: Axes Administrator
+Health:
+    Stranger : 4
+    Noob: 5
+    Peasant: 6
+    Serf: 7
+    Citizen: 8
+    Artisian: 9
+    Soldier: 10
+    Vassel: 11    

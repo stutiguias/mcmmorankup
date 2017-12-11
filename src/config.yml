@@ -1,5 +1,5 @@
 # Don't touch this
-configversion: 5
+configversion: 6
 Config:
   # Config Section:   The 'AutoUpdateTime' setting is critical of the trailing character of either an
   #                   'm' for minutes or an 'h' for hours
@@ -159,4 +159,6 @@ Config:
     UNARMED:
       enabled: false
     WOODCUTTING:
+      enabled: false
+    CUSTOM:
       enabled: false

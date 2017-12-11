@@ -76,6 +76,7 @@ public class Profile extends Util {
                 case "WOODCUTTING":
                 case "SMELTING":
                 case "POWERLEVEL":
+                case "CUSTOM":
                     ChangeMessage(player, HabilityForRank);
                     break;
                 default:
