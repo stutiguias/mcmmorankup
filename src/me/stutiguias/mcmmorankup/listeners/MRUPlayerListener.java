@@ -17,6 +17,9 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
 import me.stutiguias.mcmmorankup.task.OnJoinTask;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.event.entity.EntityDeathEvent;
 
 public class MRUPlayerListener extends Util implements Listener {
 
@@ -76,4 +79,18 @@ public class MRUPlayerListener extends Util implements Listener {
         }
     }
     
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void MobDeath(EntityDeathEvent event) {
+        Entity entity = event.getEntity();
+        try {
+            EntityType type = entity.getType();
+            int newqtd = profile.GetMOBKILLED(type.name().toUpperCase()) + 1;
+            plugin.logger.warning(type.name());
+            plugin.logger.warning("->"+newqtd);
+            profile.SetMOBKILLED(type.name().toUpperCase(), newqtd );
+        } catch (Exception ex) {
+            plugin.logger.warning(ex.getMessage());
+           ex.printStackTrace();
+        }
+    }
 }

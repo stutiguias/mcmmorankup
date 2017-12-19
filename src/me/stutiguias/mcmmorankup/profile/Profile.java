@@ -18,6 +18,7 @@ import org.bukkit.attribute.AttributeInstance;
 
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 public class Profile extends Util {
@@ -143,6 +144,12 @@ public class Profile extends Util {
         SaveYML();
         return true;
     }
+    
+    public boolean SetMOBKILLED(String mob,int qtd) {
+        PlayerYML.set("MOBKILLED." + mob, qtd);
+        SaveYML();
+        return true;
+    }
 
     public boolean SetPlayerGlobalFeed(boolean globalFeed) {
         PlayerYML.set("PlayerFeeds.Global", globalFeed);
@@ -159,7 +166,11 @@ public class Profile extends Util {
     public String GetTag() {
         return PlayerYML.getString("Tag");
     }
-
+    
+    public int GetMOBKILLED(String mob) {
+        return PlayerYML.getInt("MOBKILLED." + mob);
+    }
+    
     public List<String> GetPurchasedRanks() {
         return PlayerYML.getStringList("PurchasedRanks");
     }
@@ -244,6 +255,12 @@ public class Profile extends Util {
 
         if (!PlayerYML.isSet("Tag") && !plugin.StartTagName.isEmpty()) {
             PlayerYML.set("Tag", plugin.StartTagName);						   		
+        }
+        
+        if(!PlayerYML.isSet("MOBKILLED")){
+            for(EntityType type:EntityType.values()){
+                PlayerYML.set("MOBKILLED." + type.name(), 0 );
+            }
         }
         
         if (!PlayerYML.isSet("Last Stats.LastQuitSkill")) PlayerYML.set("Last Stats.LastQuitSkill", "N/A");

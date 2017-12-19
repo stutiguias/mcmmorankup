@@ -15,11 +15,13 @@ import me.stutiguias.mcmmorankup.apimcmmo.McMMOApi;
 import me.stutiguias.mcmmorankup.updaterank.RankUp;
 import me.stutiguias.mcmmorankup.command.MRUCommand;
 import me.stutiguias.mcmmorankup.listeners.MRUPlayerListener;
+import me.stutiguias.mcmmorankup.profile.Profile;
 import me.stutiguias.mcmmorankup.rank.BuyRanks;
 import me.stutiguias.mcmmorankup.task.UpdateTask;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.EntityType;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
@@ -457,18 +459,35 @@ public class Mcmmorankup extends JavaPlugin {
             int passhowmany = 0;
             for(String reqinfo:req.keySet()){
                 int qtd = Integer.parseInt(req.get(reqinfo));
-                if(reqinfo.equalsIgnoreCase("Powerlevel") && McMMOApi.getPowerLevel(player) > qtd){
-                    passhowmany++;
-                }
-                if(reqinfo.equalsIgnoreCase("Fishing") && McMMOApi.getSkillLevel(player, "Fishing") > qtd){
-                    passhowmany++;
-                }
+                passhowmany = CheckRequerimentLevel(reqinfo, player, qtd, passhowmany);
             }
-            if(passhowmany >= howmanyreq){
-                PlayerNewLevel = Integer.parseInt(level);
-            }
+            if(passhowmany >= howmanyreq) PlayerNewLevel = Integer.parseInt(level);
         }
         return PlayerNewLevel;
+    }
+
+    private int CheckRequerimentLevel(String reqinfo, Player player, int qtd, int passhowmany) {
+        if(reqinfo.equalsIgnoreCase("Powerlevel") && McMMOApi.getPowerLevel(player) > qtd) passhowmany++;
+        if(reqinfo.equalsIgnoreCase("Fishing") && McMMOApi.getSkillLevel(player, "Fishing") > qtd) passhowmany++;
+        if(reqinfo.equalsIgnoreCase("Axes") && McMMOApi.getSkillLevel(player, "Axes") > qtd) passhowmany++;
+        if(reqinfo.equalsIgnoreCase("Acrobatics") && McMMOApi.getSkillLevel(player, "Acrobatics") > qtd) passhowmany++;
+        if(reqinfo.equalsIgnoreCase("Archery") && McMMOApi.getSkillLevel(player, "Archery") > qtd) passhowmany++;
+        if(reqinfo.equalsIgnoreCase("Excavation") && McMMOApi.getSkillLevel(player, "Excavation") > qtd) passhowmany++;
+        if(reqinfo.equalsIgnoreCase("Herbalism") && McMMOApi.getSkillLevel(player, "Herbalism") > qtd) passhowmany++;
+        if(reqinfo.equalsIgnoreCase("Mining") && McMMOApi.getSkillLevel(player, "Mining") > qtd) passhowmany++;
+        if(reqinfo.equalsIgnoreCase("Repair") && McMMOApi.getSkillLevel(player, "Repair") > qtd) passhowmany++;
+        if(reqinfo.equalsIgnoreCase("Smelting") && McMMOApi.getSkillLevel(player, "Smelting") > qtd) passhowmany++;
+        if(reqinfo.equalsIgnoreCase("Swords") && McMMOApi.getSkillLevel(player, "Swords") > qtd) passhowmany++;
+        if(reqinfo.equalsIgnoreCase("Taming") && McMMOApi.getSkillLevel(player, "Taming") > qtd) passhowmany++;
+        if(reqinfo.equalsIgnoreCase("Unarmed") && McMMOApi.getSkillLevel(player, "Unarmed") > qtd) passhowmany++;
+        if(reqinfo.equalsIgnoreCase("Woodcutting") && McMMOApi.getSkillLevel(player, "Woodcutting") > qtd) passhowmany++;
+        
+        Profile profile = new Profile(this, player);
+        for(EntityType type:EntityType.values()){
+            if(reqinfo.equalsIgnoreCase(type.name()) && profile.GetMOBKILLED(type.name()) > qtd) passhowmany++;
+        }
+        
+        return passhowmany;
     }
     
     public int GetSkillLevelOffline(String playerName, String skill) {
