@@ -85,12 +85,10 @@ public class MRUPlayerListener extends Util implements Listener {
         try {
             EntityType type = entity.getType();
             int newqtd = profile.GetMOBKILLED(type.name().toUpperCase()) + 1;
-            plugin.logger.warning(type.name());
-            plugin.logger.warning("->"+newqtd);
             profile.SetMOBKILLED(type.name().toUpperCase(), newqtd );
         } catch (Exception ex) {
             plugin.logger.warning(ex.getMessage());
-           ex.printStackTrace();
+            ex.printStackTrace();
         }
     }
 }
