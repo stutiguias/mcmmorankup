@@ -52,25 +52,25 @@ public class RankUp extends Util {
             if (profile.GetPurchasedRanks().size() > 0 && plugin.BuyRank.GetLastPurchasedSkill( profile.GetPurchasedRanks() ).equalsIgnoreCase(skill)) {
                 hasPurchased = true;	
                 String lastPurchasedRank = plugin.BuyRank.getLastPurchasedRank( profile.GetPurchasedRanks() );		
-                purchaseLevel = plugin.GetRankStartLevel(skill, gender, lastPurchasedRank);
+                purchaseLevel = plugin.GetRankLevel(skill, gender, lastPurchasedRank);
             }
             
             int playerSkillLevel = plugin.GetSkillLevel(player, skill);
-            int StartLevel = plugin.GetRankStartLevel(skill, gender, rankNow);
+            int playerLevelNow = plugin.GetRankLevel(skill, gender, rankNow);
             
             String updatedRank = rankNow;
             int updatedLevel = 0;
-            boolean willbreak = false;
+            boolean playerLevelUpdate = false;
 
             for (String entry : plugin.RankUpConfig.get(skill).get(gender)) {
                 String[] levelRank = entry.split(",");
 
                 level = Integer.parseInt(levelRank[0]);
                 rank = levelRank[1];
-                // TODO CHECK CUSTOM
+
                 if (playerSkillLevel >= level) {
 
-                    demote = level < StartLevel;
+                    demote = level < playerLevelNow;
 
                     if(demote && plugin.hasPermission(player, "mru.exemptdemotions") ) continue;
                     if(hasPurchased && level < purchaseLevel && !plugin.AllowBuyRankDemotions ) continue;
@@ -78,14 +78,15 @@ public class RankUp extends Util {
                     maxLvl = plugin.isRankMaxLevel(skill, gender, level);
                     
                     if(!demote) promote = true;
+                    
                     updatedRank = rank;
                     updatedLevel = level;
-                    willbreak = true;
+                    playerLevelUpdate = true;
                     
                 }else if(!maxLvl && level > updatedLevel && nextLevel == 0) {
                     nextGroup = rank;
                     nextLevel = level;
-                    if(willbreak) break;
+                    if(playerLevelUpdate) break;
                 }
             }
 

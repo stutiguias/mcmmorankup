@@ -49,7 +49,7 @@ public class BuyRanks extends Util {
     
     private void ShowRankPlayerCanBuy(boolean isXp,String rankNow,Map<String, String> rankCosts) {
         
-        int startLevelRankNow = plugin.GetRankStartLevel(_profile.GetHabilityForRank(),_profile.GetGender() , rankNow);
+        int startLevelRankNow = plugin.GetRankLevel(_profile.GetHabilityForRank(),_profile.GetGender() , rankNow);
 
         TreeMap<String, String> temp = new TreeMap(new ValueComparator(rankCosts));
         temp.putAll(rankCosts);
@@ -59,7 +59,7 @@ public class BuyRanks extends Util {
             String rank = rankCost.getValue().toUpperCase();
             String cost = rankCost.getKey();
             
-            int startLevel = plugin.GetRankStartLevel(_profile.GetHabilityForRank(),_profile.GetGender() , rank);
+            int startLevel = plugin.GetRankLevel(_profile.GetHabilityForRank(),_profile.GetGender() , rank);
             if(startLevelRankNow > startLevel) continue;
             
             boolean xpL = checkIfLExists(cost.toUpperCase());

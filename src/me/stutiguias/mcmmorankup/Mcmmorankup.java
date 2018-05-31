@@ -411,7 +411,7 @@ public class Mcmmorankup extends JavaPlugin {
         return exists;
     }
 
-    public int GetRankStartLevel(String skill, String gender, String rank) {
+    public int GetRankLevel(String skill, String gender, String rank) {
         int rankLevel = 0;
         for (String entry : RankUpConfig.get(skill).get(gender)) {
             String[] levelGroup = entry.split(",");
@@ -451,40 +451,49 @@ public class Mcmmorankup extends JavaPlugin {
     }
 
     public int GetCustomLevel(Player player){
-        int PlayerNewLevel = 0;
+        int PlayerLevel = 0;
         
         for(String level:CustomRequirements.keySet()){
-            Map<String,String> req = CustomRequirements.get(level);
-            int howmanyreq = req.size();
-            int passhowmany = 0;
-            for(String reqinfo:req.keySet()){
-                int qtd = Integer.parseInt(req.get(reqinfo));
-                passhowmany = CheckRequerimentLevel(reqinfo, player, qtd, passhowmany);
+            Map<String,String> requirements = CustomRequirements.get(level);
+            int howmanyreq = requirements.size();
+            int playerpasshowmany = 0;
+            for(String requirementName:requirements.keySet()){
+                int requirementAmount = Integer.parseInt(requirements.get(requirementName));
+                playerpasshowmany = CheckRequerimentLevel(requirementName, player, requirementAmount, playerpasshowmany);
             }
-            if(passhowmany >= howmanyreq) PlayerNewLevel = Integer.parseInt(level);
+            if(playerpasshowmany >= howmanyreq){
+                PlayerLevel = Integer.parseInt(level);
+            }else{
+                break;
+            }
         }
-        return PlayerNewLevel;
+        return PlayerLevel;
     }
 
-    private int CheckRequerimentLevel(String reqinfo, Player player, int qtd, int passhowmany) {
-        if(reqinfo.equalsIgnoreCase("Powerlevel") && McMMOApi.getPowerLevel(player) > qtd) passhowmany++;
-        if(reqinfo.equalsIgnoreCase("Fishing") && McMMOApi.getSkillLevel(player, "Fishing") > qtd) passhowmany++;
-        if(reqinfo.equalsIgnoreCase("Axes") && McMMOApi.getSkillLevel(player, "Axes") > qtd) passhowmany++;
-        if(reqinfo.equalsIgnoreCase("Acrobatics") && McMMOApi.getSkillLevel(player, "Acrobatics") > qtd) passhowmany++;
-        if(reqinfo.equalsIgnoreCase("Archery") && McMMOApi.getSkillLevel(player, "Archery") > qtd) passhowmany++;
-        if(reqinfo.equalsIgnoreCase("Excavation") && McMMOApi.getSkillLevel(player, "Excavation") > qtd) passhowmany++;
-        if(reqinfo.equalsIgnoreCase("Herbalism") && McMMOApi.getSkillLevel(player, "Herbalism") > qtd) passhowmany++;
-        if(reqinfo.equalsIgnoreCase("Mining") && McMMOApi.getSkillLevel(player, "Mining") > qtd) passhowmany++;
-        if(reqinfo.equalsIgnoreCase("Repair") && McMMOApi.getSkillLevel(player, "Repair") > qtd) passhowmany++;
-        if(reqinfo.equalsIgnoreCase("Smelting") && McMMOApi.getSkillLevel(player, "Smelting") > qtd) passhowmany++;
-        if(reqinfo.equalsIgnoreCase("Swords") && McMMOApi.getSkillLevel(player, "Swords") > qtd) passhowmany++;
-        if(reqinfo.equalsIgnoreCase("Taming") && McMMOApi.getSkillLevel(player, "Taming") > qtd) passhowmany++;
-        if(reqinfo.equalsIgnoreCase("Unarmed") && McMMOApi.getSkillLevel(player, "Unarmed") > qtd) passhowmany++;
-        if(reqinfo.equalsIgnoreCase("Woodcutting") && McMMOApi.getSkillLevel(player, "Woodcutting") > qtd) passhowmany++;
+    private int CheckRequerimentLevel(String requirementName, Player player, int requirementAmount, int passhowmany) {
+        if(requirementName.equalsIgnoreCase("Powerlevel") && McMMOApi.getPowerLevel(player) > requirementAmount) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Fishing") && McMMOApi.getSkillLevel(player, "Fishing") > requirementAmount) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Axes") && McMMOApi.getSkillLevel(player, "Axes") > requirementAmount) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Acrobatics") && McMMOApi.getSkillLevel(player, "Acrobatics") > requirementAmount) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Archery") && McMMOApi.getSkillLevel(player, "Archery") > requirementAmount) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Excavation") && McMMOApi.getSkillLevel(player, "Excavation") > requirementAmount) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Herbalism") && McMMOApi.getSkillLevel(player, "Herbalism") > requirementAmount) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Mining") && McMMOApi.getSkillLevel(player, "Mining") > requirementAmount) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Repair") && McMMOApi.getSkillLevel(player, "Repair") > requirementAmount) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Smelting") && McMMOApi.getSkillLevel(player, "Smelting") > requirementAmount) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Swords") && McMMOApi.getSkillLevel(player, "Swords") > requirementAmount) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Taming") && McMMOApi.getSkillLevel(player, "Taming") > requirementAmount) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Unarmed") && McMMOApi.getSkillLevel(player, "Unarmed") > requirementAmount) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Woodcutting") && McMMOApi.getSkillLevel(player, "Woodcutting") > requirementAmount) passhowmany++;
+        
+        if(requirementName.equalsIgnoreCase("Money")) {
+           double balance = economy.getBalance(player);
+           if(balance >= requirementAmount) passhowmany++;
+        }
         
         Profile profile = new Profile(this, player);
         for(EntityType type:EntityType.values()){
-            if(reqinfo.equalsIgnoreCase(type.name()) && profile.GetMOBKILLED(type.name()) > qtd) passhowmany++;
+            if(requirementName.equalsIgnoreCase(type.name()) && profile.GetMOBKILLED(type.name()) > requirementAmount) passhowmany++;
         }
         
         return passhowmany;
