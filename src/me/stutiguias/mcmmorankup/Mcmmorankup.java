@@ -209,7 +209,8 @@ public class Mcmmorankup extends JavaPlugin {
     public void onLoadConfig() {
 
         try {
-
+            CustomAvaibleRanks = new ArrayList<>();
+            
             config = new ConfigAccessor(this, "config.yml");
             config.setupConfig();
             FileConfiguration fc = config.getConfig();
@@ -266,7 +267,8 @@ public class Mcmmorankup extends JavaPlugin {
         }
 
         OnSetupSkills();
-
+        
+        
         RankUp = new RankUp(this);
         BuyRank = new BuyRanks(this);
         ReportWriter = new UtilityReportWriter(this);
