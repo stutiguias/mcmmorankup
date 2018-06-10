@@ -21,6 +21,26 @@ RankUp:
     5: Artisian
     6: Soldier
     7: Vassel
+    # First add the rank on ExtraBaseRank section then add details here
+    # like this sample
+  Good:
+    0: Stranger
+    1: Noob
+    2: Peasant
+    3: Serf
+    4: Citizen
+    5: Artisian
+    6: Soldier
+    7: Vassel
+  Evil:
+    0: Stranger
+    1: Noob
+    2: Peasant
+    3: Serf
+    4: Citizen
+    5: Artisian
+    6: Soldier
+    7: Vassel
 Requirements:
    1: 
     Powerlevel: 42
@@ -53,3 +73,7 @@ Health:
     Artisian: 9
     Soldier: 10
     Vassel: 11    
+# Add here extra base rank beyond the male/female rank
+ExtraBaseRank:
+    1: Good
+    2: Evil

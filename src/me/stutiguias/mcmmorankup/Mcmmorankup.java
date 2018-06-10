@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,6 +21,8 @@ import me.stutiguias.mcmmorankup.rank.BuyRanks;
 import me.stutiguias.mcmmorankup.task.UpdateTask;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
 
@@ -30,7 +33,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class Mcmmorankup extends JavaPlugin {
 
-    public static final String logPrefix = "[mcmmoRankUp] ";
+    public static final String logPrefix = "[" + ChatColor.GREEN + "mcmmoRankUp"+ ChatColor.WHITE+"]";
     public static final String PluginDir = "plugins" + File.separator + "Mcmmorankup";
     public static String PluginPlayerDir = PluginDir + File.separator + "userdata";
     public static String PluginSkillsDir = PluginDir + File.separator + "skills";
@@ -88,6 +91,7 @@ public class Mcmmorankup extends JavaPlugin {
     public boolean AllowRankRewards;
     public String BuyRankCurrencyName;
     public String[] GroupToIgnore;
+    public List<String> CustomAvaibleRanks;
     public boolean PerWorldPermission;
     public boolean GenderFirst;
     public String GenderOnlyGroup;
@@ -182,6 +186,10 @@ public class Mcmmorankup extends JavaPlugin {
         getServer().getPluginManager().enablePlugin(this);
     }
 
+    private void sendMessage(String msg) {
+        Bukkit.getConsoleSender().sendMessage(msg);
+    }
+    
     private boolean setupPermissions() {
         RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(Permission.class);
         if (permissionProvider != null) {
@@ -314,6 +322,21 @@ public class Mcmmorankup extends JavaPlugin {
             }
             Ranks.put("Female", Rank);
         }
+        
+        if(!ca.fileName.toLowerCase().contains("custom")) return Ranks;
+        
+        Rank = new ArrayList<>();
+        CustomAvaibleRanks = new ArrayList<>();
+        for (String key : ca.getConfig().getConfigurationSection("ExtraBaseRank.").getKeys(false)){
+            String customRank = ca.getConfig().getString("ExtraBaseRank." + key);
+            for (String customKey : ca.getConfig().getConfigurationSection("RankUp."+ customRank + ".").getKeys(false)) {
+                Rank.add(customKey + "," + ca.getConfig().getString("RankUp."+ customRank + "." + customKey));
+            }
+            sendMessage(String.format("%s Adding custom rank %s",new Object[]{logPrefix, customRank}));
+            Ranks.put(customRank,Rank);
+            CustomAvaibleRanks.add(customRank);
+        }
+        
         return Ranks;
     }
 
@@ -413,6 +436,7 @@ public class Mcmmorankup extends JavaPlugin {
 
     public int GetRankLevel(String skill, String gender, String rank) {
         int rankLevel = 0;
+
         for (String entry : RankUpConfig.get(skill).get(gender)) {
             String[] levelGroup = entry.split(",");
             if (levelGroup[1].equalsIgnoreCase(rank)) {

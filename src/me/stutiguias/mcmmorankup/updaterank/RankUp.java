@@ -33,6 +33,11 @@ public class RankUp extends Util {
 
             profile = new Profile(plugin, player);
             
+            if(!skill.equals("CUSTOM") && ( !gender.toLowerCase().equals("male") && !gender.toLowerCase().equals("female") )) {
+                gender = "Male";
+                profile.SetGender(gender);
+            }
+            
             boolean broadCast = false;
 
             String rank;		

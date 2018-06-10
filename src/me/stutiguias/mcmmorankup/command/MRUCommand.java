@@ -41,6 +41,10 @@ public class MRUCommand extends Util implements CommandExecutor {
         avaibleCommands.put("ver", new Ver(plugin));
         avaibleCommands.put("view", new View(plugin));
         
+        for (String key : plugin.CustomAvaibleRanks) {
+            avaibleCommands.put(key.toLowerCase(), new CustomRankSelect(plugin,key));
+        }
+        
         consoleCommands.put("reload", reload);
         consoleCommands.put("set", set);
         consoleCommands.put("report", report);

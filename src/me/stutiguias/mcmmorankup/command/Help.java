@@ -44,6 +44,10 @@ public class Help extends CommandHandler {
             SendMessage("&6/mru <male|female> &7" + Message.HelpMaleFemale);
         }
         
+        for (String key : plugin.CustomAvaibleRanks) {
+            SendMessage("&6/mru "+ key +" &7 - set custom rank line");
+        }
+        
         if (plugin.hasPermission(player, "mru.playerfeeds") && plugin.playerBroadcastFeed) {
             SendMessage("&6/mru feeds &7" + Message.HelpFeeds);
         }

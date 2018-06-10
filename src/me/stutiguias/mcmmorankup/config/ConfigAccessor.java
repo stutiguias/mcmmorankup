@@ -9,7 +9,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class ConfigAccessor {
 
-    private final String fileName;
+    public final String fileName;
     private final JavaPlugin plugin;
     
     private File configFile;
