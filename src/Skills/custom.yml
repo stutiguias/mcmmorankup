@@ -25,6 +25,7 @@ Requirements:
    1: 
     Powerlevel: 42
     Money : 10
+    PlayerKilled : 1
    2:
     Powerlevel: 82
     Fishing: 25

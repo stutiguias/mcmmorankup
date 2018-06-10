@@ -496,6 +496,10 @@ public class Mcmmorankup extends JavaPlugin {
             if(requirementName.equalsIgnoreCase(type.name()) && profile.GetMOBKILLED(type.name()) > requirementAmount) passhowmany++;
         }
         
+        if(requirementName.equalsIgnoreCase("PlayerKilled")){
+            if(profile.GetPlayerKILLED() >= requirementAmount) passhowmany++;
+        }
+        
         return passhowmany;
     }
     

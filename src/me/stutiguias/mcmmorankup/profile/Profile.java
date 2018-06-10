@@ -150,7 +150,13 @@ public class Profile extends Util {
         SaveYML();
         return true;
     }
-
+    
+    public boolean SetPlayerKILLED(int qtd) {
+        PlayerYML.set("PlayerKilled", qtd);
+        SaveYML();
+        return true;
+    }
+    
     public boolean SetPlayerGlobalFeed(boolean globalFeed) {
         PlayerYML.set("PlayerFeeds.Global", globalFeed);
         SaveYML();
@@ -170,7 +176,11 @@ public class Profile extends Util {
     public int GetMOBKILLED(String mob) {
         return PlayerYML.getInt("MOBKILLED." + mob);
     }
-    
+        
+    public int GetPlayerKILLED() {
+        return PlayerYML.getInt("PlayerKilled");
+    }
+        
     public List<String> GetPurchasedRanks() {
         return PlayerYML.getStringList("PurchasedRanks");
     }
@@ -263,6 +273,7 @@ public class Profile extends Util {
             }
         }
         
+        if (!PlayerYML.isSet("PlayerKilled"))             PlayerYML.set("PlayerKilled", 0);
         if (!PlayerYML.isSet("Last Stats.LastQuitSkill")) PlayerYML.set("Last Stats.LastQuitSkill", "N/A");
         if (!PlayerYML.isSet("Last Stats.LastQuitLevel")) PlayerYML.set("Last Stats.LastQuitLevel", 0);
         if (!PlayerYML.isSet("Last Stats.LastRank"))      PlayerYML.set("Last Stats.LastRank", "N/A");

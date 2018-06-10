@@ -20,6 +20,7 @@ import me.stutiguias.mcmmorankup.task.OnJoinTask;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 
 public class MRUPlayerListener extends Util implements Listener {
 
@@ -91,5 +92,15 @@ public class MRUPlayerListener extends Util implements Listener {
             plugin.logger.warning(ex.getMessage());
             ex.printStackTrace();
         }
+    }
+    
+    @EventHandler
+    public void onKill(PlayerDeathEvent e)
+    {
+        String killed = e.getEntity().getName();
+        String killer = e.getEntity().getKiller().getName();
+        Profile killerProfile = new Profile(this.plugin,killer);
+        int newqtd = killerProfile.GetPlayerKILLED() + 1;
+        killerProfile.SetPlayerKILLED(newqtd);
     }
 }
