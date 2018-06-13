@@ -479,16 +479,18 @@ public class Mcmmorankup extends JavaPlugin {
     public int GetCustomLevel(Player player){
         int PlayerLevel = 0;
         
-        for(String level:CustomRequirements.keySet()){
-            Map<String,String> requirements = CustomRequirements.get(level);
+        for(int level=0;level<=CustomRequirements.size();level++){
+            logger.log(Level.INFO, "{0} ", new Object[]{level});
+            Map<String,String> requirements = CustomRequirements.get(String.valueOf(level));
             int howmanyreq = requirements.size();
             int playerpasshowmany = 0;
             for(String requirementName:requirements.keySet()){
                 int requirementAmount = Integer.parseInt(requirements.get(requirementName));
+                logger.log(Level.INFO, "{0} > {1} > {2}", new Object[]{level, requirementName, requirementAmount});
                 playerpasshowmany = CheckRequerimentLevel(requirementName, player, requirementAmount, playerpasshowmany);
             }
             if(playerpasshowmany >= howmanyreq){
-                PlayerLevel = Integer.parseInt(level);
+                PlayerLevel = level;
             }else{
                 break;
             }
