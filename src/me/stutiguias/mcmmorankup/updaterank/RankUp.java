@@ -241,7 +241,9 @@ public class RankUp extends Util {
 
         String groupnow = plugin.permission.getPrimaryGroup(profile.player);
         boolean state;
-
+        
+        profile.SetTag(newgroup);
+        
         if (plugin.RemoveOnlyPluginGroup) {
             RemoveGroup(groupnow, profile.player);
         } else {

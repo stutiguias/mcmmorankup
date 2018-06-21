@@ -92,17 +92,23 @@ public class Profile extends Util {
     }
 
     public void SetHealth() {
-        
         AttributeInstance healthAttributeInstance = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
         String skill = GetHabilityForRank().toUpperCase();
         String rank = GetTag().toUpperCase();
-        double health;
-        if(rank.equals("VISITOR")) 
-            health = 2;
-        else
-            health = plugin.Health.get(skill).get(rank);
-        if(!plugin.UseHealthSystem) health = 20;
-        healthAttributeInstance.setBaseValue(health);
+        try{
+            double health;
+            if(rank.equals("VISITOR")) 
+                health = 2;
+            else
+                health = plugin.Health.get(skill).get(rank);
+            if(!plugin.UseHealthSystem) health = 20;
+            healthAttributeInstance.setBaseValue(health);
+        }catch(Exception ex){
+            Mcmmorankup.logger.log(Level.INFO, "--=== Send this erro to dev ===---", rank);
+            Mcmmorankup.logger.log(Level.INFO, "Erro Rank : {0}", rank);
+            Mcmmorankup.logger.log(Level.INFO, "Erro skill : {0}", skill);
+            ex.printStackTrace();
+        }
     }
     
     public Boolean SetTag(String Tag) {
