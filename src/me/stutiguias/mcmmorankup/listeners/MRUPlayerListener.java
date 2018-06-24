@@ -97,6 +97,7 @@ public class MRUPlayerListener extends Util implements Listener {
     @EventHandler
     public void onKill(PlayerDeathEvent e)
     {
+        if(e.getEntity().getKiller().getName() == null) return;
         String killed = e.getEntity().getName();
         String killer = e.getEntity().getKiller().getName();
         Profile killerProfile = new Profile(this.plugin,killer);
