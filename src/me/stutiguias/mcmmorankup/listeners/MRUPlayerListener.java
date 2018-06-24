@@ -85,7 +85,11 @@ public class MRUPlayerListener extends Util implements Listener {
         Entity entity = event.getEntity();
         try {
             EntityType type = entity.getType();
-            if(profile == null) return;
+            if(profile == null && event.getEntity().getKiller() != null){
+                    profile = new Profile(plugin, event.getEntity().getKiller());
+            }else{
+                return;
+            }
             int newqtd = profile.GetMOBKILLED(type.name().toUpperCase()) + 1;
             profile.SetMOBKILLED(type.name().toUpperCase(), newqtd );
         } catch (Exception ex) {
