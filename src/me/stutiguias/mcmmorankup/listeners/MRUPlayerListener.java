@@ -16,9 +16,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
-import java.util.logging.Level;
 import me.stutiguias.mcmmorankup.task.OnJoinTask;
-import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -89,9 +87,9 @@ public class MRUPlayerListener extends Util implements Listener {
             EntityType type = entity.getType();
             
             try{
-                boolean isCitizensNPC = CitizensAPI.getNPCRegistry().isNPC(entity);
+                boolean isCitizensNPC = net.citizensnpcs.api.CitizensAPI.getNPCRegistry().isNPC(entity);
                 if(isCitizensNPC) return;
-            }catch(Exception ex){
+            }catch(NoClassDefFoundError ex){
                 
             }
             
