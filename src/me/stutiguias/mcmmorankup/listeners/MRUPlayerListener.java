@@ -16,6 +16,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
+import java.util.logging.Level;
 import me.stutiguias.mcmmorankup.task.OnJoinTask;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -80,7 +81,7 @@ public class MRUPlayerListener extends Util implements Listener {
         }
     }
     
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.HIGH)
     public void MobDeath(EntityDeathEvent event) {
         Entity entity = event.getEntity();
         try {
@@ -88,6 +89,7 @@ public class MRUPlayerListener extends Util implements Listener {
             if(profile == null && event.getEntity().getKiller() != null){
                     profile = new Profile(plugin, event.getEntity().getKiller());
             }else{
+                plugin.logger.log(Level.WARNING, "Mob event not reg.:{0} {1}", new Object[]{entity.getType(), event.getEntity().getKiller()});
                 return;
             }
             int newqtd = profile.GetMOBKILLED(type.name().toUpperCase()) + 1;
