@@ -18,6 +18,7 @@ import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
 import java.util.logging.Level;
 import me.stutiguias.mcmmorankup.task.OnJoinTask;
+import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -86,12 +87,20 @@ public class MRUPlayerListener extends Util implements Listener {
         Entity entity = event.getEntity();
         try {
             EntityType type = entity.getType();
-            if(profile == null && event.getEntity().getKiller() != null){
-                    profile = new Profile(plugin, event.getEntity().getKiller());
-            }else{
-                plugin.logger.log(Level.WARNING, "Mob event not reg.:{0} {1}", new Object[]{entity.getType(), event.getEntity().getKiller()});
-                return;
+            
+            try{
+                boolean isCitizensNPC = CitizensAPI.getNPCRegistry().isNPC(entity);
+                if(isCitizensNPC) return;
+            }catch(Exception ex){
+                
             }
+            
+            if(profile == null && event.getEntity().getKiller() != null){
+                Player name = event.getEntity().getKiller();
+                if(plugin.getServer().getPlayer(name.getUniqueId()) == null) return;
+                profile = new Profile(plugin, event.getEntity().getKiller());
+            }
+            
             int newqtd = profile.GetMOBKILLED(type.name().toUpperCase()) + 1;
             profile.SetMOBKILLED(type.name().toUpperCase(), newqtd );
         } catch (Exception ex) {

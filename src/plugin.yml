@@ -2,6 +2,7 @@ name: Mcmmorankup
 main: me.stutiguias.mcmmorankup.Mcmmorankup
 version: ${project.version}
 author: Stutiguias, zrocweb
+softdepend: [Citizens]
 depend: [Vault,mcMMO]
 commands:
   mru:
