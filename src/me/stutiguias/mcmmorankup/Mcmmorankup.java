@@ -484,8 +484,14 @@ public class Mcmmorankup extends JavaPlugin {
             int howmanyreq = requirements.size();
             int playerpasshowmany = 0;
             for(String requirementName:requirements.keySet()){
-                int requirementAmount = Integer.parseInt(requirements.get(requirementName));
-                playerpasshowmany = CheckRequerimentLevel(requirementName, player, requirementAmount, playerpasshowmany);
+                int requirementAmountint = 0;
+                String requimentAmountstring = "";
+                if(requirementName.equalsIgnoreCase("world")){
+                    requimentAmountstring = requirements.get(requirementName);
+                }else{
+                    requirementAmountint = Integer.parseInt(requirements.get(requirementName));
+                }
+                playerpasshowmany = CheckRequerimentLevel(requirementName, player, requirementAmountint, requimentAmountstring, playerpasshowmany);
             }
             if(playerpasshowmany >= howmanyreq){
                 PlayerLevel = level;
@@ -496,34 +502,38 @@ public class Mcmmorankup extends JavaPlugin {
         return PlayerLevel;
     }
 
-    private int CheckRequerimentLevel(String requirementName, Player player, int requirementAmount, int passhowmany) {
-        if(requirementName.equalsIgnoreCase("Powerlevel") && McMMOApi.getPowerLevel(player) > requirementAmount) passhowmany++;
-        if(requirementName.equalsIgnoreCase("Fishing") && McMMOApi.getSkillLevel(player, "Fishing") > requirementAmount) passhowmany++;
-        if(requirementName.equalsIgnoreCase("Axes") && McMMOApi.getSkillLevel(player, "Axes") > requirementAmount) passhowmany++;
-        if(requirementName.equalsIgnoreCase("Acrobatics") && McMMOApi.getSkillLevel(player, "Acrobatics") > requirementAmount) passhowmany++;
-        if(requirementName.equalsIgnoreCase("Archery") && McMMOApi.getSkillLevel(player, "Archery") > requirementAmount) passhowmany++;
-        if(requirementName.equalsIgnoreCase("Excavation") && McMMOApi.getSkillLevel(player, "Excavation") > requirementAmount) passhowmany++;
-        if(requirementName.equalsIgnoreCase("Herbalism") && McMMOApi.getSkillLevel(player, "Herbalism") > requirementAmount) passhowmany++;
-        if(requirementName.equalsIgnoreCase("Mining") && McMMOApi.getSkillLevel(player, "Mining") > requirementAmount) passhowmany++;
-        if(requirementName.equalsIgnoreCase("Repair") && McMMOApi.getSkillLevel(player, "Repair") > requirementAmount) passhowmany++;
-        if(requirementName.equalsIgnoreCase("Smelting") && McMMOApi.getSkillLevel(player, "Smelting") > requirementAmount) passhowmany++;
-        if(requirementName.equalsIgnoreCase("Swords") && McMMOApi.getSkillLevel(player, "Swords") > requirementAmount) passhowmany++;
-        if(requirementName.equalsIgnoreCase("Taming") && McMMOApi.getSkillLevel(player, "Taming") > requirementAmount) passhowmany++;
-        if(requirementName.equalsIgnoreCase("Unarmed") && McMMOApi.getSkillLevel(player, "Unarmed") > requirementAmount) passhowmany++;
-        if(requirementName.equalsIgnoreCase("Woodcutting") && McMMOApi.getSkillLevel(player, "Woodcutting") > requirementAmount) passhowmany++;
+    private int CheckRequerimentLevel(String requirementName, Player player, int requirementAmountint,String requimentAmountString, int passhowmany) {
+        if(requirementName.equalsIgnoreCase("Powerlevel") && McMMOApi.getPowerLevel(player) > requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Fishing") && McMMOApi.getSkillLevel(player, "Fishing") > requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Axes") && McMMOApi.getSkillLevel(player, "Axes") > requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Acrobatics") && McMMOApi.getSkillLevel(player, "Acrobatics") > requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Archery") && McMMOApi.getSkillLevel(player, "Archery") > requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Excavation") && McMMOApi.getSkillLevel(player, "Excavation") > requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Herbalism") && McMMOApi.getSkillLevel(player, "Herbalism") > requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Mining") && McMMOApi.getSkillLevel(player, "Mining") > requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Repair") && McMMOApi.getSkillLevel(player, "Repair") > requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Smelting") && McMMOApi.getSkillLevel(player, "Smelting") > requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Swords") && McMMOApi.getSkillLevel(player, "Swords") > requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Taming") && McMMOApi.getSkillLevel(player, "Taming") > requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Unarmed") && McMMOApi.getSkillLevel(player, "Unarmed") > requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Woodcutting") && McMMOApi.getSkillLevel(player, "Woodcutting") > requirementAmountint) passhowmany++;
         
         if(requirementName.equalsIgnoreCase("Money")) {
            double balance = economy.getBalance(player);
-           if(balance >= requirementAmount) passhowmany++;
+           if(balance >= requirementAmountint) passhowmany++;
         }
         
         Profile profile = new Profile(this, player);
         for(EntityType type:EntityType.values()){
-            if(requirementName.equalsIgnoreCase(type.name()) && profile.GetMOBKILLED(type.name()) > requirementAmount) passhowmany++;
+            if(requirementName.equalsIgnoreCase(type.name()) && profile.GetMOBKILLED(type.name()) > requirementAmountint) passhowmany++;
         }
         
         if(requirementName.equalsIgnoreCase("PLAYERKILLED")){
-            if(profile.GetPlayerKILLED() >= requirementAmount) passhowmany++;
+            if(profile.GetPlayerKILLED() >= requirementAmountint) passhowmany++;
+        }
+        
+        if(requirementName.equalsIgnoreCase("WORLD")) {
+            if(player.getWorld().getName().equalsIgnoreCase(requimentAmountString)) passhowmany++;
         }
         
         return passhowmany;

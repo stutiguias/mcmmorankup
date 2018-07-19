@@ -16,6 +16,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
+import java.util.logging.Level;
 import me.stutiguias.mcmmorankup.task.OnJoinTask;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -99,8 +100,12 @@ public class MRUPlayerListener extends Util implements Listener {
                 profile = new Profile(plugin, event.getEntity().getKiller());
             }
             
-            int newqtd = profile.GetMOBKILLED(type.name().toUpperCase()) + 1;
-            profile.SetMOBKILLED(type.name().toUpperCase(), newqtd );
+            try{
+                int newqtd = profile.GetMOBKILLED(type.name().toUpperCase()) + 1;
+                profile.SetMOBKILLED(type.name().toUpperCase(), newqtd );
+            }catch(Exception ex) {
+                Mcmmorankup.logger.log(Level.WARNING, "MOB TYPE NOT FOUND :{0}", type.name().toUpperCase());
+            }
         } catch (Exception ex) {
             plugin.logger.warning(ex.getMessage());
             ex.printStackTrace();

@@ -3,11 +3,13 @@ package me.stutiguias.mcmmorankup.updaterank;
 import me.stutiguias.mcmmorankup.Mcmmorankup;
 import me.stutiguias.mcmmorankup.Util;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import static me.stutiguias.mcmmorankup.Mcmmorankup.Message;
 import me.stutiguias.mcmmorankup.apimcmmo.McMMOApi;
 
 import me.stutiguias.mcmmorankup.profile.Profile;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 public class RankUp extends Util {
@@ -173,27 +175,42 @@ public class RankUp extends Util {
         int SkillLevel = Integer.valueOf(infoSettings.get("skilllevel"));
 
         try {
-            
+            int lni = 1;
             line = Message.RankInfoLine1.replaceAll("%ability%", skill);
-            rankInfo.put(1, line);
+            rankInfo.put(lni, line);
+            lni++;
             
             line = Message.RankInfoLine2.replaceAll("%skilllevel%", String.valueOf(SkillLevel)).replaceAll("%rankline%", playerGroup);
-            rankInfo.put(2, line);
-
+            rankInfo.put(lni, line);
+            lni++;
+            
             if(skill.equalsIgnoreCase("CUSTOM")) nLevel = nLevel - 1;
             line = Message.RankInfoLine3.replaceAll("%nLevel%", String.valueOf(nLevel + 1)).replaceAll("%nRank%", nGroup);
-            rankInfo.put(3, line);
-
+            rankInfo.put(lni, line);
+            lni++;
+            
             maxAchieved = Message.RankInfoMax;
             maxAchieved = maxAchieved.replaceAll("%ability%", skill);
 
             promoteDemote = Message.RankPromoteDemote;
             promoteDemote = promoteDemote.replaceAll("%promotedemote%", promote ? Message.Promote : Message.Demote).replaceAll("%pRank%", playerGroup);
             
+            if(skill.equalsIgnoreCase("CUSTOM")){
+                Map<String,String> returnInfo = ShowRequirementInfo(player);
+                lni++;
+                rankInfo.put(lni,"REQUIREMENT ( NAME - NOW / NEED IT )");
+                lni++;
+                for(String returnInfoName:returnInfo.keySet()){
+                    String requimentAmount = returnInfo.get(returnInfoName);
+                    rankInfo.put(lni, returnInfoName + " - " + requimentAmount);
+                    lni++;
+                }
+            }
+            
             SendFormatMessage(Message.MessageSeparator);
             SendFormatMessage(title);
 
-            for (int ln = 1; ln <= 5; ln++) {
+            for (int ln = 1; ln < lni; ln++) {
                 
                 String info = "";
                 
@@ -211,6 +228,9 @@ public class RankUp extends Util {
                     case 4:
                         if( promote )
                             info = promoteDemote;
+                        break;
+                    default:
+                        info = rankInfo.get(ln);
                         break;
                 }
                 
@@ -292,5 +312,105 @@ public class RankUp extends Util {
         } else {
             return Message.Promotion.replace("%player%", profile.player.getName()).replace("%promotedemote%", demote ? Message.Demote : Message.Promote).replace("%group%", group);
         }
+    }
+    
+    public Map<String,String> ShowRequirementInfo(Player player){
+        Map<String,String> returnInfo = new HashMap<>();
+        for(int level=0;level<=plugin.CustomRequirements.size();level++){
+            Map<String,String> requirements = plugin.CustomRequirements.get(String.valueOf(level));
+            int amountreq = requirements.size();
+            int playerpass = 0;
+            returnInfo = new HashMap<>();
+            for(String requirementName:requirements.keySet()){
+                int requirementAmountint = 0;
+                String requimentAmountstring = "";
+                if(requirementName.equalsIgnoreCase("world")){
+                    requimentAmountstring = requirements.get(requirementName);
+                }else{
+                    requirementAmountint = Integer.parseInt(requirements.get(requirementName));
+                }
+                playerpass = CheckRequerimentLevel(requirementName, player, requirementAmountint, requimentAmountstring, playerpass);
+                if(requirementAmountint != 0){
+                    returnInfo.put(requirementName.toUpperCase(), "&c" + GetRequimentNowPlayer(requirementName,player) +" &e/&c "+ String.valueOf(requirementAmountint));
+                }else{
+                    returnInfo.put(requirementName.toUpperCase(), "&c" + GetRequimentNowPlayer(requirementName,player) +" &e/&c  "+ requimentAmountstring);
+                }
+                
+            }
+            if(playerpass < amountreq){
+                break;
+            }
+        }
+        return returnInfo;
+    }
+    
+    private int CheckRequerimentLevel(String requirementName, Player player, int requirementAmountint,String requimentAmountString, int passhowmany) {
+        if(requirementName.equalsIgnoreCase("Powerlevel") && McMMOApi.getPowerLevel(player) > requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Fishing") && McMMOApi.getSkillLevel(player, "Fishing") > requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Axes") && McMMOApi.getSkillLevel(player, "Axes") > requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Acrobatics") && McMMOApi.getSkillLevel(player, "Acrobatics") > requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Archery") && McMMOApi.getSkillLevel(player, "Archery") > requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Excavation") && McMMOApi.getSkillLevel(player, "Excavation") > requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Herbalism") && McMMOApi.getSkillLevel(player, "Herbalism") > requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Mining") && McMMOApi.getSkillLevel(player, "Mining") > requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Repair") && McMMOApi.getSkillLevel(player, "Repair") > requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Smelting") && McMMOApi.getSkillLevel(player, "Smelting") > requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Swords") && McMMOApi.getSkillLevel(player, "Swords") > requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Taming") && McMMOApi.getSkillLevel(player, "Taming") > requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Unarmed") && McMMOApi.getSkillLevel(player, "Unarmed") > requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Woodcutting") && McMMOApi.getSkillLevel(player, "Woodcutting") > requirementAmountint) passhowmany++;
+        
+        if(requirementName.equalsIgnoreCase("Money")) {
+           double balance = plugin.economy.getBalance(player);
+           if(balance >= requirementAmountint) passhowmany++;
+        }
+        
+        Profile profile = new Profile(plugin, player);
+        for(EntityType type:EntityType.values()){
+            if(requirementName.equalsIgnoreCase(type.name()) && profile.GetMOBKILLED(type.name()) > requirementAmountint) passhowmany++;
+        }
+        
+        if(requirementName.equalsIgnoreCase("PLAYERKILLED")){
+            if(profile.GetPlayerKILLED() >= requirementAmountint) passhowmany++;
+        }
+        
+        if(requirementName.equalsIgnoreCase("WORLD")) {
+            if(player.getWorld().getName().equalsIgnoreCase(requimentAmountString)) passhowmany++;
+        }
+        
+        return passhowmany;
+    }
+    
+    private String GetRequimentNowPlayer(String requirementName, Player player) {
+        if(requirementName.equalsIgnoreCase("Powerlevel")) return String.valueOf(McMMOApi.getPowerLevel(player));
+        if(requirementName.equalsIgnoreCase("Fishing")) return String.valueOf(McMMOApi.getSkillLevel(player, "Fishing"));
+        if(requirementName.equalsIgnoreCase("Axes")) return String.valueOf(McMMOApi.getSkillLevel(player, "Axes"));
+        if(requirementName.equalsIgnoreCase("Acrobatics")) return String.valueOf(McMMOApi.getSkillLevel(player, "Acrobatics"));
+        if(requirementName.equalsIgnoreCase("Archery")) return String.valueOf(McMMOApi.getSkillLevel(player, "Archery"));
+        if(requirementName.equalsIgnoreCase("Excavation")) return String.valueOf(McMMOApi.getSkillLevel(player, "Excavation"));
+        if(requirementName.equalsIgnoreCase("Herbalism")) return String.valueOf(McMMOApi.getSkillLevel(player, "Herbalism"));
+        if(requirementName.equalsIgnoreCase("Mining")) return String.valueOf(McMMOApi.getSkillLevel(player, "Mining"));
+        if(requirementName.equalsIgnoreCase("Repair")) return String.valueOf(McMMOApi.getSkillLevel(player, "Repair"));
+        if(requirementName.equalsIgnoreCase("Smelting")) return String.valueOf(McMMOApi.getSkillLevel(player, "Smelting"));
+        if(requirementName.equalsIgnoreCase("Swords")) return String.valueOf(McMMOApi.getSkillLevel(player, "Swords"));
+        if(requirementName.equalsIgnoreCase("Taming")) return String.valueOf(McMMOApi.getSkillLevel(player, "Taming"));
+        if(requirementName.equalsIgnoreCase("Unarmed")) return String.valueOf(McMMOApi.getSkillLevel(player, "Unarmed"));
+        if(requirementName.equalsIgnoreCase("Woodcutting")) return String.valueOf(McMMOApi.getSkillLevel(player, "Woodcutting"));
+        if(requirementName.equalsIgnoreCase("Money")) return String.valueOf(plugin.economy.getBalance(player));
+        
+        Profile profile = new Profile(plugin, player);
+        for(EntityType type:EntityType.values()){
+            if(requirementName.equalsIgnoreCase(type.name())) return String.valueOf(profile.GetMOBKILLED(type.name()));
+        }
+        
+        if(requirementName.equalsIgnoreCase("PLAYERKILLED")){
+            return String.valueOf(profile.GetPlayerKILLED());
+        }
+        
+        if(requirementName.equalsIgnoreCase("WORLD")) {
+            return player.getWorld().getName();
+        }
+        
+        return "";
     }
 }
