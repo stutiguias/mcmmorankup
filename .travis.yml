@@ -10,7 +10,3 @@ deploy:
   api_key:
     secure: '$api_key'
   file: "target/Mcmmorankup-*.jar"
-  skip_cleanup: true
-  on:
-    all_branches: true
-    tags: true
