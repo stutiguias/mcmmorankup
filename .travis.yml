@@ -4,7 +4,7 @@ jdk:
 
 before_deploy:
   - "mvn clean package -B -Dmaven.test.skip=true"
-  - git tag "$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
+  - git tag "v0.8.0"
 
 deploy:
   provider: releases
