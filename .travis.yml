@@ -1,0 +1,13 @@
+language: java
+jdk:
+- openjdk7
+
+before_deploy:
+  - "mvn -DskipTests package"
+  - export FOO=$(ls target/Mcmmorankup-*.jar)
+  
+deploy:
+  provider: releases
+  api_key:
+    secure: 5F4TAjX3V1m51EHtzPxorQ
+  file: "${FOO}"
