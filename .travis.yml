@@ -10,4 +10,4 @@ deploy:
   provider: releases
   api_key:
     secure: '$api_key'
-  file: $(ls target/Mcmmorankup-*.jar)
+  file: 'target/Mcmmorankup-*.jar'
