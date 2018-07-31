@@ -4,10 +4,16 @@ jdk:
 
 before_deploy:
   - "mvn clean package -B -Dmaven.test.skip=true"
-  - export FOO=$(ls target/Mcmmorankup-*.jar)
+  - chmod +x gradlew
+
+script:
+  - ./gradlew clean build -i --continue
 
 deploy:
   provider: releases
   api_key:
     secure: '$api_key'
-  file: "${FOO}"
+  file: $(ls target/Mcmmorankup-*.jar)
+  on:
+    all_branches: true
+    tags: true
