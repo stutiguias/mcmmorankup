@@ -5,9 +5,9 @@ jdk:
 before_deploy:
   - "mvn clean package -B -Dmaven.test.skip=true"
   - export FOO=$(ls target/Mcmmorankup-*.jar)
-  
+
 deploy:
   provider: releases
   api_key:
-    secure: 5F4TAjX3V1m51EHtzPxorQ
+    secure: 1528c4119f307d2e18b5a3a0f3ba288b8aff4bcb
   file: "${FOO}"
