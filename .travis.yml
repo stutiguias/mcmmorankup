@@ -3,7 +3,7 @@ jdk:
 - openjdk7
 
 before_deploy:
-  - "mvn -DskipTests package"
+  - "mvn clean package -B -Dmaven.test.skip=true"
   - export FOO=$(ls target/Mcmmorankup-*.jar)
   
 deploy:
