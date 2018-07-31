@@ -2,20 +2,13 @@ language: java
 jdk:
 - oraclejdk8
 
-sudo: required
-
 before_deploy:
   - "mvn clean package -B -Dmaven.test.skip=true"
-  
-before_install:
- - chmod +x gradlew
-
-script:
-  - ./gradlew clean build -i --continue
 
 deploy:
   provider: releases
-  api_key: ${api_key}
+  api_key:
+    secure: '$api_key'
   file: "target/Mcmmorankup-*.jar"
   skip_cleanup: true
   on:
