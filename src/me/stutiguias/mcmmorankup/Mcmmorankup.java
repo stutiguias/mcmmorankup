@@ -1,5 +1,6 @@
 package me.stutiguias.mcmmorankup;
 
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import me.stutiguias.mcmmorankup.config.ConfigAccessor;
 import me.stutiguias.mcmmorankup.config.MessageConfig;
 import java.io.File;
@@ -23,10 +24,12 @@ import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
 
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -486,7 +489,7 @@ public class Mcmmorankup extends JavaPlugin {
             for(String requirementName:requirements.keySet()){
                 int requirementAmountint = 0;
                 String requimentAmountstring = "";
-                if(requirementName.equalsIgnoreCase("world")){
+                if(requirementName.equalsIgnoreCase("world") || requirementName.equalsIgnoreCase("regionworldguard")){
                     requimentAmountstring = requirements.get(requirementName);
                 }else{
                     requirementAmountint = Integer.parseInt(requirements.get(requirementName));
@@ -536,6 +539,17 @@ public class Mcmmorankup extends JavaPlugin {
             if(player.getWorld().getName().equalsIgnoreCase(requimentAmountString)) passhowmany++;
         }
         
+        if(requirementName.equalsIgnoreCase("REGIONWORLDGUARD")) {
+            Location loc = player.getLocation();
+            com.sk89q.worldguard.bukkit.RegionContainer container = getWorldGuard().getRegionContainer();
+            com.sk89q.worldguard.protection.managers.RegionManager regions = container.get(loc.getWorld());
+            // Check to make sure that "regions" is not null
+            com.sk89q.worldguard.protection.ApplicableRegionSet set = regions.getApplicableRegions(com.sk89q.worldguard.bukkit.BukkitUtil.toVector(loc));
+            for (com.sk89q.worldguard.protection.regions.ProtectedRegion region : set) {
+                // Do something with each region
+                if(region.getId().equalsIgnoreCase(requimentAmountString)) passhowmany++;
+            }
+        }
         return passhowmany;
     }
     
@@ -577,4 +591,14 @@ public class Mcmmorankup extends JavaPlugin {
         return hasPermission(pl, "mcmmo.skills." + skill.toLowerCase());
     }
    
+    public WorldGuardPlugin getWorldGuard() {
+        Plugin plugin = getServer().getPluginManager().getPlugin("WorldGuard");
+
+        // WorldGuard may not be loaded
+        if (plugin == null || !(plugin instanceof WorldGuardPlugin)) {
+            return null; // Maybe you want throw an exception instead
+        }
+
+        return (WorldGuardPlugin) plugin;
+    }
 }

@@ -9,6 +9,7 @@ import static me.stutiguias.mcmmorankup.Mcmmorankup.Message;
 import me.stutiguias.mcmmorankup.apimcmmo.McMMOApi;
 
 import me.stutiguias.mcmmorankup.profile.Profile;
+import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
@@ -324,7 +325,7 @@ public class RankUp extends Util {
             for(String requirementName:requirements.keySet()){
                 int requirementAmountint = 0;
                 String requimentAmountstring = "";
-                if(requirementName.equalsIgnoreCase("world")){
+                if(requirementName.equalsIgnoreCase("world") || requirementName.equalsIgnoreCase("regionworldguard")){
                     requimentAmountstring = requirements.get(requirementName);
                 }else{
                     requirementAmountint = Integer.parseInt(requirements.get(requirementName));
@@ -378,6 +379,18 @@ public class RankUp extends Util {
             if(player.getWorld().getName().equalsIgnoreCase(requimentAmountString)) passhowmany++;
         }
         
+        if(requirementName.equalsIgnoreCase("REGIONWORLDGUARD")) {
+            Location loc = player.getLocation();
+            com.sk89q.worldguard.bukkit.RegionContainer container = plugin.getWorldGuard().getRegionContainer();
+            com.sk89q.worldguard.protection.managers.RegionManager regions = container.get(loc.getWorld());
+            // Check to make sure that "regions" is not null
+            com.sk89q.worldguard.protection.ApplicableRegionSet set = regions.getApplicableRegions(com.sk89q.worldguard.bukkit.BukkitUtil.toVector(loc));
+            for (com.sk89q.worldguard.protection.regions.ProtectedRegion region : set) {
+                // Do something with each region
+                if(region.getId().equalsIgnoreCase(requimentAmountString)) passhowmany++;
+            }
+        }
+        
         return passhowmany;
     }
     
@@ -409,6 +422,18 @@ public class RankUp extends Util {
         
         if(requirementName.equalsIgnoreCase("WORLD")) {
             return player.getWorld().getName();
+        }
+        
+        if(requirementName.equalsIgnoreCase("REGIONWORLDGUARD")) {
+            Location loc = player.getLocation();
+            com.sk89q.worldguard.bukkit.RegionContainer container = plugin.getWorldGuard().getRegionContainer();
+            com.sk89q.worldguard.protection.managers.RegionManager regions = container.get(loc.getWorld());
+            // Check to make sure that "regions" is not null
+            com.sk89q.worldguard.protection.ApplicableRegionSet set = regions.getApplicableRegions(com.sk89q.worldguard.bukkit.BukkitUtil.toVector(loc));
+            for (com.sk89q.worldguard.protection.regions.ProtectedRegion region : set) {
+                // Do something with each region
+                return region.getId();
+            }
         }
         
         return "";
