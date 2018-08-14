@@ -58,7 +58,8 @@ public class Mcmmorankup extends JavaPlugin {
     public HashMap<String, Boolean> BuyRankUsePerms;
     public HashMap<String, Boolean> BuyRankEnabled;
     
-    public HashMap<String, Map<String,String>> CustomRequirements;
+    public HashMap<String, Map<String,String>> Requirements;
+    public HashMap<String, HashMap<String, Map<String,String>>> CustomSkill;
     
     public HashMap<String, Map<String, String>> XpRanks;	
     public HashMap<String, Map<String, String>> BuksRanks;		
@@ -281,6 +282,7 @@ public class Mcmmorankup extends JavaPlugin {
     public void OnSetupSkills() {
         
         RankUpConfig = new HashMap<>();
+        CustomSkill = new HashMap<>();
         BroadCast = new HashMap<>();
         Health = new HashMap<>();
         isRankExist = new HashMap<>();
@@ -289,22 +291,33 @@ public class Mcmmorankup extends JavaPlugin {
         XpRanks = new HashMap<>();
         BuksRanks = new HashMap<>();
 
-        SetupAccessor("POWERLEVEL", new ConfigAccessor(this, "powerlevel.yml"));
-        SetupAccessor("EXCAVATION", new ConfigAccessor(this, "excavation.yml"));
-        SetupAccessor("FISHING", new ConfigAccessor(this, "fishing.yml"));
-        SetupAccessor("HERBALISM", new ConfigAccessor(this, "herbalism.yml"));
-        SetupAccessor("MINING", new ConfigAccessor(this, "mining.yml"));
-        SetupAccessor("AXES", new ConfigAccessor(this, "axes.yml"));
-        SetupAccessor("ARCHERY", new ConfigAccessor(this, "archery.yml"));
-        SetupAccessor("SWORDS", new ConfigAccessor(this, "swords.yml"));
-        SetupAccessor("TAMING", new ConfigAccessor(this, "taming.yml"));
-        SetupAccessor("UNARMED", new ConfigAccessor(this, "unarmed.yml"));
-        SetupAccessor("ACROBATICS", new ConfigAccessor(this, "acrobatics.yml"));
-        SetupAccessor("REPAIR", new ConfigAccessor(this, "repair.yml"));
-        SetupAccessor("WOODCUTTING", new ConfigAccessor(this, "woodcutting.yml"));
-        SetupAccessor("SMELTING", new ConfigAccessor(this, "smelting.yml"));
+        SetupAccessor("POWERLEVEL", new ConfigAccessor(this, "powerlevel.yml"), false);
+        SetupAccessor("EXCAVATION", new ConfigAccessor(this, "excavation.yml"), false);
+        SetupAccessor("FISHING", new ConfigAccessor(this, "fishing.yml"), false);
+        SetupAccessor("HERBALISM", new ConfigAccessor(this, "herbalism.yml"), false);
+        SetupAccessor("MINING", new ConfigAccessor(this, "mining.yml"), false);
+        SetupAccessor("AXES", new ConfigAccessor(this, "axes.yml"), false);
+        SetupAccessor("ARCHERY", new ConfigAccessor(this, "archery.yml"), false);
+        SetupAccessor("SWORDS", new ConfigAccessor(this, "swords.yml"), false);
+        SetupAccessor("TAMING", new ConfigAccessor(this, "taming.yml"), false);
+        SetupAccessor("UNARMED", new ConfigAccessor(this, "unarmed.yml"), false);
+        SetupAccessor("ACROBATICS", new ConfigAccessor(this, "acrobatics.yml"), false);
+        SetupAccessor("REPAIR", new ConfigAccessor(this, "repair.yml"), false);
+        SetupAccessor("WOODCUTTING", new ConfigAccessor(this, "woodcutting.yml"), false);
+        SetupAccessor("SMELTING", new ConfigAccessor(this, "smelting.yml"), false);
         
-        SetupAccessor("CUSTOM", new ConfigAccessor(this, "custom.yml"));
+        File folder = new File(PluginSkillsDir);
+        File[] listOfFiles = folder.listFiles();
+
+        for (File file : listOfFiles) {
+            String skilName = file.getName().replace(".yml","").toUpperCase();
+            if (RankUpConfig.get(skilName) != null) continue;
+            if (file.isFile()) {
+                ConfigAccessor ca = new ConfigAccessor(this, file.getName());
+                ca.reloadConfig();
+                SetupAccessor(skilName, ca, true);
+            }
+        }
     }    
     
     public void MessagesReplaces() {
@@ -361,11 +374,11 @@ public class Mcmmorankup extends JavaPlugin {
         return HealthCa;
     }
     
-    public void SetupAccessor(String skill, ConfigAccessor ca) {
+    public void SetupAccessor(String skill, ConfigAccessor ca,boolean customfile) {
         boolean canBuy = false;
         
         try {
-            if (isSkillEnable(skill)) {
+            if (isSkillEnable(skill) || customfile) {
                 RankUpConfig.put(skill, GetRanks(ca));
                 Health.put(skill, GetHealth(ca));
                 isRankExist.put(skill, true);
@@ -374,19 +387,19 @@ public class Mcmmorankup extends JavaPlugin {
                 }
                 ca.setupConfig();
                 
-                if(skill.equalsIgnoreCase("CUSTOM")){
-                    // TODO : LOADING REQUERIMENTS
-                    CustomRequirements = new HashMap<>();
+                if(customfile){
+                    Requirements = new HashMap<>();
                     for (String key : ca.getConfig().getConfigurationSection("Requirements.").getKeys(false)) {
                         HashMap <String,String> newRequirement = new HashMap();
                         for(String keyRequirement : ca.getConfig().getConfigurationSection("Requirements." + key).getKeys(false)) {
                             newRequirement.put(keyRequirement, ca.getConfig().getString("Requirements." + key + "." + keyRequirement)); 
                         }
-                        CustomRequirements.put(key.toUpperCase(),newRequirement);
+                        Requirements.put(key.toUpperCase(),newRequirement);
                     }
                     if (mruStartupSummary) {
                         logger.log(Level.INFO, "{0} {1} - Loaded", new Object[]{logPrefix, skill.toUpperCase()});
                     }
+                    CustomSkill.put(skill, Requirements);
                     return;
                 }
                 
@@ -471,7 +484,7 @@ public class Mcmmorankup extends JavaPlugin {
     }
 
     public int GetSkillLevel(Player player, String skill) {
-        if (skill.equalsIgnoreCase("CUSTOM")) return GetCustomLevel(player);
+        if (CustomSkill.containsKey(skill)) return GetCustomLevel(skill,player);
         if (skill.equalsIgnoreCase("POWERLEVEL")) {
             return McMMOApi.getPowerLevel(player);
         } else {
@@ -479,11 +492,11 @@ public class Mcmmorankup extends JavaPlugin {
         }
     }
 
-    public int GetCustomLevel(Player player){
+    public int GetCustomLevel(String skill,Player player){
         int PlayerLevel = 0;
         
-        for(int level=0;level<=CustomRequirements.size();level++){
-            Map<String,String> requirements = CustomRequirements.get(String.valueOf(level));
+        for(int level=0;level<=CustomSkill.get(skill).size();level++){
+            Map<String,String> requirements = CustomSkill.get(skill).get(String.valueOf(level));
             int howmanyreq = requirements.size();
             int playerpasshowmany = 0;
             for(String requirementName:requirements.keySet()){
@@ -539,7 +552,8 @@ public class Mcmmorankup extends JavaPlugin {
             if(player.getWorld().getName().equalsIgnoreCase(requimentAmountString)) passhowmany++;
         }
         
-        if(requirementName.equalsIgnoreCase("REGIONWORLDGUARD")) {
+        try {
+         if(requirementName.equalsIgnoreCase("REGIONWORLDGUARD")) {
             Location loc = player.getLocation();
             com.sk89q.worldguard.bukkit.RegionContainer container = getWorldGuard().getRegionContainer();
             com.sk89q.worldguard.protection.managers.RegionManager regions = container.get(loc.getWorld());
@@ -549,6 +563,9 @@ public class Mcmmorankup extends JavaPlugin {
                 // Do something with each region
                 if(region.getId().equalsIgnoreCase(requimentAmountString)) passhowmany++;
             }
+         }
+        }catch(NoClassDefFoundError ex){
+            
         }
         return passhowmany;
     }
@@ -586,8 +603,8 @@ public class Mcmmorankup extends JavaPlugin {
     }
 
     public boolean isRankAvailable(String skill, Player pl) {
+        if(CustomSkill.containsKey(skill.toUpperCase())) return true;
         if(skill.toLowerCase().contains("powerlevel")) return true;
-        if(skill.toLowerCase().contains("custom")) return true;
         return hasPermission(pl, "mcmmo.skills." + skill.toLowerCase());
     }
    

@@ -196,8 +196,8 @@ public class RankUp extends Util {
             promoteDemote = Message.RankPromoteDemote;
             promoteDemote = promoteDemote.replaceAll("%promotedemote%", promote ? Message.Promote : Message.Demote).replaceAll("%pRank%", playerGroup);
             
-            if(skill.equalsIgnoreCase("CUSTOM")){
-                Map<String,String> returnInfo = ShowRequirementInfo(player);
+            if(plugin.CustomSkill.containsKey(skill)){
+                Map<String,String> returnInfo = ShowRequirementInfo(skill,player);
                 lni++;
                 rankInfo.put(lni,"REQUIREMENT ( NAME - NOW / NEED IT )");
                 lni++;
@@ -315,10 +315,10 @@ public class RankUp extends Util {
         }
     }
     
-    public Map<String,String> ShowRequirementInfo(Player player){
+    public Map<String,String> ShowRequirementInfo(String skill,Player player){
         Map<String,String> returnInfo = new HashMap<>();
-        for(int level=0;level<=plugin.CustomRequirements.size();level++){
-            Map<String,String> requirements = plugin.CustomRequirements.get(String.valueOf(level));
+        for(int level=0;level<=plugin.CustomSkill.get(skill).size();level++){
+            Map<String,String> requirements = plugin.CustomSkill.get(skill).get(String.valueOf(level));
             int amountreq = requirements.size();
             int playerpass = 0;
             returnInfo = new HashMap<>();

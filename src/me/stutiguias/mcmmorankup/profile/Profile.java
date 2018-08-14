@@ -62,28 +62,7 @@ public class Profile extends Util {
         McMMOPlayer mcMMOPlayer = SetMcMMOPlayer();
 
         if (mcMMOPlayer != null) {
-            switch(HabilityForRank.toUpperCase()){
-                case "EXCAVATION":
-                case "FISHING":
-                case "HERBALISM":
-                case "MINING":
-                case "AXES":
-                case "ARCHERY":
-                case "SWORDS":
-                case "TAMING":
-                case "UNARMED":
-                case "ACROBATICS":
-                case "REPAIR":
-                case "WOODCUTTING":
-                case "SMELTING":
-                case "POWERLEVEL":
-                case "CUSTOM":
-                    ChangeMessage(player, HabilityForRank);
-                    break;
-                default:
-                    return false;
-            }
-
+            ChangeMessage(player, HabilityForRank);
         }
 
         PlayerYML.set("HabilityForRank", HabilityForRank.toUpperCase());

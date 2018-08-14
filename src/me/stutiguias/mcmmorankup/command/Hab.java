@@ -67,12 +67,12 @@ public class Hab extends CommandHandler {
         boolean noPerm = false;
 
         for (String key : plugin.isRankExist.keySet()) {
- 		
+   
             if (!plugin.isRankAvailable(key, profile.player)) {
                 noPerm = true;
                 continue;
             } 
-            
+  
             if (plugin.BuyRankEnabled.isEmpty() && plugin.BuyRankEnabled.get(key)) {
                 preFix = Message.HabListPrefixBuy;
             }
