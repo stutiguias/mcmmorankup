@@ -135,8 +135,8 @@ public class RankUp extends Util {
                 infoSettings.put("nLevel", String.valueOf(nextLevel));
                 infoSettings.put("skilllevel", String.valueOf(playerSkillLevel));
                 infoSettings.put("maxLvl", (maxLvl ? "t" : "f"));
-                infoSettings.put("xpNeeded", String.valueOf(McMMOApi.getXpToNextLevel(player, skill)));
-                infoSettings.put("cXp", String.valueOf(McMMOApi.getXp(player, skill)));
+                infoSettings.put("xpNeeded", "");
+                infoSettings.put("cXp", "");
 
                 ShowRankingInfo(player);
 
@@ -381,13 +381,17 @@ public class RankUp extends Util {
         
         if(requirementName.equalsIgnoreCase("REGIONWORLDGUARD")) {
             Location loc = player.getLocation();
-            com.sk89q.worldguard.bukkit.RegionContainer container = plugin.getWorldGuard().getRegionContainer();
-            com.sk89q.worldguard.protection.managers.RegionManager regions = container.get(loc.getWorld());
-            // Check to make sure that "regions" is not null
-            com.sk89q.worldguard.protection.ApplicableRegionSet set = regions.getApplicableRegions(com.sk89q.worldguard.bukkit.BukkitUtil.toVector(loc));
-            for (com.sk89q.worldguard.protection.regions.ProtectedRegion region : set) {
-                // Do something with each region
-                if(region.getId().equalsIgnoreCase(requimentAmountString)) passhowmany++;
+            try{
+                com.sk89q.worldguard.bukkit.RegionContainer container = plugin.getWorldGuard().getRegionContainer();
+                com.sk89q.worldguard.protection.managers.RegionManager regions = container.get(loc.getWorld());
+                // Check to make sure that "regions" is not null
+                com.sk89q.worldguard.protection.ApplicableRegionSet set = regions.getApplicableRegions(com.sk89q.worldguard.bukkit.BukkitUtil.toVector(loc));
+                for (com.sk89q.worldguard.protection.regions.ProtectedRegion region : set) {
+                    // Do something with each region
+                    if(region.getId().equalsIgnoreCase(requimentAmountString)) passhowmany++;
+                }
+            }catch(NoClassDefFoundError ex){
+                 Mcmmorankup.logger.log(Level.WARNING, "Error trying find world guard {0}", ex.getMessage());
             }
         }
         
@@ -426,13 +430,17 @@ public class RankUp extends Util {
         
         if(requirementName.equalsIgnoreCase("REGIONWORLDGUARD")) {
             Location loc = player.getLocation();
-            com.sk89q.worldguard.bukkit.RegionContainer container = plugin.getWorldGuard().getRegionContainer();
-            com.sk89q.worldguard.protection.managers.RegionManager regions = container.get(loc.getWorld());
-            // Check to make sure that "regions" is not null
-            com.sk89q.worldguard.protection.ApplicableRegionSet set = regions.getApplicableRegions(com.sk89q.worldguard.bukkit.BukkitUtil.toVector(loc));
-            for (com.sk89q.worldguard.protection.regions.ProtectedRegion region : set) {
-                // Do something with each region
-                return region.getId();
+            try{
+                com.sk89q.worldguard.bukkit.RegionContainer container = plugin.getWorldGuard().getRegionContainer();
+                com.sk89q.worldguard.protection.managers.RegionManager regions = container.get(loc.getWorld());
+                // Check to make sure that "regions" is not null
+                com.sk89q.worldguard.protection.ApplicableRegionSet set = regions.getApplicableRegions(com.sk89q.worldguard.bukkit.BukkitUtil.toVector(loc));
+                for (com.sk89q.worldguard.protection.regions.ProtectedRegion region : set) {
+                    // Do something with each region
+                    return region.getId();
+                }
+            }catch(NoClassDefFoundError ex){
+                 Mcmmorankup.logger.log(Level.WARNING, "Error trying find world guard {0}", ex.getMessage());
             }
         }
         
