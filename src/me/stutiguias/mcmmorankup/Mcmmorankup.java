@@ -36,7 +36,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class Mcmmorankup extends JavaPlugin {
 
-    public static final String logPrefix = "[" + ChatColor.GREEN + "mcmmoRankUp"+ ChatColor.WHITE+"]";
+    public static final String logPrefix = "[mcmmoRankUp]";
     public static final String PluginDir = "plugins" + File.separator + "Mcmmorankup";
     public static String PluginPlayerDir = PluginDir + File.separator + "userdata";
     public static String PluginSkillsDir = PluginDir + File.separator + "skills";
@@ -378,6 +378,7 @@ public class Mcmmorankup extends JavaPlugin {
         boolean canBuy = false;
         
         try {
+            if (skill.toUpperCase().equals("CUSTOM")) customfile = false;
             if (isSkillEnable(skill) || customfile) {
                 RankUpConfig.put(skill, GetRanks(ca));
                 Health.put(skill, GetHealth(ca));
@@ -430,8 +431,7 @@ public class Mcmmorankup extends JavaPlugin {
     }
 
     private boolean isSkillEnable(String skill) {
-        boolean enabled = config.getConfig().getBoolean("Config.Skills." + skill + ".enabled");
-
+        boolean enabled = config.getConfig().getBoolean("Config.Skills." + skill.toUpperCase() + ".enabled");
         if (!enabled && skill.equalsIgnoreCase(DefaultSkill)) {
             logger.log(Level.WARNING, "{0} - Default Skill ({1}) was disabled. Enabling...", new Object[]{logPrefix, skill.toUpperCase()});
             config.getConfig().set("Config.Skills." + skill + ".enabled", true);
