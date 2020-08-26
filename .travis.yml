@@ -4,14 +4,16 @@ jdk:
 dist: trusty
 skip_cleanup: true
 before_deploy:
-  - "mvn clean package -B -Dmaven.test.skip=true"
-  - git tag "$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
-
+- mvn clean package -B -Dmaven.test.skip=true
+- git tag "$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
 deploy:
   provider: releases
   api_key:
-    secure: '$api_key'
+    secure: "$api_key"
   file: target/Mcmmorankup-0.8.0.jar
   skip_cleanup: true
   on:
     all_branches: true
+env:
+  global:
+    secure: LhzX0gFeexqRR+Z/CFAwZSgeO7AAsUueXahCsdu7/q0unUvMhY9PnOwAn6eq+joVRyLGNpAJbJ1FdZp73s3O4y/43ubEcUh0NrYQKVChtO0em16rWb7E7DrAa3Tn3fL2y3WrjmQpaUmV9M+ZMJC2P+Z+vvGTH11BVCSSSzYJqNg=
