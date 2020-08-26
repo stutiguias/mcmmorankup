@@ -9,20 +9,18 @@ before_deploy:
 deploy:
   provider: releases
   api_key:
-    secure: "$api_key"
+    secure: gSZKBhibW9XD5VQa5Pa4a+7sZPFyizZgeHAm17ySCmQ1t2xRVPdFO33c2QjsstjJuOGgAjF/9HThCsD2U319eLelh4/UJafP2jLJgEpOPyuobkLf7BaqN+RpQsY6VVg9NerDmwWoj8EGe9Dd0PYh2nc/NzWu0GnHWLLFzwIN0tI=
   file: target/Mcmmorankup-0.8.0.jar
-  skip_cleanup: true
   on:
-    all_branches: true
+    repo: stutiguias/mcmmorankup
+  skip_cleanup: 'true'
 env:
   global:
     secure: LhzX0gFeexqRR+Z/CFAwZSgeO7AAsUueXahCsdu7/q0unUvMhY9PnOwAn6eq+joVRyLGNpAJbJ1FdZp73s3O4y/43ubEcUh0NrYQKVChtO0em16rWb7E7DrAa3Tn3fL2y3WrjmQpaUmV9M+ZMJC2P+Z+vvGTH11BVCSSSzYJqNg=
 addons:
   sonarcloud:
-    organization: "stutiguias"
+    organization: stutiguias
     token:
-      secure: "LhzX0gFeexqRR+Z/CFAwZSgeO7AAsUueXahCsdu7/q0unUvMhY9PnOwAn6eq+joVRyLGNpAJbJ1FdZp73s3O4y/43ubEcUh0NrYQKVChtO0em16rWb7E7DrAa3Tn3fL2y3WrjmQpaUmV9M+ZMJC2P+Z+vvGTH11BVCSSSzYJqNg=" # encrypted value of your token
-
+      secure: LhzX0gFeexqRR+Z/CFAwZSgeO7AAsUueXahCsdu7/q0unUvMhY9PnOwAn6eq+joVRyLGNpAJbJ1FdZp73s3O4y/43ubEcUh0NrYQKVChtO0em16rWb7E7DrAa3Tn3fL2y3WrjmQpaUmV9M+ZMJC2P+Z+vvGTH11BVCSSSzYJqNg=
 script:
-  # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
-  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=stutiguias_mcmmorankup
+- mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=stutiguias_mcmmorankup
