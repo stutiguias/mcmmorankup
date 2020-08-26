@@ -17,3 +17,12 @@ deploy:
 env:
   global:
     secure: LhzX0gFeexqRR+Z/CFAwZSgeO7AAsUueXahCsdu7/q0unUvMhY9PnOwAn6eq+joVRyLGNpAJbJ1FdZp73s3O4y/43ubEcUh0NrYQKVChtO0em16rWb7E7DrAa3Tn3fL2y3WrjmQpaUmV9M+ZMJC2P+Z+vvGTH11BVCSSSzYJqNg=
+addons:
+  sonarcloud:
+    organization: "stutiguias"
+    token:
+      secure: "**************************" # encrypted value of your token
+
+script:
+  # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=stutiguias_mcmmorankup
