@@ -138,5 +138,8 @@
   </build>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <sonar.projectKey>stutiguias_mcmmorankup</sonar.projectKey>
+    <sonar.organization>stutiguias</sonar.organization>
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
   </properties>
 </project>
