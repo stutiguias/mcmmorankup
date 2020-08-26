@@ -1,7 +1,7 @@
 language: java
 jdk:
 - oraclejdk8
-
+dist: trusty
 before_deploy:
   - "mvn clean package -B -Dmaven.test.skip=true"
   - git tag "$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
