@@ -2,89 +2,81 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>me.stutiguias</groupId>
   <artifactId>Mcmmorankup</artifactId>
-  <version>0.8.0</version>
+  <version>0.9.1</version>
   <name>Mcmmorankup-${project.version}</name>
   <description>Mcmmorankup</description>
   
   <repositories>
+
+    <!-- worldguard -->
+    <repository>
+      <id>sk89q-repo</id>
+      <url>https://maven.enginehub.org/repo/</url>
+    </repository>
     <!-- Bukkit -->
     <repository>
       <id>spigot-repo</id>
       <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
     </repository>
-
-    <!-- mcMMO -->
-    <repository>
-      <id>md_5-repo</id>
-      <url>http://repo.md-5.net/content/repositories/public/</url>
-    </repository>
-    
     <!-- vault -->
     <repository>
-            <id>vault-repo</id>
-            <url>http://nexus.hc.to/content/repositories/pub_releases</url>
+      <id>jitpack.io</id>
+      <url>https://jitpack.io</url>
     </repository>
-    
+    <!-- McMMO -->
     <repository>
-            <id>everything</id>
-            <url>http://repo.citizensnpcs.co/</url>
+      <id>neetgames</id>
+      <url>https://nexus.neetgames.com/repository/maven-releases/</url>
     </repository>
-    
-    <!-- worldguard -->
-    <repository>
-        <id>sk89q-repo</id>
-        <url>http://maven.sk89q.com/repo/</url>
-    </repository>
+
   </repositories>
   
   <dependencies>
     <dependency>
-        <groupId>org.spigotmc</groupId>
-        <artifactId>spigot-api</artifactId>
-        <version>1.16.1-R0.1-SNAPSHOT</version>
-    </dependency>
-	
-    <dependency>
-        <groupId>com.gmail.nossr50.mcMMO</groupId>
-        <artifactId>mcMMO</artifactId>
-        <version>1.5.01-SNAPSHOT</version>
-        <type>jar</type>
-        <scope>compile</scope>
-    </dependency>
-	
-    <dependency>
-      <groupId>net.milkbowl.vault</groupId>
-      <artifactId>Vault</artifactId>
-      <version>1.5.6</version>
-      <type>jar</type>
-      <scope>compile</scope>
-    </dependency>
-    
-    <dependency>
-            <groupId>net.citizensnpcs</groupId>
-            <artifactId>citizensapi</artifactId>
-            <version>2.0.22-SNAPSHOT</version>
-            <type>jar</type>
-            <scope>compile</scope>
+      <groupId>org.spigotmc</groupId>
+      <artifactId>spigot-api</artifactId>
+      <version>26.1.2-R0.1-SNAPSHOT</version>
     </dependency>
 
     <dependency>
-      <groupId>com.sk89q</groupId>
-      <artifactId>worldguard</artifactId>
-      <version>6.1.1-SNAPSHOT</version>
-      <type>jar</type>
+      <groupId>com.github.MilkBowl</groupId>
+      <artifactId>VaultAPI</artifactId>
+      <version>1.7.1</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.gmail.nossr50.mcMMO</groupId>
+      <artifactId>mcMMO</artifactId>
+      <version>2.2.051</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>net.citizensnpcs</groupId>
+        <artifactId>citizensapi</artifactId>
+        <version>2.0.22-SNAPSHOT</version>
+        <type>jar</type>
+        <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.sk89q.worldguard</groupId>
+      <artifactId>worldguard-bukkit</artifactId>
+      <version>7.0.9</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
   
   <build>
     <finalName>${project.name}</finalName>
-    <sourceDirectory>${basedir}/src/</sourceDirectory>
+    <sourceDirectory>${basedir}/src/main/java/</sourceDirectory>
     
     <resources>
       <resource>
         <targetPath>.</targetPath>
         <filtering>true</filtering>
-        <directory>${basedir}/src/</directory>
+        <directory>${basedir}/src/main/resources/</directory>
         <includes>
           <include>plugin.yml</include>
           <include>eng.yml</include>
@@ -94,7 +86,7 @@
       
       <resource>
         <targetPath>.</targetPath>
-        <directory>${basedir}/src/Skills/</directory>
+        <directory>${basedir}/src/main/resources/Skills/</directory>
         <includes>
           <include>acrobatics.yml</include>
           <include>archery.yml</include>
@@ -120,26 +112,46 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
+        <version>3.12.1</version>
         <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
-          <showDeprecation>false</showDeprecation>
+          <source>1.8</source>
+          <target>1.8</target>
+          <showDeprecation>true</showDeprecation>
         </configuration>
       </plugin>
-      
+
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>2.4</version>
+        <version>3.3.0</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <id>copy-to-plugins</id>
+            <phase>package</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <copy file="${project.build.directory}/${project.build.finalName}.jar"
+                      todir="F:\Spigot\plugins" overwrite="true"/>
+              </target>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       
     </plugins>
   </build>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <sonar.projectKey>stutiguias_mcmmorankup</sonar.projectKey>
-    <sonar.organization>stutiguias</sonar.organization>
-    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+    <maven.compiler.release>8</maven.compiler.release>
   </properties>
 </project>

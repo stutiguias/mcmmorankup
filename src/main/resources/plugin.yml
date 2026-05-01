@@ -1,0 +1,81 @@
+name: Mcmmorankup
+main: me.stutiguias.mcmmorankup.Mcmmorankup
+version: ${project.version}
+author: Stutiguias, zrocweb
+softdepend: [Citizens,WorldGuard]
+depend: [Vault,mcMMO]
+api-version: 1.20
+commands:
+  mru:
+    description: Auto Rankup Commands and Settings
+    usage: Use /mru for Help,  /mru hab to view rankings abilities, /mru hab <ability> sets your rank line ability
+    permission: mru.setgender
+    permission-message: You don't seem to have permission to use Auto Ranking yet...
+permissions:
+    mru.user.simple:
+      children:
+        mru.buyrankbuks: false
+        mru.buyrankxp: false
+        mru.hability: true
+        mru.playerfeeds: false
+        mru.rankup: true
+        mru.stats: true
+        mru.stats.others: false
+        mru.rankup.*: true
+        mru.setgender: true
+    mru.user.*:
+      description: Gives access to all commands
+      children:
+        mru.buyrankbuks: true
+        mru.buyrankxp: true
+        mru.hability: true
+        mru.playerfeeds: true
+        mru.rankup: true
+        mru.stats: true
+        mru.stats.others: true
+        mru.setgender: true
+    mru.admin.*:
+      description: Gives access to all commands
+      children:
+        mru.admin.config: true
+        mru.buyrankbuks: true
+        mru.buyrankxp: true
+        mru.hability: true
+        mru.playerfeeds: true
+        mru.rankup: true
+        mru.stats: true
+        mru.stats.others: true
+        mru.setgender: true
+    mru.admin.config:
+       description: Allow admins to update config settings in-game and reload.
+       default: op
+    mru.setgender:
+       description: Allow set gender
+       default: true
+    mru.buyrankbuks:
+       description: Allow a player to purchase a rank from their current server worlds money
+       default: false       
+    mru.buyrankxp:
+       description: Allow a player to purchase a rank from XP or XP Levels
+       default: false
+    mru.ignore:
+       description: Ignore Player
+       default: false
+    mru.exemptdemotions:
+       description: Players with this will not get demoted, regardless of rank line changes and skill levels
+       default: false
+    mru.hability:
+       description: Gives access to provide players the option to set their base rank line
+       default: false
+    mru.playerfeeds:
+       description: Gives players the access to manage their mcmmoRankup Player feeds
+       default: false
+    mru.rankup:
+       description: Allow a player to autorank or invoke ranking up themselves via cmd /mru rank
+       default: false
+    mru.stats:
+       description: Allow a player to view their current ranking stats, both current and previous
+       default: false
+    mru.stats.others:
+       description: Allow a player to view another players ranking stats, current and previous       
+       default: false
