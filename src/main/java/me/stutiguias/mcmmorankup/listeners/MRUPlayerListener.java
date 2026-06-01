@@ -84,6 +84,9 @@ public class MRUPlayerListener extends Util implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void MobDeath(EntityDeathEvent event) {
         Entity entity = event.getEntity();
+        Player killer = event.getEntity().getKiller();
+        if (killer == null || plugin.getServer().getPlayer(killer.getUniqueId()) == null) return;
+
         try {
             EntityType type = entity.getType();
             
@@ -94,15 +97,11 @@ public class MRUPlayerListener extends Util implements Listener {
                 
             }
             
-            if(profile == null && event.getEntity().getKiller() != null){
-                Player name = event.getEntity().getKiller();
-                if(plugin.getServer().getPlayer(name.getUniqueId()) == null) return;
-                profile = new Profile(plugin, event.getEntity().getKiller());
-            }
+            Profile killerProfile = new Profile(plugin, killer);
             
             try{
-                int newqtd = profile.GetMOBKILLED(type.name().toUpperCase()) + 1;
-                profile.SetMOBKILLED(type.name().toUpperCase(), newqtd );
+                int newqtd = killerProfile.GetMOBKILLED(type.name().toUpperCase()) + 1;
+                killerProfile.SetMOBKILLED(type.name().toUpperCase(), newqtd );
             }catch(Exception ex) {
                 Mcmmorankup.logger.log(Level.WARNING, "MOB TYPE NOT FOUND :{0}", type.name().toUpperCase());
             }

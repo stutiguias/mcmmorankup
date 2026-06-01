@@ -25,7 +25,7 @@ public class Report extends CommandHandler {
     @Override
     protected Boolean OnCommand(CommandSender sender, String[] args) {
         this.sender = sender;
-        player = (Player)sender;
+        player = sender instanceof Player ? (Player)sender : null;
         
         if(isInvalid(sender, args)) return true;
         
@@ -79,6 +79,7 @@ public class Report extends CommandHandler {
 
     @Override
     protected Boolean isInvalid(CommandSender sender, String[] args) {
+        if (player == null) return false;
         if (!plugin.hasPermission(player, "mru.admin.config")) {
             SendMessage("&4You don't have permission");
             return true;

@@ -1,16 +1,10 @@
 package me.stutiguias.mcmmorankup;
 
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldguard.WorldGuard;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.ApplicableRegionSet;
-import com.sk89q.worldguard.protection.managers.RegionManager;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import com.sk89q.worldguard.protection.regions.RegionContainer;
 import me.stutiguias.mcmmorankup.config.ConfigAccessor;
 import me.stutiguias.mcmmorankup.config.MessageConfig;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,12 +20,10 @@ import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
 
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -133,6 +125,12 @@ public class Mcmmorankup extends JavaPlugin {
 
         setupEconomy();
         setupPermissions();
+
+        if (permission == null && !TagSystem) {
+            logger.log(Level.SEVERE, "{0} Vault permission provider was not found. Enable UseTagOnlySystem or install a compatible permissions plugin.", new Object[]{logPrefix});
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
         
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(playerlistener, this);
@@ -180,7 +178,6 @@ public class Mcmmorankup extends JavaPlugin {
     @Override
     public void onDisable() {
 
-        getServer().getPluginManager().disablePlugin(this);
         logger.log(Level.INFO, "{0} {1} - mcmmoRankup has been disabled...", new Object[]{logPrefix, "[System]"});
     }
 
@@ -482,6 +479,9 @@ public class Mcmmorankup extends JavaPlugin {
     }
 
     public boolean hasPermission(Player player, String node) {
+        if (permission == null) {
+            return player != null && player.hasPermission(node.toLowerCase());
+        }
         return permission.has(player.getWorld(), player.getName(), node.toLowerCase());
     }
 
@@ -537,6 +537,7 @@ public class Mcmmorankup extends JavaPlugin {
         if(requirementName.equalsIgnoreCase("Woodcutting") && McMMOApi.getSkillLevel(player, "Woodcutting") > requirementAmountint) passhowmany++;
         
         if(requirementName.equalsIgnoreCase("Money")) {
+           if (economy == null) return passhowmany;
            double balance = economy.getBalance(player);
            if(balance >= requirementAmountint) passhowmany++;
         }
@@ -554,20 +555,8 @@ public class Mcmmorankup extends JavaPlugin {
             if(player.getWorld().getName().equalsIgnoreCase(requimentAmountString)) passhowmany++;
         }
         
-        try {
-         if(requirementName.equalsIgnoreCase("REGIONWORLDGUARD")) {
-            Location loc = player.getLocation();
-            RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-            RegionManager regions = container.get(BukkitAdapter.adapt(Objects.requireNonNull(loc.getWorld())));
-            // Check to make sure that "regions" is not null
-            ApplicableRegionSet set = Objects.requireNonNull(regions).getApplicableRegions(BukkitAdapter.asBlockVector(loc));
-            for (ProtectedRegion region : set) {
-                // Do something with each region
-                if(region.getId().equalsIgnoreCase(requimentAmountString)) passhowmany++;
-            }
-         }
-        }catch(NoClassDefFoundError ex){
-            
+        if(requirementName.equalsIgnoreCase("REGIONWORLDGUARD")) {
+            if (isPlayerInWorldGuardRegion(player, requimentAmountString)) passhowmany++;
         }
         return passhowmany;
     }
@@ -581,6 +570,7 @@ public class Mcmmorankup extends JavaPlugin {
     }
 
     public Boolean GroupToIgnore(Player player) {
+        if (permission == null) return false;
         for (String Group : GroupToIgnore) {
             if (Group.equalsIgnoreCase(permission.getPrimaryGroup(player))) {
                 return true;
@@ -590,10 +580,12 @@ public class Mcmmorankup extends JavaPlugin {
     }
 
     public double GetPlayerCurrency(Player pl) {
+        if (economy == null) return 0;
         return economy.getBalance(pl.getName());
     }
 
     public String GetPlayerCurrentGroup(Player pl) {
+        if (permission == null) return "";
         return permission.getPrimaryGroup(pl.getWorld(), pl.getName());
     }
 
@@ -610,14 +602,54 @@ public class Mcmmorankup extends JavaPlugin {
         return hasPermission(pl, "mcmmo.skills." + skill.toLowerCase());
     }
    
-    public WorldGuardPlugin getWorldGuard() {
-        Plugin plugin = getServer().getPluginManager().getPlugin("WorldGuard");
+    public boolean isPlayerInWorldGuardRegion(Player player, String regionName) {
+        if (regionName == null) return false;
+        for (String currentRegion : GetWorldGuardRegions(player)) {
+            if (regionName.equalsIgnoreCase(currentRegion)) return true;
+        }
+        return false;
+    }
 
-        // WorldGuard may not be loaded
-        if (plugin == null || !(plugin instanceof WorldGuardPlugin)) {
-            return null; // Maybe you want throw an exception instead
+    public String GetWorldGuardRegion(Player player) {
+        List<String> regions = GetWorldGuardRegions(player);
+        return regions.isEmpty() ? "" : regions.get(0);
+    }
+
+    private List<String> GetWorldGuardRegions(Player player) {
+        List<String> regionIds = new ArrayList<>();
+        if (player == null || getServer().getPluginManager().getPlugin("WorldGuard") == null) return regionIds;
+
+        try {
+            Class<?> worldGuardClass = Class.forName("com.sk89q.worldguard.WorldGuard");
+            Class<?> bukkitAdapterClass = Class.forName("com.sk89q.worldedit.bukkit.BukkitAdapter");
+            Object worldGuard = worldGuardClass.getMethod("getInstance").invoke(null);
+            Object platform = worldGuard.getClass().getMethod("getPlatform").invoke(worldGuard);
+            Object container = platform.getClass().getMethod("getRegionContainer").invoke(platform);
+            Object adaptedWorld = bukkitAdapterClass.getMethod("adapt", org.bukkit.World.class).invoke(null, player.getWorld());
+            Object regions = invokeSingleArgMethod(container, "get", adaptedWorld);
+            if (regions == null) return regionIds;
+
+            Object blockVector = bukkitAdapterClass.getMethod("asBlockVector", org.bukkit.Location.class).invoke(null, player.getLocation());
+            Object applicableRegions = invokeSingleArgMethod(regions, "getApplicableRegions", blockVector);
+            if (!(applicableRegions instanceof Iterable)) return regionIds;
+
+            for (Object region : (Iterable<?>) applicableRegions) {
+                Object id = region.getClass().getMethod("getId").invoke(region);
+                regionIds.add(String.valueOf(id));
+            }
+        } catch (Exception ex) {
+            logger.log(Level.WARNING, "{0} Error checking WorldGuard region: {1}", new Object[]{logPrefix, ex.getMessage()});
         }
 
-        return (WorldGuardPlugin) plugin;
+        return regionIds;
+    }
+
+    private Object invokeSingleArgMethod(Object target, String methodName, Object argument) throws Exception {
+        for (Method method : target.getClass().getMethods()) {
+            if (method.getName().equals(methodName) && method.getParameterTypes().length == 1 && method.getParameterTypes()[0].isInstance(argument)) {
+                return method.invoke(target, argument);
+            }
+        }
+        throw new NoSuchMethodException(methodName);
     }
 }

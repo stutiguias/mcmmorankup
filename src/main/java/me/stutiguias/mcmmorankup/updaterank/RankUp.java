@@ -1,19 +1,14 @@
 package me.stutiguias.mcmmorankup.updaterank;
 
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldguard.WorldGuard;
-import com.sk89q.worldguard.protection.regions.RegionContainer;
 import me.stutiguias.mcmmorankup.Mcmmorankup;
 import me.stutiguias.mcmmorankup.Util;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.logging.Level;
 import static me.stutiguias.mcmmorankup.Mcmmorankup.Message;
 import me.stutiguias.mcmmorankup.apimcmmo.McMMOApi;
 
 import me.stutiguias.mcmmorankup.profile.Profile;
-import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
@@ -366,6 +361,7 @@ public class RankUp extends Util {
         if(requirementName.equalsIgnoreCase("Woodcutting") && McMMOApi.getSkillLevel(player, "Woodcutting") > requirementAmountint) passhowmany++;
         
         if(requirementName.equalsIgnoreCase("Money")) {
+           if (plugin.economy == null) return passhowmany;
            double balance = plugin.economy.getBalance(player);
            if(balance >= requirementAmountint) passhowmany++;
         }
@@ -384,19 +380,7 @@ public class RankUp extends Util {
         }
         
         if(requirementName.equalsIgnoreCase("REGIONWORLDGUARD")) {
-            Location loc = player.getLocation();
-            try{
-                RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-                com.sk89q.worldguard.protection.managers.RegionManager regions = container.get(BukkitAdapter.adapt(Objects.requireNonNull(loc.getWorld())));
-                // Check to make sure that "regions" is not null
-                com.sk89q.worldguard.protection.ApplicableRegionSet set = Objects.requireNonNull(regions).getApplicableRegions(BukkitAdapter.asBlockVector(loc));
-                for (com.sk89q.worldguard.protection.regions.ProtectedRegion region : set) {
-                    // Do something with each region
-                    if(region.getId().equalsIgnoreCase(requimentAmountString)) passhowmany++;
-                }
-            }catch(NoClassDefFoundError ex){
-                 Mcmmorankup.logger.log(Level.WARNING, "Error trying find world guard {0}", ex.getMessage());
-            }
+            if (plugin.isPlayerInWorldGuardRegion(player, requimentAmountString)) passhowmany++;
         }
         
         return passhowmany;
@@ -417,7 +401,7 @@ public class RankUp extends Util {
         if(requirementName.equalsIgnoreCase("Taming")) return String.valueOf(McMMOApi.getSkillLevel(player, "Taming"));
         if(requirementName.equalsIgnoreCase("Unarmed")) return String.valueOf(McMMOApi.getSkillLevel(player, "Unarmed"));
         if(requirementName.equalsIgnoreCase("Woodcutting")) return String.valueOf(McMMOApi.getSkillLevel(player, "Woodcutting"));
-        if(requirementName.equalsIgnoreCase("Money")) return String.valueOf(plugin.economy.getBalance(player));
+        if(requirementName.equalsIgnoreCase("Money")) return plugin.economy == null ? "0" : String.valueOf(plugin.economy.getBalance(player));
         
         Profile profile = new Profile(plugin, player);
         for(EntityType type:EntityType.values()){
@@ -433,19 +417,7 @@ public class RankUp extends Util {
         }
         
         if(requirementName.equalsIgnoreCase("REGIONWORLDGUARD")) {
-            Location loc = player.getLocation();
-            try{
-                RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-                com.sk89q.worldguard.protection.managers.RegionManager regions = container.get(BukkitAdapter.adapt(Objects.requireNonNull(loc.getWorld())));
-                // Check to make sure that "regions" is not null
-                com.sk89q.worldguard.protection.ApplicableRegionSet set = Objects.requireNonNull(regions).getApplicableRegions(BukkitAdapter.asBlockVector(loc));
-                for (com.sk89q.worldguard.protection.regions.ProtectedRegion region : set) {
-                    // Do something with each region
-                    return region.getId();
-                }
-            }catch(NoClassDefFoundError ex){
-                 Mcmmorankup.logger.log(Level.WARNING, "Error trying find world guard {0}", ex.getMessage());
-            }
+            return plugin.GetWorldGuardRegion(player);
         }
         
         return "";
