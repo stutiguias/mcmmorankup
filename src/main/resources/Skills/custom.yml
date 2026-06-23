@@ -5,18 +5,18 @@ RankUp:
   Male:
    #Level : GroupName
     0: Stranger
-    1: Noob
-    2: Peasant
-    3: Serf
+    1: Archer
+    2: Ranger
+    3: Hunter
     4: Citizen
     5: Artisian
     6: Soldier
     7: Vassel
   Female:
     0: Stranger
-    1: Noob
-    2: Peasant
-    3: Serf
+    1: Archer
+    2: Ranger
+    3: Hunter
     4: Citizen
     5: Artisian
     6: Soldier
@@ -25,52 +25,57 @@ RankUp:
     # like this sample
   Good:
     0: Stranger
-    1: Noob
-    2: Peasant
-    3: Serf
+    1: Archer
+    2: Ranger
+    3: Hunter
     4: Citizen
     5: Artisian
     6: Soldier
     7: Vassel
   Evil:
     0: Stranger
-    1: Noob
-    2: Peasant
-    3: Serf
+    1: Archer
+    2: Ranger
+    3: Hunter
     4: Citizen
     5: Artisian
     6: Soldier
     7: Vassel
 Requirements:
+   # Each level may require multiple mcMMO skills or other requirements.
+   # The player must meet every requirement in the level to unlock that rank.
+   # Example: level 1 unlocks Archer only at Woodcutting 200 and Archery 400.
    1: 
-    Powerlevel: 42
+    Woodcutting: 200
+    Archery: 400
     Money : 10
     PlayerKilled : 1
     World : 'world'
     RegionWorldGuard : 'wgregion'
    2:
-    Powerlevel: 82
-    Fishing: 25
+    Woodcutting: 500
+    Archery: 800
+    Acrobatics: 100
    3:
     Powerlevel: 160
-    Skelly: 50
+    Skeleton: 50
     Creeper: 25
     Zombie: 50
 Broadcast:
     #GroupName : Broadcast Name
     Stranger: Axes Settler
-    Noob: Axes Worker Level I
-    Peasant: Axes Worker Level II
-    Serf: Axes Resident
+    Archer: Archer
+    Ranger: Ranger
+    Hunter: Hunter
     Citizen: Axes Dweller
     Artisian: Level 1 Axes Moderator (Mayor)
     Soldier: Axes Moderator (Mayor)
     Vassel: Axes Administrator
 Health:
     Stranger : 4
-    Noob: 5
-    Peasant: 6
-    Serf: 7
+    Archer: 5
+    Ranger: 6
+    Hunter: 7
     Citizen: 8
     Artisian: 9
     Soldier: 10

@@ -48,6 +48,10 @@ public class Report extends CommandHandler {
 
         switch(args[1].toLowerCase()) {
             case "c":
+                if (args.length < 3) {
+                    SendMessage("&6Usage: /mru report c <skill> [filename]");
+                    return true;
+                }
                 if (!plugin.isRankExist.containsKey(args[2].toUpperCase())) {
                     SendMessage(Message.PlayerWarnings + "Huh! Expected a skill as the reports category and a valid skill!");
                     return false;

@@ -318,6 +318,7 @@ public class RankUp extends Util {
         Map<String,String> returnInfo = new HashMap<>();
         for(int level=0;level<=plugin.CustomSkill.get(skill).size();level++){
             Map<String,String> requirements = plugin.CustomSkill.get(skill).get(String.valueOf(level));
+            if (requirements == null) continue;
             int amountreq = requirements.size();
             int playerpass = 0;
             returnInfo = new HashMap<>();
@@ -345,20 +346,20 @@ public class RankUp extends Util {
     }
     
     private int CheckRequerimentLevel(String requirementName, Player player, int requirementAmountint,String requimentAmountString, int passhowmany) {
-        if(requirementName.equalsIgnoreCase("Powerlevel") && McMMOApi.getPowerLevel(player) > requirementAmountint) passhowmany++;
-        if(requirementName.equalsIgnoreCase("Fishing") && McMMOApi.getSkillLevel(player, "Fishing") > requirementAmountint) passhowmany++;
-        if(requirementName.equalsIgnoreCase("Axes") && McMMOApi.getSkillLevel(player, "Axes") > requirementAmountint) passhowmany++;
-        if(requirementName.equalsIgnoreCase("Acrobatics") && McMMOApi.getSkillLevel(player, "Acrobatics") > requirementAmountint) passhowmany++;
-        if(requirementName.equalsIgnoreCase("Archery") && McMMOApi.getSkillLevel(player, "Archery") > requirementAmountint) passhowmany++;
-        if(requirementName.equalsIgnoreCase("Excavation") && McMMOApi.getSkillLevel(player, "Excavation") > requirementAmountint) passhowmany++;
-        if(requirementName.equalsIgnoreCase("Herbalism") && McMMOApi.getSkillLevel(player, "Herbalism") > requirementAmountint) passhowmany++;
-        if(requirementName.equalsIgnoreCase("Mining") && McMMOApi.getSkillLevel(player, "Mining") > requirementAmountint) passhowmany++;
-        if(requirementName.equalsIgnoreCase("Repair") && McMMOApi.getSkillLevel(player, "Repair") > requirementAmountint) passhowmany++;
-        if(requirementName.equalsIgnoreCase("Smelting") && McMMOApi.getSkillLevel(player, "Smelting") > requirementAmountint) passhowmany++;
-        if(requirementName.equalsIgnoreCase("Swords") && McMMOApi.getSkillLevel(player, "Swords") > requirementAmountint) passhowmany++;
-        if(requirementName.equalsIgnoreCase("Taming") && McMMOApi.getSkillLevel(player, "Taming") > requirementAmountint) passhowmany++;
-        if(requirementName.equalsIgnoreCase("Unarmed") && McMMOApi.getSkillLevel(player, "Unarmed") > requirementAmountint) passhowmany++;
-        if(requirementName.equalsIgnoreCase("Woodcutting") && McMMOApi.getSkillLevel(player, "Woodcutting") > requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Powerlevel") && McMMOApi.getPowerLevel(player) >= requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Fishing") && McMMOApi.getSkillLevel(player, "Fishing") >= requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Axes") && McMMOApi.getSkillLevel(player, "Axes") >= requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Acrobatics") && McMMOApi.getSkillLevel(player, "Acrobatics") >= requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Archery") && McMMOApi.getSkillLevel(player, "Archery") >= requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Excavation") && McMMOApi.getSkillLevel(player, "Excavation") >= requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Herbalism") && McMMOApi.getSkillLevel(player, "Herbalism") >= requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Mining") && McMMOApi.getSkillLevel(player, "Mining") >= requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Repair") && McMMOApi.getSkillLevel(player, "Repair") >= requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Smelting") && McMMOApi.getSkillLevel(player, "Smelting") >= requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Swords") && McMMOApi.getSkillLevel(player, "Swords") >= requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Taming") && McMMOApi.getSkillLevel(player, "Taming") >= requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Unarmed") && McMMOApi.getSkillLevel(player, "Unarmed") >= requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Woodcutting") && McMMOApi.getSkillLevel(player, "Woodcutting") >= requirementAmountint) passhowmany++;
         
         if(requirementName.equalsIgnoreCase("Money")) {
            if (plugin.economy == null) return passhowmany;
@@ -368,7 +369,7 @@ public class RankUp extends Util {
         
         Profile profile = new Profile(plugin, player);
         for(EntityType type:EntityType.values()){
-            if(requirementName.equalsIgnoreCase(type.name()) && profile.GetMOBKILLED(type.name()) > requirementAmountint) passhowmany++;
+            if((requirementName.equalsIgnoreCase(type.name()) || isLegacyEntityRequirement(requirementName, type)) && profile.GetMOBKILLED(type.name()) >= requirementAmountint) passhowmany++;
         }
         
         if(requirementName.equalsIgnoreCase("PLAYERKILLED")){
@@ -384,6 +385,10 @@ public class RankUp extends Util {
         }
         
         return passhowmany;
+    }
+
+    private boolean isLegacyEntityRequirement(String requirementName, EntityType type) {
+        return requirementName.equalsIgnoreCase("Skelly") && type.name().equalsIgnoreCase("SKELETON");
     }
     
     private String GetRequimentNowPlayer(String requirementName, Player player) {
@@ -405,7 +410,7 @@ public class RankUp extends Util {
         
         Profile profile = new Profile(plugin, player);
         for(EntityType type:EntityType.values()){
-            if(requirementName.equalsIgnoreCase(type.name())) return String.valueOf(profile.GetMOBKILLED(type.name()));
+            if(requirementName.equalsIgnoreCase(type.name()) || isLegacyEntityRequirement(requirementName, type)) return String.valueOf(profile.GetMOBKILLED(type.name()));
         }
         
         if(requirementName.equalsIgnoreCase("PLAYERKILLED")){

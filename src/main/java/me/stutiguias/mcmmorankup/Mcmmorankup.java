@@ -20,6 +20,7 @@ import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
 
@@ -304,6 +305,7 @@ public class Mcmmorankup extends JavaPlugin {
         SetupAccessor("REPAIR", new ConfigAccessor(this, "repair.yml"), false);
         SetupAccessor("WOODCUTTING", new ConfigAccessor(this, "woodcutting.yml"), false);
         SetupAccessor("SMELTING", new ConfigAccessor(this, "smelting.yml"), false);
+        SetupAccessor("CUSTOM", new ConfigAccessor(this, "custom.yml"), false);
         
         File folder = new File(PluginSkillsDir);
         File[] listOfFiles = folder.listFiles();
@@ -379,27 +381,24 @@ public class Mcmmorankup extends JavaPlugin {
         try {
             if (skill.toUpperCase().equals("CUSTOM")) customfile = false;
             if (isSkillEnable(skill) || customfile) {
+                ca.setupConfig();
                 RankUpConfig.put(skill, GetRanks(ca));
                 Health.put(skill, GetHealth(ca));
                 isRankExist.put(skill, true);
                 if (UseAlternativeBroadcast) {
                     BroadCast.put(skill, GetAlternativeBroadcast(ca));
                 }
-                ca.setupConfig();
+
+                HashMap<String, Map<String,String>> requirements = GetRequirements(ca);
+                if (!requirements.isEmpty()) {
+                    Requirements = requirements;
+                    CustomSkill.put(skill, requirements);
+                }
                 
-                if(customfile){
-                    Requirements = new HashMap<>();
-                    for (String key : ca.getConfig().getConfigurationSection("Requirements.").getKeys(false)) {
-                        HashMap <String,String> newRequirement = new HashMap();
-                        for(String keyRequirement : ca.getConfig().getConfigurationSection("Requirements." + key).getKeys(false)) {
-                            newRequirement.put(keyRequirement, ca.getConfig().getString("Requirements." + key + "." + keyRequirement)); 
-                        }
-                        Requirements.put(key.toUpperCase(),newRequirement);
-                    }
+                if(customfile || !requirements.isEmpty()){
                     if (mruStartupSummary) {
                         logger.log(Level.INFO, "{0} {1} - Loaded", new Object[]{logPrefix, skill.toUpperCase()});
                     }
-                    CustomSkill.put(skill, Requirements);
                     return;
                 }
                 
@@ -427,6 +426,25 @@ public class Mcmmorankup extends JavaPlugin {
             isRankExist.put(skill, false);
             BuyRankEnabled.put(skill, false);
         }
+    }
+
+    private HashMap<String, Map<String,String>> GetRequirements(ConfigAccessor ca) {
+        HashMap<String, Map<String,String>> requirements = new HashMap<>();
+        ConfigurationSection requirementsSection = ca.getConfig().getConfigurationSection("Requirements");
+        if (requirementsSection == null) return requirements;
+
+        for (String key : requirementsSection.getKeys(false)) {
+            ConfigurationSection levelSection = ca.getConfig().getConfigurationSection("Requirements." + key);
+            if (levelSection == null) continue;
+
+            HashMap<String,String> newRequirement = new HashMap<>();
+            for(String keyRequirement : levelSection.getKeys(false)) {
+                newRequirement.put(keyRequirement, ca.getConfig().getString("Requirements." + key + "." + keyRequirement));
+            }
+            requirements.put(key.toUpperCase(), newRequirement);
+        }
+
+        return requirements;
     }
 
     private boolean isSkillEnable(String skill) {
@@ -499,6 +517,7 @@ public class Mcmmorankup extends JavaPlugin {
         
         for(int level=0;level<=CustomSkill.get(skill).size();level++){
             Map<String,String> requirements = CustomSkill.get(skill).get(String.valueOf(level));
+            if (requirements == null) continue;
             int howmanyreq = requirements.size();
             int playerpasshowmany = 0;
             for(String requirementName:requirements.keySet()){
@@ -521,20 +540,20 @@ public class Mcmmorankup extends JavaPlugin {
     }
 
     private int CheckRequerimentLevel(String requirementName, Player player, int requirementAmountint,String requimentAmountString, int passhowmany) {
-        if(requirementName.equalsIgnoreCase("Powerlevel") && McMMOApi.getPowerLevel(player) > requirementAmountint) passhowmany++;
-        if(requirementName.equalsIgnoreCase("Fishing") && McMMOApi.getSkillLevel(player, "Fishing") > requirementAmountint) passhowmany++;
-        if(requirementName.equalsIgnoreCase("Axes") && McMMOApi.getSkillLevel(player, "Axes") > requirementAmountint) passhowmany++;
-        if(requirementName.equalsIgnoreCase("Acrobatics") && McMMOApi.getSkillLevel(player, "Acrobatics") > requirementAmountint) passhowmany++;
-        if(requirementName.equalsIgnoreCase("Archery") && McMMOApi.getSkillLevel(player, "Archery") > requirementAmountint) passhowmany++;
-        if(requirementName.equalsIgnoreCase("Excavation") && McMMOApi.getSkillLevel(player, "Excavation") > requirementAmountint) passhowmany++;
-        if(requirementName.equalsIgnoreCase("Herbalism") && McMMOApi.getSkillLevel(player, "Herbalism") > requirementAmountint) passhowmany++;
-        if(requirementName.equalsIgnoreCase("Mining") && McMMOApi.getSkillLevel(player, "Mining") > requirementAmountint) passhowmany++;
-        if(requirementName.equalsIgnoreCase("Repair") && McMMOApi.getSkillLevel(player, "Repair") > requirementAmountint) passhowmany++;
-        if(requirementName.equalsIgnoreCase("Smelting") && McMMOApi.getSkillLevel(player, "Smelting") > requirementAmountint) passhowmany++;
-        if(requirementName.equalsIgnoreCase("Swords") && McMMOApi.getSkillLevel(player, "Swords") > requirementAmountint) passhowmany++;
-        if(requirementName.equalsIgnoreCase("Taming") && McMMOApi.getSkillLevel(player, "Taming") > requirementAmountint) passhowmany++;
-        if(requirementName.equalsIgnoreCase("Unarmed") && McMMOApi.getSkillLevel(player, "Unarmed") > requirementAmountint) passhowmany++;
-        if(requirementName.equalsIgnoreCase("Woodcutting") && McMMOApi.getSkillLevel(player, "Woodcutting") > requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Powerlevel") && McMMOApi.getPowerLevel(player) >= requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Fishing") && McMMOApi.getSkillLevel(player, "Fishing") >= requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Axes") && McMMOApi.getSkillLevel(player, "Axes") >= requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Acrobatics") && McMMOApi.getSkillLevel(player, "Acrobatics") >= requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Archery") && McMMOApi.getSkillLevel(player, "Archery") >= requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Excavation") && McMMOApi.getSkillLevel(player, "Excavation") >= requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Herbalism") && McMMOApi.getSkillLevel(player, "Herbalism") >= requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Mining") && McMMOApi.getSkillLevel(player, "Mining") >= requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Repair") && McMMOApi.getSkillLevel(player, "Repair") >= requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Smelting") && McMMOApi.getSkillLevel(player, "Smelting") >= requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Swords") && McMMOApi.getSkillLevel(player, "Swords") >= requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Taming") && McMMOApi.getSkillLevel(player, "Taming") >= requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Unarmed") && McMMOApi.getSkillLevel(player, "Unarmed") >= requirementAmountint) passhowmany++;
+        if(requirementName.equalsIgnoreCase("Woodcutting") && McMMOApi.getSkillLevel(player, "Woodcutting") >= requirementAmountint) passhowmany++;
         
         if(requirementName.equalsIgnoreCase("Money")) {
            if (economy == null) return passhowmany;
@@ -544,7 +563,7 @@ public class Mcmmorankup extends JavaPlugin {
         
         Profile profile = new Profile(this, player);
         for(EntityType type:EntityType.values()){
-            if(requirementName.equalsIgnoreCase(type.name()) && profile.GetMOBKILLED(type.name()) > requirementAmountint) passhowmany++;
+            if((requirementName.equalsIgnoreCase(type.name()) || isLegacyEntityRequirement(requirementName, type)) && profile.GetMOBKILLED(type.name()) >= requirementAmountint) passhowmany++;
         }
         
         if(requirementName.equalsIgnoreCase("PLAYERKILLED")){
@@ -559,6 +578,10 @@ public class Mcmmorankup extends JavaPlugin {
             if (isPlayerInWorldGuardRegion(player, requimentAmountString)) passhowmany++;
         }
         return passhowmany;
+    }
+
+    private boolean isLegacyEntityRequirement(String requirementName, EntityType type) {
+        return requirementName.equalsIgnoreCase("Skelly") && type.name().equalsIgnoreCase("SKELETON");
     }
     
     public int GetSkillLevelOffline(String playerName, String skill) {

@@ -212,7 +212,7 @@ public class Set extends CommandHandler {
                 cfg = "UseGenderClass";
                 break;
             case "buyranks":
-                cfg = "AllowBuyRanks";
+                cfg = "AllowBuyingRanks";
                 break;
             case "rankrewards":
                 cfg = "AllowRankRewards";
