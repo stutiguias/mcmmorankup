@@ -27,6 +27,9 @@ public class OnJoinTask extends Util implements Runnable {
 
     @Override
     public void run() {
+        // The player may have disconnected during the configured join delay.
+        if (!profile.player.isOnline()) return;
+
         String skill = profile.GetHabilityForRank().toUpperCase();
         String gender = profile.GetGender();
         String status;

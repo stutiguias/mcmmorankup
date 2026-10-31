@@ -497,10 +497,8 @@ public class Mcmmorankup extends JavaPlugin {
     }
 
     public boolean hasPermission(Player player, String node) {
-        if (permission == null) {
-            return player != null && player.hasPermission(node.toLowerCase());
-        }
-        return permission.has(player.getWorld(), player.getName(), node.toLowerCase());
+        // Player permissions are already available through Bukkit; avoid Vault name lookups.
+        return player != null && player.hasPermission(node.toLowerCase());
     }
 
     public int GetSkillLevel(Player player, String skill) {
