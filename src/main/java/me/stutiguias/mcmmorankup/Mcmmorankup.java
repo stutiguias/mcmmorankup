@@ -344,10 +344,10 @@ public class Mcmmorankup extends JavaPlugin {
         
         if(!ca.fileName.toLowerCase().contains("custom")) return Ranks;
         
-        Rank = new ArrayList<>();
         CustomAvaibleRanks = new ArrayList<>();
         for (String key : ca.getConfig().getConfigurationSection("ExtraBaseRank.").getKeys(false)){
             String customRank = ca.getConfig().getString("ExtraBaseRank." + key);
+            Rank = new ArrayList<>();
             for (String customKey : ca.getConfig().getConfigurationSection("RankUp."+ customRank + ".").getKeys(false)) {
                 Rank.add(customKey + "," + ca.getConfig().getString("RankUp."+ customRank + "." + customKey));
             }
@@ -512,12 +512,17 @@ public class Mcmmorankup extends JavaPlugin {
         }
     }
 
+    public List<String> GetCustomLevels(String skill) {
+        List<String> levels = new ArrayList<>(CustomSkill.get(skill).keySet());
+        levels.sort(Comparator.comparingInt(Integer::parseInt));
+        return levels;
+    }
+
     public int GetCustomLevel(String skill,Player player){
         int PlayerLevel = 0;
         
-        for(int level=0;level<=CustomSkill.get(skill).size();level++){
-            Map<String,String> requirements = CustomSkill.get(skill).get(String.valueOf(level));
-            if (requirements == null) continue;
+        for (String level : GetCustomLevels(skill)) {
+            Map<String,String> requirements = CustomSkill.get(skill).get(level);
             int howmanyreq = requirements.size();
             int playerpasshowmany = 0;
             for(String requirementName:requirements.keySet()){
@@ -531,7 +536,7 @@ public class Mcmmorankup extends JavaPlugin {
                 playerpasshowmany = CheckRequerimentLevel(requirementName, player, requirementAmountint, requimentAmountstring, playerpasshowmany);
             }
             if(playerpasshowmany >= howmanyreq){
-                PlayerLevel = level;
+                PlayerLevel = Integer.parseInt(level);
             }else{
                 break;
             }

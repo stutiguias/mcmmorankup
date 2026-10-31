@@ -79,7 +79,7 @@ public class RankUp extends Util {
 
                     demote = level < playerLevelNow;
 
-                    if(demote && plugin.hasPermission(player, "mru.exemptdemotions") ) continue;
+                    if(demote && (!plugin.AllowDemotions || plugin.hasPermission(player, "mru.exemptdemotions"))) continue;
                     if(hasPurchased && level < purchaseLevel && !plugin.AllowBuyRankDemotions ) continue;
 
                     maxLvl = plugin.isRankMaxLevel(skill, gender, level);
@@ -110,9 +110,9 @@ public class RankUp extends Util {
                 }
             
                 if (plugin.TagSystem) {
-                    ChangeTag(updatedRank, skill, broadCast, demote);
+                    if (!ChangeTag(updatedRank, skill, broadCast, demote)) return "error";
                 } else {
-                    ChangeGroup(updatedRank, skill, broadCast, demote);
+                    if (!ChangeGroup(updatedRank, skill, broadCast, demote)) return "error";
                 }
                 
             }else{
@@ -248,46 +248,93 @@ public class RankUp extends Util {
         }
     }
 
-    private void ChangeTag(String promoteTag, String skill, boolean bCast, boolean demote) {
-        profile.SetTag(promoteTag);
+    private boolean ChangeTag(String promoteTag, String skill, boolean bCast, boolean demote) {
+        if (!profile.SetTag(promoteTag)) return false;
         if (bCast) {
             BrcstMsg(Message.BroadcastRankupTitle);
             BrcstMsg(Message.GeneralMessages + BroadcastMessage(promoteTag, skill, demote));
             BrcstMsg(Message.MessageSeparator);
         }
+        return true;
     }
 
     private boolean ChangeGroup(String newgroup, String skill, boolean bCast, boolean demote) {
 
         String groupnow = plugin.permission.getPrimaryGroup(profile.player);
-        boolean state;
-        
-        profile.SetTag(newgroup);
-        
-        if (plugin.RemoveOnlyPluginGroup) {
-            RemoveGroup(groupnow, profile.player);
-        } else {
-            String[] playergroups = plugin.permission.getPlayerGroups(profile.player);
-            for (String playergroup : playergroups) {
-                RemoveGroup(playergroup, profile.player);
+        String previousTag = profile.GetTag();
+        String[] previousGroups = plugin.permission.getPlayerGroups(profile.player);
+        boolean alreadyMember = isInGroup(newgroup);
+        boolean tagAttempted = false;
+
+        try {
+            // Confirm the destination before removing any existing permissions.
+            if (!alreadyMember && !AddGroup(newgroup, profile.player)) {
+                throw new IllegalStateException("Could not add destination group " + newgroup);
             }
+            String[] groupsToRemove = plugin.RemoveOnlyPluginGroup ? new String[]{groupnow} : previousGroups;
+            for (String group : groupsToRemove) {
+                if (!group.equalsIgnoreCase(newgroup) && !removeGroupChecked(group, profile.player)) {
+                    throw new IllegalStateException("Could not remove previous group " + group);
+                }
+            }
+            tagAttempted = true;
+            if (!profile.SetTag(newgroup)) throw new IllegalStateException("Could not save new rank tag");
+        } catch (Exception ex) {
+            Mcmmorankup.logger.log(Level.WARNING, "Rank change failed for " + profile.player.getName(), ex);
+            boolean restored = true;
+            for (String group : previousGroups) {
+                try {
+                    if (!isInGroup(group)) restored &= AddGroup(group, profile.player);
+                } catch (Exception rollbackError) {
+                    restored = false;
+                    Mcmmorankup.logger.log(Level.SEVERE, "Could not restore group " + group, rollbackError);
+                }
+            }
+            try {
+                if (!alreadyMember && isInGroup(newgroup)) restored &= removeGroupChecked(newgroup, profile.player);
+            } catch (Exception rollbackError) {
+                restored = false;
+                Mcmmorankup.logger.log(Level.SEVERE, "Could not remove destination group " + newgroup, rollbackError);
+            }
+            if (tagAttempted) {
+                try {
+                    restored &= profile.SetTag(previousTag);
+                } catch (Exception rollbackError) {
+                    restored = false;
+                    Mcmmorankup.logger.log(Level.SEVERE, "Could not restore previous tag", rollbackError);
+                }
+            }
+            if (!restored) {
+                Mcmmorankup.logger.log(Level.SEVERE, "Rank rollback incomplete for {0}; administrator intervention required", profile.player.getName());
+            }
+            return false;
         }
-        state = AddGroup(newgroup, profile.player);
-        
-        if (bCast && state && !groupnow.equalsIgnoreCase(newgroup)) {
+
+        if (bCast && !groupnow.equalsIgnoreCase(newgroup)) {
             BrcstMsg(Message.BroadcastRankupTitle);
             BrcstMsg(Message.GeneralMessages + BroadcastMessage(newgroup, skill, demote));
             BrcstMsg(Message.MessageSeparator);
         }
 
-        return state;
+        return true;
+    }
+
+    private boolean isInGroup(String group) {
+        if (plugin.PerWorldPermission) {
+            return plugin.permission.playerInGroup(profile.player.getWorld(), profile.player.getName(), group);
+        }
+        return plugin.permission.playerInGroup(profile.player, group);
     }
 
     public void RemoveGroup(String groupnow,Player player) {
+        removeGroupChecked(groupnow, player);
+    }
+
+    private boolean removeGroupChecked(String groupnow, Player player) {
         if(plugin.PerWorldPermission) {
-            plugin.permission.playerRemoveGroup(player.getWorld(), player.getName(), groupnow);
+            return plugin.permission.playerRemoveGroup(player.getWorld(), player.getName(), groupnow);
         }else{
-            plugin.permission.playerRemoveGroup(player, groupnow);
+            return plugin.permission.playerRemoveGroup(player, groupnow);
         }
     }
     
@@ -316,9 +363,8 @@ public class RankUp extends Util {
     
     public Map<String,String> ShowRequirementInfo(String skill,Player player){
         Map<String,String> returnInfo = new HashMap<>();
-        for(int level=0;level<=plugin.CustomSkill.get(skill).size();level++){
-            Map<String,String> requirements = plugin.CustomSkill.get(skill).get(String.valueOf(level));
-            if (requirements == null) continue;
+        for (String level : plugin.GetCustomLevels(skill)) {
+            Map<String,String> requirements = plugin.CustomSkill.get(skill).get(level);
             int amountreq = requirements.size();
             int playerpass = 0;
             returnInfo = new HashMap<>();

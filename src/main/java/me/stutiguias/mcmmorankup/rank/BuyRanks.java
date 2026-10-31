@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import me.stutiguias.mcmmorankup.XpCalc;
 import me.stutiguias.mcmmorankup.profile.Profile;
 
 import org.bukkit.entity.Player;
+import net.milkbowl.vault.economy.EconomyResponse;
 
 public class BuyRanks extends Util {
 
@@ -121,7 +123,6 @@ public class BuyRanks extends Util {
             
             String RankNow = plugin.TagSystem ? _profile.GetTag() : plugin.permission.getPrimaryGroup(player.getWorld(), player.getName());
 
-            boolean transactionStatus;
             int cost = Integer.parseInt(costOfRank);
             StringBuilder costMsg = new StringBuilder();
             costMsg.append(cost);
@@ -131,32 +132,81 @@ public class BuyRanks extends Util {
                 return true;
             }
             
-            if(!ChangePlayerRank(rankToBuy, player, RankNow)) throw new Exception();
-            if(!SetHistoryPurchasedRanks(rankToBuy, costOfRank, RankNow, isXp, xpLMode)) throw new Exception();
-            
-            if (isXp) {
+            int previousLevel = player.getLevel();
+            float previousExp = player.getExp();
+            int previousTotalExp = player.getTotalExperience();
+            List<String> previousPurchases = new ArrayList<>(_profile.GetPurchasedRanks());
+            String[] previousGroups = plugin.TagSystem ? new String[0] : plugin.permission.getPlayerGroups(player);
 
-                if (xpLMode) {
-                    player.setLevel(player.getLevel() - cost);
-                    costMsg.append(" ").append(Message.BuyLevels);
-                } else {
-                    int totalPlayerXp = XpCalc.GetTotalExperience(player);
-                    XpCalc.clearExperience(player);
-                    XpCalc.setTotalExperience(player, totalPlayerXp - cost);
-                    costMsg.append(" ").append(Message.BuyPoints);
+            if (!isXp) {
+                if (plugin.economy == null) return false;
+                EconomyResponse payment = plugin.economy.withdrawPlayer(player, cost);
+                if (payment == null || !payment.transactionSuccess()) {
+                    SendFormatMessage("&cPayment failed. Your rank has not been changed.");
+                    return false;
                 }
-                transactionStatus = true;
-                
-            } else {
-                plugin.economy.withdrawPlayer(player.getName(), cost);
-                costMsg.append(" ").append(plugin.BuyRankCurrencyName);
-                transactionStatus = true;
             }
+
+            try {
+                if (isXp) {
+                    if (xpLMode) {
+                        player.setLevel(previousLevel - cost);
+                    } else {
+                        XpCalc.setTotalExperience(player, XpCalc.GetTotalExperience(player) - cost);
+                    }
+                }
+                if (!ChangePlayerRank(rankToBuy, player, RankNow)) throw new IllegalStateException("Rank change failed");
+                if (!SetHistoryPurchasedRanks(rankToBuy, costOfRank, RankNow, isXp, xpLMode)) {
+                    throw new IllegalStateException("Purchase history could not be saved");
+                }
+            } catch (Exception ex) {
+                try {
+                    if (plugin.TagSystem) {
+                        if (!_profile.SetTag(RankNow)) throw new IllegalStateException("Could not restore tag");
+                    } else {
+                        boolean restored = true;
+                        for (String group : plugin.permission.getPlayerGroups(player)) {
+                            if (!java.util.Arrays.asList(previousGroups).contains(group)) {
+                                restored &= plugin.permission.playerRemoveGroup(player.getWorld(), player.getName(), group);
+                            }
+                        }
+                        for (String group : previousGroups) {
+                            if (!plugin.permission.playerInGroup(player.getWorld(), player.getName(), group)) {
+                                restored &= plugin.permission.playerAddGroup(player.getWorld(), player.getName(), group);
+                            }
+                        }
+                        if (!restored) throw new IllegalStateException("Could not restore permission groups");
+                    }
+                } catch (Exception rollbackError) {
+                    Mcmmorankup.logger.log(Level.SEVERE, "Could not restore rank for " + player.getName(), rollbackError);
+                }
+                try {
+                    if (!_profile.SetPurchasedRank(previousPurchases)) {
+                        throw new IllegalStateException("Could not restore purchase history");
+                    }
+                } catch (Exception rollbackError) {
+                    Mcmmorankup.logger.log(Level.SEVERE, "Could not restore purchase history for " + player.getName(), rollbackError);
+                }
+                if (isXp) {
+                    player.setLevel(previousLevel);
+                    player.setExp(previousExp);
+                    player.setTotalExperience(previousTotalExp);
+                } else {
+                    EconomyResponse refund = plugin.economy.depositPlayer(player, cost);
+                    if (refund == null || !refund.transactionSuccess()) {
+                        Mcmmorankup.logger.log(Level.SEVERE, "Refund failed for {0}; amount: {1}", new Object[]{player.getName(), cost});
+                        SendFormatMessage("&cRefund failed. Contact an administrator.");
+                    }
+                }
+                throw ex;
+            }
+
+            costMsg.append(" ").append(isXp ? (xpLMode ? Message.BuyLevels : Message.BuyPoints) : plugin.BuyRankCurrencyName);
 
             SendFormatMessage(Message.BuyPurchaseConfirm.replace("%rank%", rankToBuy)
                                                            .replace("%cost%", costMsg));
 
-            return transactionStatus;
+            return true;
         } catch (NullPointerException ex) {
             Mcmmorankup.logger.log(Level.WARNING, "'{'BuyRanks Null'}' - Error ocurred during rank purchasing {0}", ex.getMessage());
             return false;
@@ -258,7 +308,7 @@ public class BuyRanks extends Util {
                  .append(curXP).append("/").append(curXpl).append("L").append("|").append("From:").append(curGroup);
 
             purchased.add(pRank.toString());
-            _profile.SetPurchasedRank(purchased);
+            if (!_profile.SetPurchasedRank(purchased)) return false;
         } catch (Exception e) {
             SendFormatMessage("&cThere was an error updating your rankup profile! Contact an Administrator!");
             return false;
@@ -302,14 +352,13 @@ public class BuyRanks extends Util {
         boolean transactionStatus;
         if (plugin.TagSystem) {
             transactionStatus = _profile.SetTag(rankToBuy);
-            _profile.SaveYML();
         } else {
             if (plugin.RemoveOnlyPluginGroup) {
-                plugin.permission.playerRemoveGroup(player.getWorld(), player.getName(), grpNow);
+                if (!plugin.permission.playerRemoveGroup(player.getWorld(), player.getName(), grpNow)) return false;
             } else {
                 String[] curGroups = plugin.permission.getPlayerGroups(player);
                 for (String curGroup : curGroups) {
-                    plugin.permission.playerRemoveGroup(player.getWorld(), player.getName(), curGroup);
+                    if (!plugin.permission.playerRemoveGroup(player.getWorld(), player.getName(), curGroup)) return false;
                 }
             }
             transactionStatus = plugin.permission.playerAddGroup(player.getWorld(), player.getName(), rankToBuy);

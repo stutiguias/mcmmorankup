@@ -92,15 +92,14 @@ public class Profile extends Util {
     
     public Boolean SetTag(String Tag) {
         PlayerYML.set("Tag", Tag);
-        SaveYML();
+        if (!saveProfile()) return false;
         SetHealth();
         return true;
     }
 
     public Boolean SetPurchasedRank(List<String> ranks) {
         PlayerYML.set("PurchasedRanks", ranks);
-        SaveYML();
-        return true;
+        return saveProfile();
     }
 
     public void SetQuitStats() {
@@ -247,6 +246,7 @@ public class Profile extends Util {
     }
 
     public void CheckPlayerConfig() {
+        String previousConfig = PlayerYML.saveToString();
 
         if (!PlayerYML.isSet("Tag") && !plugin.StartTagName.isEmpty()) {
             PlayerYML.set("Tag", plugin.StartTagName);						   		
@@ -270,18 +270,24 @@ public class Profile extends Util {
         if (!PlayerYML.isSet("PlayerFeeds.Global"))       PlayerYML.set("PlayerFeeds.Global", true);
         if (!PlayerYML.isSet("PlayerFeeds.XpUpdates"))    PlayerYML.set("PlayerFeeds.XpUpdates", false);
         
-        SaveYML();
+        if (!previousConfig.equals(PlayerYML.saveToString())) SaveYML();
 
     }
 
     public void SaveYML() {
+        saveProfile();
+    }
+
+    private boolean saveProfile() {
         try {
             PlayerYML.save(configplayerfile);
+            return true;
         } catch (FileNotFoundException ex) {
             Mcmmorankup.logger.log(Level.WARNING, "{0} File Not Found {1}", new Object[]{Mcmmorankup.logPrefix, ex.getMessage()});
         } catch (IOException ex) {
             Mcmmorankup.logger.log(Level.WARNING, "{0} IO Problem {1}", new Object[]{Mcmmorankup.logPrefix, ex.getMessage()});
         }
+        return false;
     }
 
     private void LoadPlayerProfile(String playerName) {

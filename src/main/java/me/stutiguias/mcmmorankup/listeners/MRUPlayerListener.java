@@ -25,8 +25,6 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 
 public class MRUPlayerListener extends Util implements Listener {
 
-    private Profile profile;
-    
     public MRUPlayerListener(Mcmmorankup plugin) {
         super(plugin);
     }
@@ -44,7 +42,7 @@ public class MRUPlayerListener extends Util implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerLeave(PlayerQuitEvent event) {
-        profile = new Profile(plugin, event.getPlayer() );
+        Profile profile = new Profile(plugin, event.getPlayer() );
         profile.SetQuitStats();
     }
 
@@ -53,7 +51,7 @@ public class MRUPlayerListener extends Util implements Listener {
         if (!plugin.playerAbilityXpUpdateFeed) return;
         PrimarySkillType skillType = event.getSkill();
 
-        profile = new Profile(plugin, event.getPlayer());
+        Profile profile = new Profile(plugin, event.getPlayer());
         String skill = profile.GetHabilityForRank();
 
         if (!profile.GetPlayerXpUpdateFeed() || !skillType.toString().equalsIgnoreCase(skill) || skill.equalsIgnoreCase("POWERLEVEL")) return; 
@@ -68,17 +66,33 @@ public class MRUPlayerListener extends Util implements Listener {
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         if (event.isCancelled()) return;
         if (!plugin.TagSystem) return;
-        if (plugin.isIgnored(event.getPlayer())) return;
-        
-        profile = new Profile(plugin, event.getPlayer());
-        String Tag = profile.GetTag();
-        if (Tag == null) Tag = "";
+        String Tag;
+        try {
+            // Profile files and permission providers are accessed only on the server thread.
+            Tag = event.isAsynchronous()
+                    ? Bukkit.getScheduler().callSyncMethod(plugin, () -> getChatTag(event.getPlayer())).get()
+                    : getChatTag(event.getPlayer());
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            return;
+        } catch (Exception ex) {
+            Mcmmorankup.logger.log(Level.WARNING, "Could not read chat tag", ex);
+            return;
+        }
+        if (Tag == null) return;
         String format = event.getFormat();
         if(format.contains("-mru")) {
             event.setFormat(format.replace("-mru",parseColor(Tag)));
         }else{
             event.setFormat(parseColor(Tag) + " " + format);
         }
+    }
+
+    private String getChatTag(Player player) {
+        if (!plugin.TagSystem || !player.isOnline() || plugin.isIgnored(player)) return null;
+        Profile profile = new Profile(plugin, player);
+        String tag = profile.GetTag();
+        return tag == null ? "" : tag;
     }
     
     @EventHandler(priority = EventPriority.HIGH)
